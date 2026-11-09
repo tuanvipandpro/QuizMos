@@ -1,6 +1,6 @@
 # Git process
 
-Tracking: [#97](https://github.com/tuanvipandpro/quiz-app/issues/97). This is the canonical branch/routing policy. See [contributing](contributing.md) for change classification, verification, secrets and release acceptance.
+Merge-method follow-up: [#106](https://github.com/tuanvipandpro/QuizMos/issues/106). Tracking: [#97](https://github.com/tuanvipandpro/quiz-app/issues/97). This is the canonical branch/routing policy. See [contributing](contributing.md) for change classification, verification, secrets and release acceptance.
 
 ## Branch routing
 
@@ -31,7 +31,41 @@ PR head code can edit its own ordinary workflow, so production also has a truste
 1. Update the protected `develop` baseline through accepted PRs. Create a release from its current commit, named `work/release-mN-yyyyMMdd`: positive milestone number and real calendar date in Asia/Saigon. Current M1 is `work/release-m1-20261106`; M2/M3 get their own dated branches.
 2. Start each issue branch from that release. Use descriptive `codex/` names including the issue number where practical, for example `codex/80-exam-history`. Existing M1 branch names remain valid; do not rewrite working history merely to rename them.
 3. Target issue PRs at their milestone release. Keep one cohesive issue per MR. Preserve stable data IDs, account isolation and the issue's independent acceptance/rollout gates while resolving shared code changes.
-4. When the milestone is accepted, open release → `develop`, then `develop` → production PRs. Use merge commits for these shared-branch promotions to preserve ancestry for future milestones. Do not squash/reset shared development history or force-push protected branches.
+4. When the milestone is accepted, open release → `develop`, then `develop` → production PRs. Follow the merge-method matrix below; preserve each issue commit through milestone and production promotion. Do not squash/reset shared development history or force-push protected branches.
+
+## Merge methods
+
+One issue produces one implementation PR and one final squash commit in develop. Working branches may contain multiple commits; WIP/debug commits must not reach develop separately. Include both the issue and original PR number in the squash subject, for example `feat(history): archive exams (Refs #80) (#92)`. Review the final squash message rather than copying the complete WIP log. A follow-up after accepted integration gets a new linked issue/PR; do not amend protected history to force it into the old commit.
+
+| PR purpose                  | Source → target                  | Method                                                                                                                | Result                                                                            |
+| --------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Issue implementation        | Issue branch → milestone release | **Squash and merge**                                                                                                  | Exactly one traceable commit for that issue                                       |
+| Repository governance issue | Issue branch → develop           | **Squash and merge**                                                                                                  | One commit for the governance issue                                               |
+| Milestone integration       | Accepted release → develop       | Preserve issue commits; fast-forward only when available through the protected PR process, otherwise **merge commit** | Each issue stays one commit; an optional milestone merge commit records promotion |
+| Production release          | Same-repository develop → master | **Merge commit**, one PR per milestone                                                                                | One release PR with milestone notes; shared ancestry is retained                  |
+| Accepted baseline sync      | Develop → an existing release    | **Merge commit**                                                                                                      | Preserve shared ancestry without resquashing delivered issues                     |
+
+Do not squash a whole milestone into develop: that would hide the individual issue commits. Do not rebase-and-merge an issue containing several WIP commits: that would retain several commits for one issue. Do not squash shared develop history into master; one release PR does not require collapsing its issue ancestry.
+
+Fast-forward only advances a branch pointer when the target is an ancestor of the source. It neither combines commits nor creates a merge commit. GitHub's standard PR merge choices do not provide a native fast-forward-only button. Keep protected PR/CI requirements: never replace a checked PR with a direct push merely to obtain a linear graph. The merge-commit fallback above is the default for GitHub promotions; an additional milestone merge commit does not count as a second issue implementation commit.
+
+## Branch cleanup
+
+Retain an issue branch after its squash into a release. Delete its remote branch only after the recorded issue squash commit has reached develop and required post-merge develop checks pass. Check the squash commit's ancestry, not the original multi-commit branch head: squashing deliberately changes that relationship. Confirm the branch still has the reviewed head and contains no subsequent unmerged work.
+
+Delete only that issue branch. Never delete develop, master/main, the active milestone release, or an unrelated branch. Keep a small issue/PR-to-squash-commit record in the promotion PR so delayed cleanup is auditable. Local worktree removal is separate; preserve dirty files and do not force-delete a checked-out branch.
+
+Do not enable repository-wide automatic head deletion for this flow: it would remove issue branches immediately after release integration, before they reach develop. Do not pass `--delete-branch` on issue → release merges. This policy specifies controlled cleanup; this change does not install a deletion bot or change GitHub settings.
+
+## Milestone release notes
+
+Use one open develop → master PR for the milestone. Update that PR as the accepted develop head advances rather than opening one production PR per issue. Title it with the milestone, for example `Release M1 — Reliable learning foundation`.
+
+Its body must contain the user-visible features/fixes/data changes grouped by issue/PR, actual verification results and head, configuration/migrations/rollout gates, known incomplete acceptance, and rollback notes. Separate code integration from production activation. Keep issue references as `Refs #N`; close delivery issues only after their required production checks/smoke pass.
+
+## Existing M1 history
+
+The current M1 release already contains issue merge commits made under the earlier policy. It cannot be promoted unchanged while claiming the new one-commit-per-issue layout. Before its final integration, prepare a clean successor release from accepted develop and reconstruct one reviewed commit per issue, retaining original issue/PR references. Compare the complete result with the verified M1 candidate and rerun applicable integration checks. Preserve the original published release for audit; do not force-push it or rewrite protected develop/master history. Existing pre-policy develop commits are historical, not silently rewritten.
 
 ## Protection and CI
 
