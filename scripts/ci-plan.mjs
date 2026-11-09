@@ -94,6 +94,7 @@ export function changesBetween(base, head, cwd = process.cwd()) {
 // Runtime contracts imported by both the browser and the production Worker.
 const sharedRuntimeFiles = new Set([
   'src/utils/questionModel.js',
+  'src/utils/dragDropTemplate.js',
   'src/services/llm/explanationPrompt.js',
 ]);
 const sharedFiles = new Set([
