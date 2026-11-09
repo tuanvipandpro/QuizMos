@@ -1,0 +1,172 @@
+{
+  "sourceSha256": "66e8286a485b1b37f4dc80d3666edd9e4956bac1ea45da47160d8be9e1cb03cf",
+  "sourceBytes": 211827,
+  "questionCount": 98,
+  "sourceIdAnswerSha256": "8541dd325782669079e9ce62c680487ca64dc0929b5c093102bc48bc458eee88",
+  "publishedSha256": "1e713c59bc1405df580ea7e36a000ebe2d537af4de9d09789ae615b780e9c069",
+  "reviewedOptionsSha256": "f728edc90a127d5e400036b33536398625736498543cd667a5b83679ba276881",
+  "reviewedAt": "2026-11-10",
+  "corrections": [
+    {
+      "id": "q-1",
+      "fields": ["explanation", "question", "template"],
+      "reason": "Use workflow/job permissions and explicit manual PR gate"
+    },
+    {
+      "id": "q-11",
+      "fields": ["imageUrl", "question"],
+      "reason": "Replace malformed command exhibit with complete inline Bash"
+    },
+    {
+      "id": "q-13",
+      "fields": ["question"],
+      "reason": "Establish named MCP tool allowlist premise"
+    },
+    {
+      "id": "q-15",
+      "fields": ["question"],
+      "reason": "Label profile exhibit as proposed configuration"
+    },
+    {
+      "id": "q-16",
+      "fields": ["explanation", "template"],
+      "reason": "Use direct MCP headers field"
+    },
+    {
+      "id": "q-17",
+      "fields": ["explanation", "options", "question"],
+      "reason": "Use native CLI agent selection and permission kinds"
+    },
+    {
+      "id": "q-18",
+      "fields": ["question"],
+      "reason": "Label profile exhibit as proposed configuration"
+    },
+    {
+      "id": "q-23",
+      "fields": ["question"],
+      "reason": "Align profile filename with marked path"
+    },
+    {
+      "id": "q-30",
+      "fields": ["question"],
+      "reason": "Label profile exhibit as proposed configuration"
+    },
+    {
+      "id": "q-37",
+      "fields": ["explanation", "statements"],
+      "reason": "Ask only facts actually visible in model-request logs"
+    },
+    {
+      "id": "q-42",
+      "fields": ["explanation", "statements"],
+      "reason": "Distinguish feature flag from runtime MCP server capability"
+    },
+    {
+      "id": "q-44",
+      "fields": ["question"],
+      "reason": "Label profile exhibit as proposed configuration"
+    },
+    {
+      "id": "q-46",
+      "fields": ["question"],
+      "reason": "Disambiguate head_ref and run_id concurrency requirement"
+    },
+    {
+      "id": "q-48",
+      "fields": ["explanation"],
+      "reason": "Correct manual artifact-deletion audit-event scope"
+    },
+    {
+      "id": "q-49",
+      "fields": ["explanation", "options"],
+      "reason": "Classify observed invocation failure without attributing misuse"
+    },
+    {
+      "id": "q-50",
+      "fields": ["question", "statements"],
+      "reason": "Fix branch identifier and user-invocable spelling"
+    },
+    {
+      "id": "q-51",
+      "fields": ["template"],
+      "reason": "Remove erroneous duplicate risk reviewer job"
+    },
+    {
+      "id": "q-53",
+      "fields": ["explanation", "options", "question"],
+      "reason": "Explicit self-review and administrator-bypass protection"
+    },
+    {
+      "id": "q-54",
+      "fields": ["explanation", "question"],
+      "reason": "Separate workflow-token scopes from external credential boundaries"
+    },
+    {
+      "id": "q-57",
+      "fields": ["explanation", "question"],
+      "reason": "Human accountability rather than irreversible-commit claim"
+    },
+    {
+      "id": "q-58",
+      "fields": ["explanation", "imageUrl", "options", "question", "template"],
+      "reason": "Use native JSON preToolUse hook and trusted validator; remove obsolete exhibit"
+    },
+    {
+      "id": "q-63",
+      "fields": ["explanation", "question"],
+      "reason": "Scope clear command to Copilot CLI"
+    },
+    {
+      "id": "q-73",
+      "fields": ["explanation", "options", "question"],
+      "reason": "State MCP server name/toolset premise"
+    },
+    {
+      "id": "q-74",
+      "fields": ["question"],
+      "reason": "Remove escaped JSON braces"
+    },
+    {
+      "id": "q-77",
+      "fields": ["explanation", "options", "question", "template"],
+      "reason": "Use complete native SDK session/hook API with cleanup"
+    },
+    {
+      "id": "q-79",
+      "fields": ["explanation", "question", "template"],
+      "reason": "Use separate valid hook files without duplicate keys"
+    },
+    {
+      "id": "q-85",
+      "fields": ["explanation", "template"],
+      "reason": "Include hidden session-log directory explicitly"
+    },
+    {
+      "id": "q-87",
+      "fields": ["explanation", "question", "template"],
+      "reason": "Supply protected manual job and shared plan artifact"
+    },
+    {
+      "id": "q-90",
+      "fields": ["explanation", "options"],
+      "reason": "Remove unsupported fixed compaction percentage"
+    },
+    {
+      "id": "q-94",
+      "fields": ["explanation", "question", "template"],
+      "reason": "Supply valid current-head human-review workflow"
+    },
+    {
+      "id": "q-96",
+      "fields": ["explanation", "options", "question"],
+      "reason": "Narrow intended Git log permission without sandbox claim"
+    },
+    {
+      "id": "q-98",
+      "fields": ["question"],
+      "reason": "Scope secret mapping requirement accurately"
+    }
+  ],
+  "publishedHashNormalization": "UTF-8 with LF line endings"
+}

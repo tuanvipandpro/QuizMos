@@ -1,4 +1,5 @@
 export const vi = {
+  Intermediate: 'Trung cấp',
   Prev: 'Trước',
   Next: 'Tiếp',
   'Open your banking app': 'Mở app ngân hàng của bạn',
