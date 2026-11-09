@@ -1,8 +1,10 @@
+import { dragDropTemplateParts } from './dragDropTemplate.js';
+
 export const questionType = (question) => question.type || 'multiple_choice';
 export const questionExplanation = (question) =>
   typeof question?.explanation === 'string' ? question.explanation.trim() : '';
 export const isStructuredQuestion = (question) =>
-  ['dropdown', 'yes_no'].includes(questionType(question));
+  ['dropdown', 'yes_no', 'drag_drop'].includes(questionType(question));
 export const questionParts = (question) =>
   questionType(question) === 'yes_no' ? question.statements : question.slots;
 export const partOptions = (question, id) =>
@@ -148,8 +150,8 @@ export function validateQuizQuestions(questions, { allowLegacyIncomplete = false
     const type = questionType(question);
     if (
       (Object.hasOwn(question, 'type') &&
-        !['multiple_choice', 'dropdown', 'yes_no'].includes(question.type)) ||
-      !['multiple_choice', 'dropdown', 'yes_no'].includes(type)
+        !['multiple_choice', 'dropdown', 'yes_no', 'drag_drop'].includes(question.type)) ||
+      !['multiple_choice', 'dropdown', 'yes_no', 'drag_drop'].includes(type)
     )
       fail('unsupported question type.');
     if (!isStructuredQuestion(question)) {
@@ -208,25 +210,33 @@ export function validateQuizQuestions(questions, { allowLegacyIncomplete = false
         ))
     )
       fail('yes_no requires Yes and No options.');
-    if (type === 'dropdown') {
+    if (type === 'dropdown' || type === 'drag_drop') {
       if (Object.keys(question.options).length !== parts.length)
-        fail('dropdown options must match every slot.');
+        fail(`${type} options must match every slot.`);
       if (question.layout != null && !['inline', 'rows'].includes(question.layout))
-        fail('unsupported dropdown layout.');
+        fail(`unsupported ${type} layout.`);
       if (question.instruction != null && typeof question.instruction !== 'string')
-        fail('invalid dropdown instruction.');
+        fail(`invalid ${type} instruction.`);
       if (question.layout === 'inline') {
-        if (!text(question.template)) fail('inline dropdown requires a template.');
-        const placeholders = [...question.template.matchAll(/\{\{([^{}]+)\}\}/g)].map(
-          (match) => match[1]
-        );
+        if (!text(question.template)) fail(`inline ${type} requires a template.`);
+        const placeholders =
+          type === 'drag_drop'
+            ? dragDropTemplateParts(question.template)
+                .filter((part) => part.slotId != null)
+                .map((part) => part.slotId)
+            : [...question.template.matchAll(/\{\{([^{}]+)\}\}/g)].map((match) => match[1]);
         if (
           placeholders.length !== parts.length ||
           new Set(placeholders).size !== parts.length ||
           placeholders.some((id) => !partIds.has(id))
         )
           fail('template must include each slot exactly once.');
-      } else if (parts.some((part) => !text(part.label))) fail('row dropdowns require labels.');
+      } else if (parts.some((part) => !text(part.label)))
+        fail(
+          type === 'drag_drop'
+            ? 'row drag_drop questions require labels.'
+            : 'row dropdowns require labels.'
+        );
     }
   }
   return questions;
