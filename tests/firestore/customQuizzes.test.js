@@ -80,7 +80,15 @@ test('candidate Rules preserve the existing private profile and bank-checkpoint 
 
 test('all supported formats round-trip through the real SDK and validate on read', async () => {
   const s = service();
-  for (const format of ['single', 'multiple', 'yes-no', 'dropdown-rows', 'dropdown-inline']) {
+  for (const format of [
+    'single',
+    'multiple',
+    'yes-no',
+    'dropdown-rows',
+    'dropdown-inline',
+    'drag-drop-rows',
+    'drag-drop-inline',
+  ]) {
     const questions = JSON.parse(
       await fs.readFile(
         new URL(`../../public/examples/quiz-${format}.json`, import.meta.url),

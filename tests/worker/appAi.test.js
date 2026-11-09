@@ -97,7 +97,15 @@ test('server validation, byte cap, model allowlist and Vietnamese output for leg
 test('all supported formats cross the real Worker and D1 boundary', async (t) => {
   const h = await workerHarness({ now: () => stamp });
   t.after(h.dispose);
-  for (const format of ['single', 'multiple', 'yes-no', 'dropdown-rows', 'dropdown-inline']) {
+  for (const format of [
+    'single',
+    'multiple',
+    'yes-no',
+    'dropdown-rows',
+    'dropdown-inline',
+    'drag-drop-rows',
+    'drag-drop-inline',
+  ]) {
     const questions = JSON.parse(
       await readFile(new URL(`../../public/examples/quiz-${format}.json`, import.meta.url), 'utf8')
     );

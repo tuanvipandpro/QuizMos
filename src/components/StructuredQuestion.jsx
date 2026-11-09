@@ -9,6 +9,7 @@ import {
 } from '../utils/questionModel';
 import './StructuredQuestion.css';
 import { useLanguage } from '../contexts/LanguageContext';
+import DragDropAnswers from './DragDropAnswers';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -80,7 +81,17 @@ export default function StructuredQuestion({
       <Paragraph type="secondary">
         {t('Completed {count} of {total}', { count: completed, total: parts.length })}
       </Paragraph>
-      {questionType(data) === 'dropdown' && data.layout === 'inline' ? (
+      {questionType(data) === 'drag_drop' ? (
+        <DragDropAnswers
+          key={`${String(data.id)}:${!!readOnly}`}
+          data={data}
+          answer={answer}
+          onSelectAnswer={onSelectAnswer}
+          readOnly={readOnly}
+          reveal={reveal}
+          feedback={feedback}
+        />
+      ) : questionType(data) === 'dropdown' && data.layout === 'inline' ? (
         <>
           <div className="structured-template">
             {data.template.split(/(\{\{[^{}]+\}\})/g).map((piece, index) => {
