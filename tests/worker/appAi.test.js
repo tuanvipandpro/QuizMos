@@ -138,7 +138,7 @@ test('the public quality-review pack fits the real request/prompt boundary witho
   assert.ok(Math.max(...promptBytes) <= AI_POLICY.maxPromptBytes);
   assert.ok(Math.max(...promptBytes) >= AI_POLICY.maxPromptBytes - 256);
   const tooLarge = structuredClone(appAiQualityCases.at(-1).question);
-  tooLarge.options.A += '界'.repeat(200);
+  tooLarge.options[tooLarge.slots[0].id].A += '界'.repeat(200);
   assert.equal((await call(h, { ...input(), question: tooLarge })).status, 413);
   assert.equal(h.calls(), 8);
 });

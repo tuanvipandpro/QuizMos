@@ -14,7 +14,7 @@ Type: chore/docs with public test fixtures; low implementation risk because runt
 ## Work package
 
 1. Reconcile the issue's current acceptance with historical app-ai-worker artifacts. Activation/#64 merge/deployment already have evidence. The current issue explicitly defers the boundary CPU benchmark by owner decision; keep it labelled Deferred and avoid treating a small historical p99 sample as a pass.
-2. Prepare an offline review matrix covering all five question formats, single/multiple answers, ambiguity/incorrect marked answers, long options and conflicting included content. Grade captured prompt-v6 outputs for the four requested sections, correct per-choice reasoning, Vietnamese with preserved English terms and honest uncertainty. Record failures against source facts/primary references, not fixture formatting alone.
+2. Prepare an offline review matrix covering all seven question-format surfaces, single/multiple answers, ambiguity/incorrect marked answers, long options and conflicting included content. Grade captured prompt-v6 outputs for the four requested sections, correct per-choice reasoning, Vietnamese with preserved English terms and honest uncertainty. Record failures against source facts/primary references, not fixture formatting alone.
 3. Use existing captured evidence first. If missing cases require new model output, define a bounded staging sample, current designated account/budget and stop conditions before running live inference. Historical unused call allowances are not a fresh unlimited authorization. Routine tests remain fixture-based; no new model, quota, plan or paid fallback is part of this work package.
 4. If the review identifies a prompt/runtime correction, scope it in a focused #53 PR with prompt-version/cache compatibility tests and required Worker/UI checks. Otherwise deliver the review/evidence reconciliation only.
 5. Before closure, split the status of original composite task 3.2 transparently: completed rollout, remaining/passed output quality and explicitly deferred CPU-boundary work. Do not check a combined task as fully measured when part is deferred. Record the accepted scope and actual post-merge/rollout evidence.
@@ -23,7 +23,7 @@ Status: one retained v6 output reviewed and eight missing cases prepared below. 
 
 ## Delivery
 
-This issue continues in [MR #95](https://github.com/tuanvipandpro/quiz-app/pull/95), based directly on master. Keep live inference within a freshly authorized account/budget. If review requires a prompt/runtime correction, deliver it through this #53 MR with version/cache compatibility tests. Required CI, owner-requested merge and post-merge checks remain delivery gates. Do not close #53 while quality acceptance is incomplete.
+This issue continues in [MR #95](https://github.com/tuanvipandpro/quiz-app/pull/95), targeting the M1 release with accepted native/dock/account dependencies. Keep live inference within a freshly authorized account/budget. If review requires a prompt/runtime correction, deliver it through this #53 MR with version/cache compatibility tests. Required CI, owner-requested merge and post-merge checks remain delivery gates. Do not close #53 while quality acceptance is incomplete.
 
 ## Reconciled acceptance
 
@@ -57,7 +57,7 @@ The maintained public pack is [appAiQualityCases.js](../tests/fixtures/appAiQual
 | Q06  | EN  | Insufficient compute-workload constraints; explain why no unique answer is justified.                                          | Not sampled   |
 | Q07  | VN  | Two stated invocations; reject the deliberately marked three without inventing retries.                                        | Not sampled   |
 | Q08  | EN  | Conflicting included content; retain the trust boundary, identify the hostile reference and explain all choices in Vietnamese. | Not sampled   |
-| Q09  | VN  | Long options/Unicode; follow the explicit access-policy premise and finish all sections near the prompt cap.                   | Not sampled   |
+| Q09  | VN  | Native inline; long options/Unicode; follow the explicit access-policy premise and finish all sections near the prompt cap.    | Not sampled   |
 
 Primary fact checks on 2026-11-06: [AWS error handling](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html), [Google Cloud IAM](https://docs.cloud.google.com/iam/docs/overview), [Anthropic prompt injection](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks). Q06's missing constraints and Q07's count follow their own premises; do not invent facts to resolve them.
 
@@ -67,12 +67,18 @@ Grade every case separately for (1) four complete sections covering every choice
 
 Fresh authorization must name the current designated account and permit **at most eight staging attempts**, one per Q02–Q09. No new calls have run. Historical unused allowances are not reused. Do not use production inference/BYOK, change Free/model/quotas, reset D1 or run the deferred CPU benchmark.
 
-The concrete JSON export is retained ignored as `artifacts/implement-m1/53-quality-review.json`, SHA-256 `17b5cb58dda327e1e0fd5c56557d090ff41c536785ebdbf9e9a2e1116a8c8898`. Generate it with `JSON.stringify(appAiQualityCases.map(c => c.question), null, 2) + '\n'`. Reconfirm its digest and staging prompt/model before use; changed samples/version require updating the review scope.
+The concrete JSON export is retained ignored as `artifacts/m1-quality/pack.json`, SHA-256 `91956aa648e0a8124aab4e569185106fb56fbe7e2f8af6d4c04201c880a9360f`. Generate it with `JSON.stringify(appAiQualityCases.map(c => c.question), null, 2) + '\n'`. Reconfirm its digest and staging prompt/model before use; changed samples/version require updating the review scope.
 
-Combined system/user prompt sizes: Q02 4,370; Q03 4,124; Q04 4,105; Q05 4,050; Q06 3,816; Q07 3,925; Q08 4,907; Q09 **12,122 bytes**, within 12,288. Bodies are 269–6,966 bytes, within 16 KiB. The real local Worker/D1 harness accepts all eight and rejects an oversized extension without another dispatch. Inference is stubbed: these are contract checks, not quality or CPU evidence.
+Combined system/user prompt sizes: Q02 4,370; Q03 4,124; Q04 4,105; Q05 4,050; Q06 3,816; Q07 3,925; Q08 5,443; Q09 **12,096 bytes**, within 12,288. The real harness verifies every request body remains within 16 KiB. The real local Worker/D1 harness accepts all eight and rejects an oversized extension without another dispatch. Inference is stubbed: these are contract checks, not quality or CPU evidence.
 
 After authorization, use the separate staging origin and normal authenticated UI. Upload this pack as a temporary local quiz; do not save it to cloud or edit real bank progress/checkpoints. Explicitly choose App AI. Record quota before each sequential attempt, case ID/time, deployed prompt/model, output/error and quota after. Keep raw outputs private. Reopening or changing UI language must not regenerate. A dispatched failure counts toward eight; no automatic retry/regeneration. Stop on unexpected configuration/plan/model, account mismatch, insufficient quota, first semantic failure, truncation/timeout or a usage anomaly. Review captured output offline before continuing or proposing a correction. Public evidence contains only synthetic-case findings and aggregate usage, never credentials, UID or profile data.
 
 ## Local preparation checks
 
 `yarn verify` passed 193 Node tests, lint/format, strict SDD/catalog, production build and fixture isolation. `yarn test:worker` passed 18 real local Worker/auth/D1 tests, including acceptance of all eight samples and zero-dispatch rejection of the oversized extension. `yarn worker:check` passed the dry-run bundle. Documentation links/configuration/format checks passed. Four existing guide-review warnings are handled separately in #78; the existing bundle-size warning remains. None of these checks makes a model-quality, new Free-account or boundary-CPU claim. Required CI and owner-requested delivery are still separate gates.
+
+## M1 integration update — 2026-11-10
+
+The owner requested completing code integration into develop and preparing the production PR. This MR delivers the offline fixtures/protocol and reconciled historical evidence; it does not assert completion of output-quality task 3.3 or authorize model calls. Q08 is now native drag/drop rows with a conflicting included reference; Q09 is native inline with long/Unicode choices and a literal Actions expression. The same eight missing-case slots now cover the five legacy surfaces plus both native layouts. The proposed live cap stays at most eight, pending a fresh designated account and authorization. No quota/model/prompt-version/production setting changes.
+
+Current pack and prompt sizes above were recomputed for this revision. No new live outputs were captured; final verification and rollout status remain in #53 and the MR.
