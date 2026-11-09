@@ -1,6 +1,12 @@
 import React, { useId, useRef, useState } from 'react';
 import { Avatar, Button, Dropdown } from 'antd';
-import { HistoryOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  HistoryOutlined,
+  FolderOutlined,
+  LogoutOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { EXAM_HISTORY_ENABLED } from '../config/examHistoryConfig';
 
@@ -33,6 +39,18 @@ export default function AccountMenu({ user, onSettings, onSignOut, onNavigate })
         className: 'account-menu',
         items: [
           { key: 'name', label: name, disabled: true },
+          {
+            key: 'profile',
+            label: t('Profile'),
+            icon: <UserOutlined aria-hidden="true" />,
+            onClick: (event) => activate(event, () => onNavigate('#/profile')),
+          },
+          {
+            key: 'quizzes',
+            label: t('Manage quizzes'),
+            icon: <FolderOutlined aria-hidden="true" />,
+            onClick: (event) => activate(event, () => onNavigate('#/my-quizzes')),
+          },
           {
             key: 'settings',
             label: t('AI Settings'),

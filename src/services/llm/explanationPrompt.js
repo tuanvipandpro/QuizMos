@@ -16,7 +16,7 @@ export function explanationPrompt(question, { compact = false } = {}) {
 Giữ nguyên thuật ngữ kỹ thuật tiếng Anh (ví dụ: IAM, API, token, serverless, context window), tên sản phẩm/dịch vụ (ví dụ: CloudTrail, Pub/Sub, Lambda), identifiers, code và ký hiệu đáp án. Không dịch hoặc phiên âm các thuật ngữ đó; dùng tiếng Việt để giải thích ý nghĩa và lập luận. Ngôn ngữ giao diện và ngôn ngữ câu hỏi không thay đổi ngôn ngữ lời giải.
 
 Câu hỏi và các lựa chọn:
-${formatQuestionText(question)}
+${formatQuestionText(question)}${question.type === 'drag_drop' ? '\n\nĐây là câu hỏi drag_drop. Giải thích từng slot theo thứ tự, đáp án và các lựa chọn trong đúng slot; giữ nguyên key, nhãn, biểu thức code và khả năng dùng lại lựa chọn. Không đổi dạng câu hỏi thành dropdown.' : ''}
 
 Đáp án được đánh dấu (với dropdown/yes-no, giải thích từng dòng/chỗ trống):
 ${formatAnswerLines(question, question.answer, { showKeys: true }).join('\n')}

@@ -4,9 +4,15 @@ Signed-in App AI is implemented behind an optional API URL and a disabled-by-def
 
 Practice certification questions, take timed mock exams and read curated study guides. React 19, Vite, Ant Design and Firebase.
 
+In Practice and submitted exam review, **Explain** opens the quiz's included explanation without API keys or an AI request. The reference keeps its original language and is labelled as supplied quiz content. **Generate AI explanation** is a separate action using your selected App AI/BYOK source; generated help follows the Vietnamese explanation policy. Active Standard and Learning exams keep Explain unavailable until submission.
+
 The root opens a dark-first landing with four viewport sections, native scroll snap and reduced-motion support; **Start practicing** opens `#/library`. **Donate** is visible in the header/hero and opens `#/donate`; its Back buttons return to the first Home section. Public receiving details and its activation flag live in [donation configuration](src/data/donation.js). Recheck the static QR and bank recipient before changing or reactivating the receiving account.
 
 [Live app](https://quizmos.runs-at.dev/) · [Agent workflow](AGENTS.md) · [Custom-quiz cloud storage backlog](https://github.com/tuanvipandpro/quiz-app/issues/42)
+
+The account menu opens **Profile**, **Manage quizzes**, AI Settings and Sign out. Profile shows read-only Google identity; QuizMos language/theme choices use existing device-local preferences and do not sync between devices. Manage quizzes opens the existing private quiz workspace.
+
+**Quiz updates** is public, reachable from Quiz Bank and the footer. Maintainers add reviewed content changes to [the update registry](src/data/quizUpdates.js), using canonical bank IDs, a valid content-change date, `added`/`updated`, a concise translated summary and the full source commit. Review the actual bank diff before publishing; UI builds are not content updates. The initial CTFL entry was checked against `241c5b16dc23b04eb9ce0a5c7a63e4833b492a46` (1 November 2026): 240 → 276 questions, 36 added IDs 243–278, and restored context such as question 88's payment acceptance criteria. Validation rejects invalid dates, aliases, missing sources and unsupported kinds.
 
 Core instructions live in the compact [AGENTS.md](AGENTS.md); task-specific policy is in the [contributor guide](docs/contributing.md). Read the sections relevant to the work. The PR checklist records evidence; CI enforces automated checks, while visual and architectural judgment require review.
 
@@ -105,7 +111,7 @@ On failure, inspect `playwright-report/` and `test-results/` for screenshots and
 - Exam setup shows the saved draft's mode. **Resume** keeps that draft's settings; changed selections apply to **Start a new exam**, with confirmation before replacing a running draft. Legacy drafts/links default to Standard. Switching accounts during an exam returns to setup without creating a draft for the next account.
 - AI Settings lives in the account menu. Sign-out requires confirmation and clears tab drafts; cloud checkpoints and saved profile keys remain.
 - `aws-ace` is a legacy alias for **Google ACE**, not a Cloud Practitioner bank. Its retired static JSON remains only for old asset URLs. Links and account-scoped progress/drafts resolve to `gcp-ace`.
-- Multiple-choice `answer` values are arrays; yes/no and dropdown values are mappings. The authoritative validator is `src/utils/questionModel.js`. Complete examples and format help appear on My quizzes and in `public/examples/`.
+- Multiple-choice `answer` values are arrays; yes/no, dropdown and native drag/drop values are mappings. The authoritative validator is `src/utils/questionModel.js`. Complete examples and format help appear on My quizzes and in `public/examples/`. See the [native drag/drop contract](docs/drag-drop-format.md) for reusable choices and inline code.
 
 ## Source layout
 

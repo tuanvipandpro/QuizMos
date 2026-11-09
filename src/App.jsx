@@ -59,6 +59,8 @@ const SettingsModal = lazy(() => import('./components/SettingsModal'));
 const ExamHistoryPage = lazy(() => import('./components/ExamHistoryPage'));
 const LandingPage = lazy(() => import('./components/LandingPage'));
 const DonatePage = lazy(() => import('./components/DonatePage'));
+const ProfilePage = lazy(() => import('./components/ProfilePage'));
+const QuizUpdatesPage = lazy(() => import('./components/QuizUpdatesPage'));
 
 function initialDarkMode() {
   let storage;
@@ -327,7 +329,11 @@ export default function App() {
               ? t('Quiz Bank')
               : route.page === 'my-quizzes'
                 ? t('My quizzes')
-                : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
+                : route.page === 'profile'
+                  ? t('Profile')
+                  : route.page === 'updates'
+                    ? t('Quiz updates')
+                    : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
   }, [route.page, active?.name, t]);
   let examDraft = null;
   if (active && route.mode === 'overview') {
@@ -449,6 +455,19 @@ export default function App() {
         }}
       />
     );
+  else if (route.page === 'profile')
+    screen = (
+      <ProfilePage
+        user={authLoading ? null : user}
+        loading={authLoading}
+        isDarkMode={isDarkMode}
+        onThemeChange={(value) => setIsDarkMode(value === 'dark')}
+        onSettings={() => setSettingsStatus('open')}
+        onNavigate={go}
+        onSignIn={openLogin}
+      />
+    );
+  else if (route.page === 'updates') screen = <QuizUpdatesPage onNavigate={go} />;
   else if (route.page === 'library')
     screen = (
       <QuizLibrary
@@ -458,6 +477,7 @@ export default function App() {
         onExpandedChange={setExpanded}
         progressState={progressState}
         onOpen={openQuiz}
+        onUpdates={() => go('#/updates')}
       />
     );
   else if (route.page === 'my-quizzes')

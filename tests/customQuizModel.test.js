@@ -23,7 +23,15 @@ const instance = '00000000-0000-4000-8000-000000000001';
 const candidate = () => createCustomCandidate(' Sample ', sample(), instance);
 
 test('custom content accepts 1/100 questions and all shared question formats', () => {
-  for (const type of ['single', 'multiple', 'yes-no', 'dropdown-rows', 'dropdown-inline']) {
+  for (const type of [
+    'single',
+    'multiple',
+    'yes-no',
+    'dropdown-rows',
+    'dropdown-inline',
+    'drag-drop-rows',
+    'drag-drop-inline',
+  ]) {
     const questions = sample(type);
     assert.equal(createCustomCandidate('Example', questions).questionCount, 1);
     const hundred = Array.from({ length: 100 }, (_, index) => ({ ...questions[0], id: index }));
