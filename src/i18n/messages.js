@@ -29,6 +29,10 @@ export const vi = {
   'Open quiz': 'Mở quiz',
   'Added 36 questions, bringing this bank to 276. Restored missing question context, including the payment acceptance-criteria scenario.':
     'Bổ sung 36 câu hỏi, nâng tổng số lên 276. Khôi phục ngữ cảnh còn thiếu, bao gồm tình huống về tiêu chí chấp nhận thanh toán.',
+  'Generate AI explanation': 'Tạo giải thích AI',
+  'No explanation is included with this question.': 'Câu hỏi này chưa có giải thích kèm theo.',
+  'Generate AI help when you need more explanation.':
+    'Tạo lời giải AI khi bạn cần được giải thích thêm.',
   Prev: 'Trước',
   Next: 'Tiếp',
   'Open your banking app': 'Mở app ngân hàng của bạn',
@@ -598,6 +602,36 @@ export const vi = {
   Professional: 'Professional',
   Expert: 'Expert',
   Advanced: 'Nâng cao',
+  'Choice bank': 'Các lựa chọn',
+  'Recorded placements': 'Các vị trí đã ghi nhận',
+  'Drag a handle, or select a choice and then a slot. Escape cancels; Delete clears a focused slot.':
+    'Kéo tay nắm hoặc chọn một lựa chọn rồi chọn ô đặt. Escape để hủy; Delete để xóa ô đang focus.',
+  'Choice {key} selected. Choose a slot.': 'Đã chọn {key}. Hãy chọn ô đặt.',
+  'Choice {key} placed in {part}.': 'Đã đặt {key} vào {part}.',
+  'Placement cancelled. Answers kept.': 'Đã hủy thao tác. Câu trả lời được giữ nguyên.',
+  'This choice cannot be placed here. Answers kept.':
+    'Không thể đặt lựa chọn này vào đây. Câu trả lời được giữ nguyên.',
+  'Answer cleared for {part}.': 'Đã xóa câu trả lời tại {part}.',
+  'Drag choice {key}': 'Kéo lựa chọn {key}',
+  'Drop or place here': 'Thả hoặc đặt vào đây',
+  'Select a choice first.': 'Hãy chọn một lựa chọn trước.',
+  'Clear {part}': 'Xóa {part}',
+  'Release to place': 'Thả để đặt',
+  'Choose another slot': 'Chọn ô khác',
+  'Drag and drop rows': 'Kéo thả theo hàng',
+  'Inline drag and drop': 'Kéo thả trong nội dung',
+  'Use native choices and labelled drop slots with an answer mapping.':
+    'Dùng lựa chọn kéo thả và các ô có nhãn, kèm mapping đáp án.',
+  'Place native choices in {{slotId}} blanks; GitHub code expressions stay literal.':
+    'Đặt lựa chọn kéo thả vào ô {{slotId}}; biểu thức code GitHub được giữ nguyên.',
+  'Choice keys mapped to text. Dropdown and drag/drop questions use one map per slot.':
+    'Key lựa chọn gắn với nội dung. Dropdown và kéo thả dùng một map cho mỗi slot.',
+  'An array of option keys, or a mapping for yes/no, dropdown and drag/drop parts.':
+    'Mảng key đáp án, hoặc mapping cho từng phần yes/no, dropdown và kéo thả.',
+  'unsupported drag_drop layout.': 'layout drag_drop không được hỗ trợ.',
+  'drag_drop options must match every slot.': 'options của drag_drop phải khớp từng slot.',
+  'inline drag_drop requires a template.': 'drag_drop inline cần có template.',
+  'row drag_drop questions require labels.': 'các slot drag_drop theo hàng cần có nhãn.',
   Practitioner: 'Practitioner',
 };
 
