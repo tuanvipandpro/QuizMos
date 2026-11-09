@@ -79,7 +79,7 @@ Persist capture eligibility and the owner in new/actively resumed sessions. Comp
 
 Local evidence: `yarn verify` passed 220 Node tests and production build/isolation; real SDK Rules suite passed 27 cases; History E2E passed 32 cases with no page errors. The full-app run and focused failure diagnoses are recorded in [the maintained contract](../../../docs/exam-history.md). Disposable traces/screenshots remain ignored. UI/IO fixture results are not production acceptance.
 
-The History UI requires #74's dock correction. Recorded local integration used foundation `f3cf76982bded136d640f0af94dd504d02d64ae6` plus History `599a5ec`. Workflow migration #97 replays the unchanged #80 runtime/tests on the original #80 plan so the issue-only MR targets `work/release-m1-20261106`; its source no longer inherits #74. First accept governance MR #99 into develop and synchronize that baseline into the existing release through a checked PR; land #89 there, then update #92 and require current-base CI. Preserve #75's account/menu changes and reconcile #79 policy before enablement. Production acceptance remains after the milestone's develop/production promotion, not merely an issue merge into the release.
+The History UI requires #74's dock correction. Recorded local integration used foundation `f3cf76982bded136d640f0af94dd504d02d64ae6` plus History `599a5ec`. Workflow migration #97 replays the unchanged #80 runtime/tests on the original #80 plan so the issue-only MR targets `work/release-m1-20261106`; its source no longer inherits #74. Governance #99 and the explicitly approved baseline sync #102 are merged; this History head includes release baseline 4bac829. Land #89 and native-format #103 there, then update #92 and require current-base CI. Preserve #75's account/menu changes and reconcile #79 policy before enablement. Production acceptance remains after the milestone's develop/production promotion, not merely an issue merge into the release.
 
 ## Migration Plan
 
@@ -90,3 +90,9 @@ One #80 feature PR after #75 (with the history entry gated) and the #79 baseline
 - [Firestore transactions](https://firebase.google.com/docs/firestore/manage-data/transactions): retries, atomic writes and offline failure behavior.
 - [Rules atomic-state functions](https://firebase.google.com/docs/reference/rules/rules.firestore): projected-document checks for coupled writes/deletes.
 - [Firestore limits](https://firebase.google.com/docs/firestore/quotas): document and rule-access constraints; implementation must verify against the current platform.
+
+## Native format coordination — #103
+
+The native drag_drop implementation stays in its own MR #104. This #80 change only preserves native row/inline slots in the existing allowlisted archive projection. It does not import the native renderer/domain feature, expand privacy fields or regrade archives. Model and all-format UI regressions now derive formats from the shared registry, so the old five run independently and the two native formats are exercised when #103 is integrated.
+
+Focused #80 model/store/source checks pass 27/27 on the issue-only head. A local ignored integration combines this projection with dock foundation f3cf769 and native b8246f7; 32 archive/domain/build checks pass, including both native encode/decode cases. Final local integration 34cc868 passes the production build/fixture guard, 27 demo Rules cases and 32 History browser cases, including all seven formats in both modes on desktop/phone. The issue-only History head passes yarn verify with 237 Node tests. Native MR #104 passes 26 browser cases and final Astra review has no remaining actionable findings. This does not enable the client, publish Rules/indexes or replace required latest-head/production acceptance.
