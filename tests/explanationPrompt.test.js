@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { formatAnswerLines, formatQuestionText } from '../src/utils/questionModel.js';
+import { createHash } from 'node:crypto';
 import {
   explanationPrompt,
   explanationSystemPrompt,
@@ -75,3 +76,29 @@ for (const format of ['single', 'multiple', 'yes-no', 'dropdown-rows', 'dropdown
     assert.deepEqual(question, before);
   });
 }
+
+test('native drag guidance covers original slots/code while all prior-format prompt bytes stay unchanged', () => {
+  const old = JSON.parse(
+    readFileSync(new URL('./fixtures/dragDropPromptBaseline.json', import.meta.url))
+  );
+  const hash = (value) => createHash('sha256').update(value).digest('hex');
+  assert.equal(hash(explanationSystemPrompt()), old.system);
+  for (const format of ['single', 'multiple', 'yes-no', 'dropdown-rows', 'dropdown-inline']) {
+    const q = JSON.parse(
+      readFileSync(new URL(`../public/examples/quiz-${format}.json`, import.meta.url))
+    )[0];
+    for (const compact of [false, true])
+      assert.equal(hash(explanationPrompt(q, { compact })), old[format + ':' + compact]);
+  }
+  for (const format of ['drag-drop-rows', 'drag-drop-inline']) {
+    const q = JSON.parse(
+      readFileSync(new URL(`../public/examples/quiz-${format}.json`, import.meta.url))
+    )[0];
+    const prompt = explanationPrompt(q, { compact: true });
+    assert.match(prompt, /câu hỏi drag_drop/);
+    assert(prompt.includes(formatQuestionText(q)));
+    for (const line of formatAnswerLines(q, q.answer, { showKeys: true }))
+      assert(prompt.includes(line));
+    if (format.endsWith('inline')) assert(prompt.includes('${{ github.ref }}'));
+  }
+});
