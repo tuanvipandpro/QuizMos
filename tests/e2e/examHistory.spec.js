@@ -8,6 +8,7 @@ import { contrastRatio } from './uiContrast.js';
 import { createExamSession, finishExam } from '../../src/utils/studySession.js';
 import { createHistoryAttempt, examHistorySource } from '../../src/utils/examHistory.js';
 import { contentHash } from '../../src/utils/contentHash.js';
+import { questionFormats } from '../../src/data/questionFormats.js';
 import {
   questionType,
   questionParts,
@@ -155,6 +156,16 @@ async function answerExample(page, question) {
         .getByRole('group', { name: part.text, exact: true })
         .getByText(partOptions(question, part.id)[question.answer[part.id]], { exact: true })
         .click();
+  } else if (questionType(question) === 'drag_drop') {
+    for (const part of questionParts(question)) {
+      const key = question.answer[part.id],
+        text = partOptions(question, part.id)[key];
+      await page
+        .locator('.dd-choice-bank')
+        .getByRole('button', { name: `${key}. ${text}`, exact: true })
+        .click();
+      await page.locator(`[data-dd-slot="${part.id}"]`).click();
+    }
   } else {
     for (const [index, part] of questionParts(question).entries()) {
       const select = page.getByRole('combobox', {
@@ -240,7 +251,7 @@ test('all formats in both exam modes archive independently from deleted and reus
   });
   let total = 0;
   for (const mode of ['standard', 'learning'])
-    for (const format of ['single', 'multiple', 'yes-no', 'dropdown-rows', 'dropdown-inline']) {
+    for (const { id: format } of questionFormats) {
       const title = `History ${format} ${mode}`,
         file = fileURLToPath(new URL(`../../public/examples/quiz-${format}.json`, import.meta.url));
       const question = JSON.parse(fs.readFileSync(file))[0];
@@ -272,6 +283,13 @@ test('all formats in both exam modes archive independently from deleted and reus
       await expect(page.locator('.history-score')).toContainText('100.0%');
       for (const input of await page.locator('.quiz-question-card input').all())
         await expect(input).toBeDisabled();
+      if (questionType(question) === 'drag_drop') {
+        await expect(page.locator('.drag-drop-answers button')).toHaveCount(0);
+        await expect(page.locator('.dd-readonly-value')).toHaveCount(question.slots.length);
+        const original = await records(page);
+        await page.locator('.dd-readonly-value').first().click();
+        expect(await records(page)).toEqual(original);
+      }
       await expect(page.getByRole('button', { name: 'Explain', exact: true })).toHaveCount(0);
       await page.getByRole('button', { name: 'My quizzes', exact: true }).click();
       card = page
@@ -284,8 +302,8 @@ test('all formats in both exam modes archive independently from deleted and reus
       await expect(modal).toBeHidden();
     }
   await page.goto('./#/history');
-  await expect(page.getByText('10/50 saved exams', { exact: true })).toBeVisible();
-  await expect(page.locator('.history-statistics .ant-card')).toHaveCount(10);
+  await expect(page.getByText(`${total}/50 saved exams`, { exact: true })).toBeVisible();
+  await expect(page.locator('.history-statistics .ant-card')).toHaveCount(total);
   const oldest = Object.values((await records(page)).attempts).find(
     (attempt) => attempt.summary.source.title === 'History single standard'
   );

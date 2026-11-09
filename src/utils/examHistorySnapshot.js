@@ -167,7 +167,7 @@ export function archivedQuestion(question) {
     : sortedRecord(question.answer);
   if (questionType(question) === 'yes_no')
     copy.statements = question.statements.map(({ id, text }) => ({ id, text }));
-  if (questionType(question) === 'dropdown')
+  if (['dropdown', 'drag_drop'].includes(questionType(question)))
     copy.slots = question.slots.map(({ id, label }) => ({
       id,
       ...(label == null ? {} : { label }),

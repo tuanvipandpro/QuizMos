@@ -17,7 +17,13 @@ import {
   createHistoryAttempt,
   retainedHistoryStats,
 } from '../src/utils/examHistory.js';
-import { decodeHistorySnapshot, validateHistorySummary } from '../src/utils/examHistorySnapshot.js';
+import {
+  archivedQuestion,
+  decodeHistorySnapshot,
+  validateHistorySummary,
+} from '../src/utils/examHistorySnapshot.js';
+import { questionFormats } from '../src/data/questionFormats.js';
+import { isStructuredQuestion } from '../src/utils/questionModel.js';
 import { cloudQuizId } from '../src/utils/customQuizModel.js';
 import { MAX_HISTORY_BYTES } from '../src/data/examHistoryLimits.js';
 import { findQuiz } from '../src/data/quizzes.js';
@@ -111,7 +117,7 @@ test('source eligibility is bank-first/canonical and private instance/version sc
   assert.equal(privateSource.contentVersion, 2);
 });
 
-for (const format of ['single', 'multiple', 'yes-no', 'dropdown-rows', 'dropdown-inline'])
+for (const { id: format } of questionFormats)
   test(`immutable ${format} capture uses shared scoring and preserves the seen context`, async () => {
     const questions = example(format),
       session = complete(make(questions));
@@ -127,16 +133,51 @@ for (const format of ['single', 'multiple', 'yes-no', 'dropdown-rows', 'dropdown
       Object.keys(archive.questions[0].options),
       Object.keys(session.questions[0].options)
     );
-    assert.equal(
-      Array.isArray(archive.answers[0]),
-      !['yes-no', 'dropdown-rows', 'dropdown-inline'].includes(format)
-    );
+    assert.equal(Array.isArray(archive.answers[0]), !isStructuredQuestion(session.questions[0]));
     const reorderedSource = {
       ...summary,
       source: Object.fromEntries(Object.entries(summary.source).reverse()),
     };
     assert.deepEqual(await decodeHistorySnapshot(reorderedSource, snapshot), archive);
   });
+
+test('native row/inline snapshot projection keeps slots and excludes private metadata', () => {
+  for (const layout of ['rows', 'inline']) {
+    const question = {
+      id: 'native-archive',
+      type: 'drag_drop',
+      layout,
+      question: 'Place the choices.',
+      instruction: 'Choices may be reused.',
+      ...(layout === 'inline'
+        ? { template: 'run {{first}} with ${{ github.ref }} and {{second}}' }
+        : {}),
+      slots: [
+        { id: 'first', label: 'First', privateValue: 'omit-slot' },
+        { id: 'second', label: 'Second' },
+      ],
+      options: { first: { A: 'Read', B: 'Write' }, second: { A: 'Read', B: 'Write' } },
+      answer: { first: 'A', second: 'A' },
+      explanation: 'omit-help',
+      privateValue: 'omit-root',
+    };
+    const projected = archivedQuestion(question);
+    assert.equal(projected.type, 'drag_drop');
+    assert.equal(projected.layout, layout);
+    assert.deepEqual(projected.slots, [
+      { id: 'first', label: 'First' },
+      { id: 'second', label: 'Second' },
+    ]);
+    assert.deepEqual(projected.answer, question.answer);
+    assert.deepEqual(projected.options, question.options);
+    assert.equal(projected.template, question.template);
+    assert.ok(!JSON.stringify(projected).includes('omit-'));
+    projected.slots[0].label = 'Changed copy';
+    projected.options.first.A = 'Changed copy';
+    assert.equal(question.slots[0].label, 'First');
+    assert.equal(question.options.first.A, 'Read');
+  }
+});
 
 test('capture records the strict greater-than-80% policy and incomplete answers separately', async () => {
   const q = example('single')[0];
