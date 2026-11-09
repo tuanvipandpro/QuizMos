@@ -256,7 +256,9 @@ test('read-only transitions discard pending tap selection while keeping recorded
     await expect(page.locator('.dd-choice-text[aria-pressed=true]')).toHaveCount(0);
     await slot(page, 'second').click();
     await expect(state(page)).toHaveText('{"first":"A"}');
-    await expect(page.getByRole('status')).toHaveText('Select a choice first.');
+    await expect(page.locator('.drag-drop-answers').getByRole('status')).toHaveText(
+      'Select a choice first.'
+    );
     await choice(page, 'B').locator('.dd-choice-text').click();
     await slot(page, 'second').click();
     await expect(state(page)).toHaveText('{"first":"A","second":"B"}');
