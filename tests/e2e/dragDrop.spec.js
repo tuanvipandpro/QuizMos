@@ -180,6 +180,89 @@ async function touchDrag(page, context, from, to, cancel = false) {
   await cdp.detach();
 }
 
+test('mouse/touch drops accept visible row/inline slot padding and release hints', async ({
+  page,
+  context,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 1400 });
+  for (const format of ['drag-drop-rows', 'drag-drop-inline']) {
+    await fixture(page, format);
+    for (const pointerType of ['mouse', 'touch'])
+      for (const surface of ['padding', 'hint']) {
+        const from = choice(page, 'A').locator('.dd-handle');
+        await from.scrollIntoViewIfNeeded();
+        const wrapper = page.locator('[data-dd-drop-slot="first"]');
+        const box = await (
+          surface === 'hint' ? wrapper.locator('.dd-target-hint') : wrapper
+        ).boundingBox();
+        const point =
+          surface === 'hint'
+            ? { x: box.x + box.width / 2, y: box.y + box.height / 2 }
+            : { x: box.x + box.width - 5, y: box.y + box.height - 5 };
+        expect(
+          await page.evaluate(
+            ({ x, y }) => !!document.elementFromPoint(x, y)?.closest('[data-dd-slot]'),
+            point
+          )
+        ).toBe(false);
+        const a = await from.boundingBox(),
+          start = { x: a.x + 22, y: a.y + 22 };
+        let cdp;
+        if (pointerType === 'touch') {
+          cdp = await context.newCDPSession(page);
+          await cdp.send('Input.dispatchTouchEvent', {
+            type: 'touchStart',
+            touchPoints: [{ ...start, id: 9 }],
+          });
+          await cdp.send('Input.dispatchTouchEvent', {
+            type: 'touchMove',
+            touchPoints: [{ ...point, id: 9 }],
+          });
+        } else {
+          await page.mouse.move(start.x, start.y);
+          await page.mouse.down();
+          await page.mouse.move(point.x, point.y, { steps: 10 });
+        }
+        await expect(wrapper).toHaveClass(/dd-drop-active/);
+        await expect(wrapper.locator('.dd-target-hint')).toHaveText('Release to place');
+        if (cdp) {
+          await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+          await cdp.detach();
+        } else await page.mouse.up();
+        await expect(state(page)).toHaveText('{"first":"A"}');
+        await expect(page.locator('.dd-ghost')).toHaveCount(0);
+        await page
+          .getByRole('button', {
+            name: format === 'drag-drop-rows' ? 'Clear Worker one' : 'Clear First message',
+            exact: true,
+          })
+          .click();
+        await expect(state(page)).toHaveText('{}');
+      }
+  }
+});
+
+test('read-only transitions discard pending tap selection while keeping recorded mappings', async ({
+  page,
+}) => {
+  for (const format of ['drag-drop-rows', 'drag-drop-inline']) {
+    await fixture(page, format);
+    await choice(page, 'A').locator('.dd-choice-text').click();
+    await slot(page, 'first').click();
+    await choice(page, 'B').locator('.dd-choice-text').click();
+    await page.evaluate(() => window.quizNativeDragFixture.lock(true));
+    await expect(page.locator('.drag-drop-answers button')).toHaveCount(0);
+    await page.evaluate(() => window.quizNativeDragFixture.lock(false));
+    await expect(page.locator('.dd-choice-text[aria-pressed=true]')).toHaveCount(0);
+    await slot(page, 'second').click();
+    await expect(state(page)).toHaveText('{"first":"A"}');
+    await expect(page.getByRole('status')).toHaveText('Select a choice first.');
+    await choice(page, 'B').locator('.dd-choice-text').click();
+    await slot(page, 'second').click();
+    await expect(state(page)).toHaveText('{"first":"A","second":"B"}');
+  }
+});
+
 test('actual touch pointer dragging places a choice and touch cancellation keeps prior mappings', async ({
   page,
   context,

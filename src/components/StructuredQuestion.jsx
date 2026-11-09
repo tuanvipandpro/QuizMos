@@ -83,7 +83,7 @@ export default function StructuredQuestion({
       </Paragraph>
       {questionType(data) === 'drag_drop' ? (
         <DragDropAnswers
-          key={String(data.id)}
+          key={`${String(data.id)}:${!!readOnly}`}
           data={data}
           answer={answer}
           onSelectAnswer={onSelectAnswer}

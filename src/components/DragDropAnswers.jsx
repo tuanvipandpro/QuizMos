@@ -157,11 +157,21 @@ export default function DragDropAnswers({
       </>
     );
     return inline ? (
-      <span key={part.id} className={className} role="group" aria-label={partLabel(part, index)}>
+      <span
+        key={part.id}
+        className={className}
+        data-dd-drop-slot={readOnly ? undefined : part.id}
+        role="group"
+        aria-label={partLabel(part, index)}
+      >
         {contents}
       </span>
     ) : (
-      <fieldset key={part.id} className={className}>
+      <fieldset
+        key={part.id}
+        className={className}
+        data-dd-drop-slot={readOnly ? undefined : part.id}
+      >
         <legend>{partLabel(part, index)}</legend>
         {contents}
         {feedback(part, index)}

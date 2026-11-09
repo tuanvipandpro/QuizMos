@@ -9,8 +9,8 @@ export function useDragDropPointer(options) {
     mounted = useRef(true);
   const [visual, setVisual] = useState(null);
   const targetAt = (point) => {
-    const node = document.elementFromPoint(point.x, point.y)?.closest('[data-dd-slot]');
-    return node && current.current.rootRef.current?.contains(node) ? node.dataset.ddSlot : null;
+    const node = document.elementFromPoint(point.x, point.y)?.closest('[data-dd-drop-slot]');
+    return node && current.current.rootRef.current?.contains(node) ? node.dataset.ddDropSlot : null;
   };
   const stop = (notify = false) => {
     const old = gesture.current;
