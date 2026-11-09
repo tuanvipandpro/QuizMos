@@ -2,7 +2,7 @@
 
 ## Context
 
-See [proposal](proposal.md). questionModel currently accepts MC, yes_no and dropdown only. StructuredQuestion owns the common card, completion and feedback; studySession owns drafts/deadlines. GH-600 has 19 mapped drag_drop items using rows/inline templates. History #80 is unmerged; its snapshot integration stays in MR #92. Governance #99 and baseline sync #102 are merged; this branch uses M1 release baseline 4bac829. Production promotion #101 remains open and is separately authorized.
+See [proposal](proposal.md). At intake, questionModel accepted MC, yes_no and dropdown only. StructuredQuestion owns the common card, completion and feedback; studySession owns drafts/deadlines. GH-600 has 19 mapped drag_drop items using rows/inline templates. History #80 is unmerged; its snapshot integration stays in MR #92. Governance #99 and baseline sync #102 are merged; this branch uses M1 release baseline 4bac829. Production promotion #101 remains open and is separately authorized.
 
 ## Goals / Non-Goals
 
@@ -28,16 +28,22 @@ See [proposal](proposal.md). questionModel currently accepts MC, yes_no and drop
 
 ## Verification matrix
 
-| Requirement | Evidence                                                                                                                                                                                          | Status                                     |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| CQ-DD-01    | Domain/malformed-schema tests; 98/98 unchanged GH-600 source items validate, including 19 native items; SHA-256 `66e8286a485b1b37f4dc80d3666edd9e4956bac1ea45da47160d8be9e1cb03cf`                | Local pass; no bank import                 |
-| CQ-DD-02    | Pure reuse/move/replace/clear tests and actual CDP touch/mouse dragging, autoscroll, tap/keyboard, invalid drop and Escape E2E                                                                    | Local pass                                 |
-| CQ-DD-03    | Actual Practice/Standard/Learning mapping restore and feedback; submitted static controls and expiry during captured drag                                                                         | Local pass; archive integration pending    |
-| CQ-DD-04    | Same-ID replacement, StrictMode read-only/unmount, account change during capture, preserved deadline/answers after expiry                                                                         | Local pass                                 |
-| CQ-DD-05    | Custom-model/Rules envelopes; Worker/D1 input/quota stubs; five pre-change prompt hashes; literal code/copy/shuffle/fingerprint tests                                                             | Local pass; #80 shared integration pending |
-| CQ-DD-06    | Row/inline long-text matrix at 320/360/390/412/768/1280 and 844x390; VN/EN, light/dark, normal/reduced motion, 44px targets, contrast and keyboard focus; rendered narrow/inline images inspected | Local Chromium emulation pass              |
+| Requirement | Evidence                                                                                                                                                                                          | Status                                          |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| CQ-DD-01    | Domain/malformed-schema tests; 98/98 unchanged GH-600 source items validate, including 19 native items; SHA-256 `66e8286a485b1b37f4dc80d3666edd9e4956bac1ea45da47160d8be9e1cb03cf`                | Local pass; no bank import                      |
+| CQ-DD-02    | Pure reuse/move/replace/clear tests and actual CDP touch/mouse dragging, autoscroll, tap/keyboard, invalid drop and Escape E2E                                                                    | Local pass                                      |
+| CQ-DD-03    | Actual Practice/Standard/Learning mapping restore and feedback; submitted static controls and expiry during captured drag                                                                         | Local pass including shared archive integration |
+| CQ-DD-04    | Same-ID replacement, StrictMode read-only/unmount, account change during capture, preserved deadline/answers after expiry                                                                         | Local pass                                      |
+| CQ-DD-05    | Custom-model/Rules envelopes; Worker/D1 input/quota stubs; five pre-change prompt hashes; literal code/copy/shuffle/fingerprint tests                                                             | Local pass including separate #80 integration   |
+| CQ-DD-06    | Row/inline long-text matrix at 320/360/390/412/768/1280 and 844x390; VN/EN, light/dark, normal/reduced motion, 44px targets, contrast and keyboard focus; rendered narrow/inline images inspected | Local Chromium emulation pass                   |
 
-The native head passes `yarn verify` (216 Node tests), `yarn test:worker` (17), `yarn worker:check`, demo `yarn test:rules` (17), and focused native E2E (22). Full browser regression, shared History integration, Astra review and latest-head hosted CI are still pending. These are local fixture/emulator results, not physical-device, production-policy or live-inference acceptance.
+The native implementation passes `yarn verify` (216 Node tests), `yarn test:worker` (17), `yarn worker:check`, demo `yarn test:rules` (17), and final native E2E (26). Both original Astra findings were fixed: the entire visible slot accepts drops, and read-only transitions discard transient selection. Final read-only review at 33413c1 found no remaining actionable findings; Astra independently ran 13 model/prompt checks. The fixture-only status locator was scoped to exclude the synthetic output, preserving expected text/timeouts.
+
+Separate History MR #92 now preserves native slots and derives format regression cases from the registry. Its issue-only head passes `yarn verify` (237). Ignored integration 34cc868 combines dock f3cf769, History projection df5c768 and the final native changes: production build/fixture isolation, 27 demo Rules cases, 32 History E2E cases and 32 focused archive/domain/build tests pass. Both native layouts archive/replay in Standard/Learning, preserving original mappings and stored outcomes.
+
+The broad b8246f7 browser run recorded 206 passes, four load/reload timeouts and two intentional phone-only skips. All four failures passed focused reruns: the native reload case is included in the final 26-case pass; BYOK/Standard cases passed a four-case rerun with unchanged assertions/timeouts. This is not reported as a clean full-suite pass. Rendered final narrow row/inline and read-only screenshots were inspected. Local results use Chromium emulation/fixtures/emulators; physical-device, production policy and live-inference acceptance are not claimed.
+
+Implementation MR #104 targets the accepted M1 release. Required latest-head hosted checks and owner-requested integration/promotion plus public native smoke remain delivery gates; task 4.3 stays open.
 
 UI skill query `dragging movements --domain ux` matched **Dragging Movements**; provide single-pointer and keyboard alternatives. React query `pointer event cleanup --stack react` matched **Clean up effects** and **Avoid unnecessary effects**; use event handlers for gestures and effects only for resource lifecycle. Native-only size units do not replace this app's 44 CSS-pixel requirement.
 
