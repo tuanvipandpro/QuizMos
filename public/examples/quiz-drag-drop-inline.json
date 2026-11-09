@@ -1,0 +1,34 @@
+[
+  {
+    "id": "q1",
+    "type": "drag_drop",
+    "layout": "inline",
+    "question": "Complete the workflow: log start, then finish for the current branch.",
+    "instruction": "Drag a message into each blank.",
+    "template": "steps:\n  - run: echo \"{{first}}\"\n  - run: echo \"{{second}} for ${{ github.ref }}\"",
+    "slots": [
+      {
+        "id": "first",
+        "label": "First message"
+      },
+      {
+        "id": "second",
+        "label": "Second message"
+      }
+    ],
+    "options": {
+      "first": {
+        "A": "start",
+        "B": "finish"
+      },
+      "second": {
+        "A": "start",
+        "B": "finish"
+      }
+    },
+    "answer": {
+      "first": "A",
+      "second": "B"
+    }
+  }
+]
