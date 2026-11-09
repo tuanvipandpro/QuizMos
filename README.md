@@ -105,7 +105,7 @@ On failure, inspect `playwright-report/` and `test-results/` for screenshots and
 - Exam setup shows the saved draft's mode. **Resume** keeps that draft's settings; changed selections apply to **Start a new exam**, with confirmation before replacing a running draft. Legacy drafts/links default to Standard. Switching accounts during an exam returns to setup without creating a draft for the next account.
 - AI Settings lives in the account menu. Sign-out requires confirmation and clears tab drafts; cloud checkpoints and saved profile keys remain.
 - `aws-ace` is a legacy alias for **Google ACE**, not a Cloud Practitioner bank. Its retired static JSON remains only for old asset URLs. Links and account-scoped progress/drafts resolve to `gcp-ace`.
-- Multiple-choice `answer` values are arrays; yes/no and dropdown values are mappings. The authoritative validator is `src/utils/questionModel.js`. Complete examples and format help appear on My quizzes and in `public/examples/`.
+- Multiple-choice `answer` values are arrays; yes/no, dropdown and native drag/drop values are mappings. The authoritative validator is `src/utils/questionModel.js`. Complete examples and format help appear on My quizzes and in `public/examples/`. See the [native drag/drop contract](docs/drag-drop-format.md) for reusable choices and inline code.
 
 ## Source layout
 

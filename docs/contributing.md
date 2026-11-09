@@ -86,7 +86,7 @@ These are agent workflow rules supported by templates; templates do not technica
 - Bank-first navigation; featured AIP-C01 and CCAR-P; group by provider.
 - EN defaults, VN/EN toggle, light/dark, phone widths down to 320px.
 - Header/navigation align left with utilities right. Center only the intended introductory/card/upload content. Keep long questions and form labels readable.
-- Multiple-choice answers are arrays. Yes/no and dropdown answers are mappings. Use the shared validator.
+- Multiple-choice answers are arrays. Yes/no, dropdown and native drag/drop answers are mappings. Use the shared validator.
 - Preserve question IDs, quiz aliases, cloud checkpoints and account-scoped drafts. `aws-ace` resolves to Google ACE; it is not an AWS Cloud Practitioner bank.
 - Verify actual quiz contents before changing provider/name/code. Count/schema/hash checks alone do not establish exam alignment.
 - Do not refresh a guide's reviewed hash until its content and question mappings have been reviewed. `yarn check:guides` exposes outstanding reviews.
