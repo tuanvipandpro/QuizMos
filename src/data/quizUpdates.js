@@ -2,6 +2,15 @@
 // Review the referenced bank diff before adding or revising an entry.
 export const quizUpdates = [
   {
+    id: 'gcp-paa-2026-11-10',
+    bankId: 'gcp-paa',
+    kind: 'added',
+    date: '2026-11-10',
+    summary:
+      'Added 75 Professional Agentic Architect (PAA) practice questions, including 7 multiple-answer questions.',
+    sourceRevision: 'a84dd76fc9450119e46dcb10e2ded04454ac05b6',
+  },
+  {
     id: 'gh600-2026-11-10',
     bankId: 'gh-600',
     kind: 'added',

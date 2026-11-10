@@ -1,4 +1,6 @@
 export const vi = {
+  'Added 75 Professional Agentic Architect (PAA) practice questions, including 7 multiple-answer questions.':
+    'Bổ sung 75 câu luyện tập Professional Agentic Architect (PAA), gồm 7 câu nhiều đáp án.',
   'Refresh quizzes': 'Làm mới danh sách quiz',
   'Could not refresh quizzes. Check your connection and try again.':
     'Chưa thể làm mới danh sách quiz. Kiểm tra kết nối rồi thử lại.',
