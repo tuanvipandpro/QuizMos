@@ -1,4 +1,41 @@
 export const vi = {
+  'Added 98 GH-600 practice questions, including 19 drag-and-drop questions.':
+    'Bổ sung 98 câu luyện tập GH-600, gồm 19 câu kéo thả.',
+  Intermediate: 'Trung cấp',
+  Profile: 'Hồ sơ',
+  'Your account and QuizMos settings.': 'Tài khoản và cài đặt QuizMos của bạn.',
+  'Loading account…': 'Đang tải tài khoản…',
+  'Sign in to view your profile': 'Đăng nhập để xem hồ sơ',
+  'Use your Google account to view your profile and manage your quizzes.':
+    'Dùng tài khoản Google để xem hồ sơ và quản lý quiz của bạn.',
+  'Google account': 'Tài khoản Google',
+  'Identity is provided by Google and is read-only here.':
+    'Thông tin do Google cung cấp và chỉ được xem tại đây.',
+  Name: 'Tên',
+  Email: 'Email',
+  'Not provided': 'Chưa cung cấp',
+  'Manage quizzes': 'Quản lý quiz',
+  'QuizMos settings': 'Cài đặt QuizMos',
+  'Language and theme are saved on this device. They do not change your Google account or sync between devices.':
+    'Ngôn ngữ và giao diện được lưu trên thiết bị này. Các cài đặt không thay đổi tài khoản Google và không đồng bộ giữa các thiết bị.',
+  Theme: 'Giao diện',
+  Light: 'Sáng',
+  Dark: 'Tối',
+  'Quiz updates': 'Cập nhật quiz',
+  'Reviewed additions and changes to the public quiz banks. Dates refer to bank content changes.':
+    'Các bổ sung và thay đổi đã được rà soát trong thư viện quiz công khai. Ngày hiển thị là ngày thay đổi nội dung bộ câu hỏi.',
+  'No reviewed quiz updates yet. Explore the Quiz Bank while new changes are reviewed.':
+    'Chưa có cập nhật quiz đã được rà soát. Hãy khám phá thư viện quiz trong khi các thay đổi mới được kiểm tra.',
+  Added: 'Đã thêm',
+  Updated: 'Đã cập nhật',
+  'Reviewed source': 'Nguồn đã rà soát',
+  'Open quiz': 'Mở quiz',
+  'Added 36 questions, bringing this bank to 276. Restored missing question context, including the payment acceptance-criteria scenario.':
+    'Bổ sung 36 câu hỏi, nâng tổng số lên 276. Khôi phục ngữ cảnh còn thiếu, bao gồm tình huống về tiêu chí chấp nhận thanh toán.',
+  'Generate AI explanation': 'Tạo giải thích AI',
+  'No explanation is included with this question.': 'Câu hỏi này chưa có giải thích kèm theo.',
+  'Generate AI help when you need more explanation.':
+    'Tạo lời giải AI khi bạn cần được giải thích thêm.',
   Prev: 'Trước',
   Next: 'Tiếp',
   'Open your banking app': 'Mở app ngân hàng của bạn',
@@ -568,7 +605,140 @@ export const vi = {
   Professional: 'Professional',
   Expert: 'Expert',
   Advanced: 'Nâng cao',
+  'Choice bank': 'Các lựa chọn',
+  'Recorded placements': 'Các vị trí đã ghi nhận',
+  'Drag a handle, or select a choice and then a slot. Escape cancels; Delete clears a focused slot.':
+    'Kéo tay nắm hoặc chọn một lựa chọn rồi chọn ô đặt. Escape để hủy; Delete để xóa ô đang focus.',
+  'Choice {key} selected. Choose a slot.': 'Đã chọn {key}. Hãy chọn ô đặt.',
+  'Choice {key} placed in {part}.': 'Đã đặt {key} vào {part}.',
+  'Placement cancelled. Answers kept.': 'Đã hủy thao tác. Câu trả lời được giữ nguyên.',
+  'This choice cannot be placed here. Answers kept.':
+    'Không thể đặt lựa chọn này vào đây. Câu trả lời được giữ nguyên.',
+  'Answer cleared for {part}.': 'Đã xóa câu trả lời tại {part}.',
+  'Drag choice {key}': 'Kéo lựa chọn {key}',
+  'Drop or place here': 'Thả hoặc đặt vào đây',
+  'Select a choice first.': 'Hãy chọn một lựa chọn trước.',
+  'Clear {part}': 'Xóa {part}',
+  'Release to place': 'Thả để đặt',
+  'Choose another slot': 'Chọn ô khác',
+  'Drag and drop rows': 'Kéo thả theo hàng',
+  'Inline drag and drop': 'Kéo thả trong nội dung',
+  'Use native choices and labelled drop slots with an answer mapping.':
+    'Dùng lựa chọn kéo thả và các ô có nhãn, kèm mapping đáp án.',
+  'Place native choices in {{slotId}} blanks; GitHub code expressions stay literal.':
+    'Đặt lựa chọn kéo thả vào ô {{slotId}}; biểu thức code GitHub được giữ nguyên.',
+  'Choice keys mapped to text. Dropdown and drag/drop questions use one map per slot.':
+    'Key lựa chọn gắn với nội dung. Dropdown và kéo thả dùng một map cho mỗi slot.',
+  'An array of option keys, or a mapping for yes/no, dropdown and drag/drop parts.':
+    'Mảng key đáp án, hoặc mapping cho từng phần yes/no, dropdown và kéo thả.',
+  'unsupported drag_drop layout.': 'layout drag_drop không được hỗ trợ.',
+  'drag_drop options must match every slot.': 'options của drag_drop phải khớp từng slot.',
+  'inline drag_drop requires a template.': 'drag_drop inline cần có template.',
+  'row drag_drop questions require labels.': 'các slot drag_drop theo hàng cần có nhãn.',
   Practitioner: 'Practitioner',
+  'Exam history': 'Lịch sử thi',
+  'Sign in to use your exam history.': 'Đăng nhập để dùng lịch sử thi.',
+  'This exam archive is invalid or uses an unsupported format.':
+    'Bản lưu bài thi không hợp lệ hoặc dùng định dạng chưa được hỗ trợ.',
+  'Your history is full. Delete an older attempt, then retry this result.':
+    'Lịch sử đã đầy. Xóa một bài thi cũ rồi thử lưu kết quả này lại.',
+  'This result is too large to archive. It remains in this tab.':
+    'Kết quả này quá lớn để lưu vào lịch sử. Nội dung vẫn còn trong tab này.',
+  'History access was denied. Please retry later.':
+    'Quyền truy cập lịch sử bị từ chối. Vui lòng thử lại sau.',
+  'Could not reach exam history. Check your connection and retry.':
+    'Không kết nối được với lịch sử thi. Kiểm tra mạng rồi thử lại.',
+  'The history service rejected this result. It remains in this tab.':
+    'Dịch vụ lịch sử từ chối kết quả này. Nội dung vẫn còn trong tab.',
+  'This attempt already has a different archive. It was not overwritten.':
+    'Bài thi này đã có bản lưu khác. Bản lưu đó không bị ghi đè.',
+  'The saved quiz changed or was removed. This result remains in this tab.':
+    'Quiz đã lưu đã thay đổi hoặc bị xóa. Kết quả vẫn còn trong tab này.',
+  'This archive was deleted. This tab result will not recreate it.':
+    'Bản lưu đã bị xóa. Kết quả trong tab này sẽ không tạo lại bản lưu đó.',
+  'This exam archive is no longer available.': 'Bản lưu bài thi này không còn khả dụng.',
+  'Exam history is unavailable. Please retry later.':
+    'Lịch sử thi chưa khả dụng. Vui lòng thử lại sau.',
+  'The account changed. Open history from the current account.':
+    'Tài khoản đã thay đổi. Hãy mở lịch sử từ tài khoản hiện tại.',
+  'Please wait for the current history action.': 'Vui lòng chờ thao tác lịch sử hiện tại hoàn tất.',
+  'Sign in to archive future exams. This result stays in this tab.':
+    'Đăng nhập để lưu các bài thi tiếp theo. Kết quả này vẫn ở trong tab.',
+  'Unsaved quiz results stay in this tab. Save the quiz before starting a future exam to keep history.':
+    'Kết quả của quiz chưa lưu chỉ nằm trong tab này. Lưu quiz trước khi bắt đầu bài thi tiếp theo để giữ lịch sử.',
+  'This completed exam stays in this tab. New exams can be archived.':
+    'Bài thi đã hoàn thành này chỉ nằm trong tab. Các bài thi mới có thể được lưu vào lịch sử.',
+  'This result stays in its original account and tab.':
+    'Kết quả này được giữ trong tài khoản và tab ban đầu.',
+  'Saving exam to history…': 'Đang lưu bài thi vào lịch sử…',
+  'Exam saved to history.': 'Đã lưu bài thi vào lịch sử.',
+  'View saved result': 'Xem kết quả đã lưu',
+  'The current result remains available in this tab.':
+    'Kết quả hiện tại vẫn có thể xem trong tab này.',
+  'Manage history': 'Quản lý lịch sử',
+  'Checking the original quiz…': 'Đang kiểm tra quiz gốc…',
+  'The original quiz is still available.': 'Quiz gốc vẫn còn khả dụng.',
+  'The source quiz changed. This review shows the saved version.':
+    'Quiz gốc đã thay đổi. Phần xem lại này hiển thị phiên bản đã lưu.',
+  'The original quiz is no longer available. Your archived questions remain here.':
+    'Quiz gốc không còn khả dụng. Các câu hỏi đã lưu của bạn vẫn có ở đây.',
+  'The saved quiz slot has been reused. This archive belongs to the original quiz.':
+    'Vị trí lưu quiz đã được sử dụng lại. Bản lưu bài thi này vẫn thuộc quiz ban đầu.',
+  'The original source status could not be checked. Archived content is still available.':
+    'Chưa kiểm tra được trạng thái quiz gốc. Nội dung bài thi đã lưu vẫn có thể xem.',
+  'The original illustration is unavailable. Saved question text remains available.':
+    'Không tải được hình minh họa gốc. Nội dung câu hỏi đã lưu vẫn có thể xem.',
+  'Read-only saved exam. The recorded result is shown without regrading.':
+    'Bài thi đã lưu chỉ để xem. Kết quả được giữ theo lần chấm ban đầu.',
+  'Delete archive': 'Xóa bản lưu',
+  'Archived score': 'Điểm đã lưu',
+  Ended: 'Kết thúc',
+  Duration: 'Thời lượng',
+  'Duration unavailable': 'Không rõ thời lượng',
+  '{minutes} min {seconds} sec': '{minutes} phút {seconds} giây',
+  'Recorded scoring policy': 'Quy tắc chấm điểm đã lưu',
+  'Open current quiz': 'Mở quiz hiện tại',
+  'Archived question': 'Câu hỏi đã lưu',
+  'Your saved answer': 'Câu trả lời đã lưu của bạn',
+  'Correct answer in this snapshot': 'Đáp án đúng trong bản lưu này',
+  'Archived question navigation': 'Điều hướng câu hỏi đã lưu',
+  'Personal learning history, not an official exam credential.':
+    'Lịch sử học cá nhân, không phải kết quả chứng nhận chính thức.',
+  'Exam history is not available yet. Results remain in this tab.':
+    'Lịch sử thi chưa được mở. Kết quả vẫn nằm trong tab này.',
+  'Loading exam history…': 'Đang tải lịch sử thi…',
+  'Sign in to view exam history': 'Đăng nhập để xem lịch sử thi',
+  'Your saved exam results are private to your account.':
+    'Kết quả bài thi đã lưu chỉ thuộc tài khoản của bạn.',
+  'Loading saved result…': 'Đang tải kết quả đã lưu…',
+  '{count}/{limit} saved exams': '{count}/{limit} bài thi đã lưu',
+  'Statistics cover all retained attempts. Delete an archive to free space.':
+    'Thống kê gồm tất cả bài thi còn được giữ. Xóa bản lưu để giải phóng chỗ.',
+  'No saved exam results yet. Complete a future exam on a bank or a saved quiz to build your history.':
+    'Chưa có kết quả bài thi đã lưu. Hoàn thành bài thi mới từ thư viện hoặc quiz đã lưu để tạo lịch sử.',
+  'Retained history statistics': 'Thống kê lịch sử còn được giữ',
+  Attempts: 'Lượt thi',
+  Best: 'Cao nhất',
+  Latest: 'Gần nhất',
+  'Saved exams': 'Bài thi đã lưu',
+  'Review saved result': 'Xem lại kết quả',
+  Expired: 'Hết thời gian',
+  Submitted: 'Đã nộp',
+  'History pages': 'Các trang lịch sử',
+  'Page {page} of {total}': 'Trang {page} / {total}',
+  'Deleting an archive removes its questions and answers. A private deletion receipt remains to prevent stale retries from recreating it.':
+    'Xóa bản lưu sẽ xóa câu hỏi và câu trả lời của bài thi đó. Một dấu xác nhận xóa riêng tư được giữ lại để tab cũ không tạo lại bản lưu.',
+  'Back to history': 'Về lịch sử thi',
+  'Refresh history': 'Tải lại lịch sử',
+  'Archive deleted.': 'Đã xóa bản lưu.',
+  'Saved quiz version': 'Phiên bản quiz đã lưu',
+  'Delete this exam archive?': 'Xóa bản lưu bài thi này?',
+  'Questions and answers will be removed from history. The original quiz is kept. A minimal deletion receipt remains.':
+    'Câu hỏi và câu trả lời sẽ bị xóa khỏi lịch sử. Quiz gốc được giữ nguyên. Một dấu xác nhận xóa tối thiểu vẫn được lưu.',
+  'Saved quiz exams can be archived separately. Replacing or deleting a quiz does not delete its exam history.':
+    'Bài thi từ quiz đã lưu có thể được lưu lịch sử riêng. Thay JSON hoặc xóa quiz không xóa lịch sử thi của quiz đó.',
+  'Archived exam results are kept separately. Delete them from Exam history when needed.':
+    'Kết quả bài thi được giữ riêng. Hãy xóa chúng từ Lịch sử thi khi cần.',
 };
 
 export function translate(language, key, params = {}) {

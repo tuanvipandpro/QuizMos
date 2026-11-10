@@ -1,0 +1,13 @@
+{
+  "single:false": "011d34a1d59571e40d5018ae76abdef3d0834d49ab390bcc2e81530857ab7fb5",
+  "single:true": "c98c7cbbb417b6fb2690566ca516282cb42bc60df48bb1b9b2324f899e867c52",
+  "multiple:false": "124afaab371b9bb3d62bdc0e0610f746c3f41d15c373ae861f793b469e4e4275",
+  "multiple:true": "d8a6f79730d76151537b0bee5073a0ea09a69c0a8dd0465a27c2146d488658fa",
+  "yes-no:false": "d25474a0e98ef800523ed3002915d4026e73ddccb695bd8afb2f7f3b247f3162",
+  "yes-no:true": "60f23792e1a5ce77946a605600d13a4c2ebb55a0aa7513f363f62a00407c7f82",
+  "dropdown-rows:false": "4ba5e3602ad8e42b59f8b79c3b743cc4abe53eb8203620e0eca42d9a239e18c5",
+  "dropdown-rows:true": "86fe19486eee526b953c5466374a9e6a2d2cfe93ac1cb1bb589d2e1db13ae2e9",
+  "dropdown-inline:false": "413ef1ca99e7c5a507c6990839790bb62df8b7b0131e31f3048a83e7091bbfe1",
+  "dropdown-inline:true": "bcbdc8bb641c1e34f42beb4543b06b9940f623a8e33f9aa3b027704eeb9a3458",
+  "system": "fd91f194aa45ea53dedb6f2a2537664b01bba8b0ba8de34da81112cf7949316b"
+}

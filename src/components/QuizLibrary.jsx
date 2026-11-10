@@ -24,6 +24,7 @@ export default function QuizLibrary({
   onExpandedChange,
   progressState,
   onOpen,
+  onUpdates,
 }) {
   const { t } = useLanguage();
   const search = useRef(null);
@@ -85,11 +86,13 @@ export default function QuizLibrary({
         <Paragraph type="secondary">
           {t('Start with a featured exam or explore each provider.')}
         </Paragraph>
+        <Button onClick={onUpdates}>{t('Quiz updates')}</Button>
       </div>
       <label className="library-search">
         <span>{t('Find a certification')}</span>
         <Input
           ref={search}
+          aria-label={t('Find a certification')}
           size="large"
           prefix={<SearchOutlined aria-hidden="true" />}
           placeholder={t('Name, exam code or provider…')}

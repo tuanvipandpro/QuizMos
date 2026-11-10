@@ -4,9 +4,15 @@ Signed-in App AI is implemented behind an optional API URL and a disabled-by-def
 
 Practice certification questions, take timed mock exams and read curated study guides. React 19, Vite, Ant Design and Firebase.
 
+In Practice and submitted exam review, **Explain** opens the quiz's included explanation without API keys or an AI request. The reference keeps its original language and is labelled as supplied quiz content. **Generate AI explanation** is a separate action using your selected App AI/BYOK source; generated help follows the Vietnamese explanation policy. Active Standard and Learning exams keep Explain unavailable until submission.
+
 The root opens a dark-first landing with four viewport sections, native scroll snap and reduced-motion support; **Start practicing** opens `#/library`. **Donate** is visible in the header/hero and opens `#/donate`; its Back buttons return to the first Home section. Public receiving details and its activation flag live in [donation configuration](src/data/donation.js). Recheck the static QR and bank recipient before changing or reactivating the receiving account.
 
 [Live app](https://quizmos.runs-at.dev/) · [Agent workflow](AGENTS.md) · [Custom-quiz cloud storage backlog](https://github.com/tuanvipandpro/quiz-app/issues/42)
+
+The account menu opens **Profile**, **Manage quizzes**, AI Settings and Sign out. Profile shows read-only Google identity; QuizMos language/theme choices use existing device-local preferences and do not sync between devices. Manage quizzes opens the existing private quiz workspace.
+
+**Quiz updates** is public, reachable from Quiz Bank and the footer. Maintainers add reviewed content changes to [the update registry](src/data/quizUpdates.js), using canonical bank IDs, a valid content-change date, `added`/`updated`, a concise translated summary and the full source commit. Review the actual bank diff before publishing; UI builds are not content updates. The initial CTFL entry was checked against `241c5b16dc23b04eb9ce0a5c7a63e4833b492a46` (1 November 2026): 240 → 276 questions, 36 added IDs 243–278, and restored context such as question 88's payment acceptance criteria. Validation rejects invalid dates, aliases, missing sources and unsupported kinds.
 
 Core instructions live in the compact [AGENTS.md](AGENTS.md); task-specific policy is in the [contributor guide](docs/contributing.md). Read the sections relevant to the work. The PR checklist records evidence; CI enforces automated checks, while visual and architectural judgment require review.
 
@@ -105,7 +111,7 @@ On failure, inspect `playwright-report/` and `test-results/` for screenshots and
 - Exam setup shows the saved draft's mode. **Resume** keeps that draft's settings; changed selections apply to **Start a new exam**, with confirmation before replacing a running draft. Legacy drafts/links default to Standard. Switching accounts during an exam returns to setup without creating a draft for the next account.
 - AI Settings lives in the account menu. Sign-out requires confirmation and clears tab drafts; cloud checkpoints and saved profile keys remain.
 - `aws-ace` is a legacy alias for **Google ACE**, not a Cloud Practitioner bank. Its retired static JSON remains only for old asset URLs. Links and account-scoped progress/drafts resolve to `gcp-ace`.
-- Multiple-choice `answer` values are arrays; yes/no and dropdown values are mappings. The authoritative validator is `src/utils/questionModel.js`. Complete examples and format help appear on My quizzes and in `public/examples/`.
+- Multiple-choice `answer` values are arrays; yes/no, dropdown and native drag/drop values are mappings. The authoritative validator is `src/utils/questionModel.js`. Complete examples and format help appear on My quizzes and in `public/examples/`. See the [native drag/drop contract](docs/drag-drop-format.md) for reusable choices and inline code.
 
 ## Source layout
 
@@ -142,16 +148,16 @@ Preserve IDs and marked answers unless a review explicitly authorizes a correcti
 
 The historical Anthropic importer remains available as `node scripts/import-anthropic-quizzes.mjs <snapshot-directory> --check`. Remove `--check` only for an intentional reviewed import; generated reports go to ignored `artifacts/imports/`; keep them separate from development guidance.
 
-Four guides currently require content/coverage review:
+The four Anthropic guides were substantively reviewed against the revisions in the [6 November 2026 review note](docs/study-guide-review-2026-11-06.md). Counts and topic links now cover the current banks:
 
 | Guide  | Reviewed questions | Current bank |
 | ------ | -----------------: | -----------: |
-| CCAR-F |                175 |          201 |
-| CCAR-P |                 63 |          157 |
-| CCAO-F |                119 |          151 |
-| CCDV-F |                 53 |           96 |
+| CCAR-F |                195 |          195 |
+| CCAR-P |                126 |          126 |
+| CCAO-F |                137 |          137 |
+| CCDV-F |                 96 |           96 |
 
-AIP-C01's reviewed fingerprint matches its 136-question bank. Existing guide warnings are intentional. Review the Markdown, concepts, primary references and topic-to-question mappings before updating `sourceQuestionCount`/`sourceQuizHash`. Do not relabel a stale guide as reviewed merely to make a check green.
+AIP-C01's reviewed fingerprint still matches its 136-question bank. Guides retain the stale-source warning if a later bank change invalidates the reviewed snapshot. Review the Markdown, concepts, primary references and topic-to-question mappings before updating `sourceQuestionCount`/`sourceQuizHash`; a matching hash alone is not content acceptance. These reviews do not certify every marked answer; [#96](https://github.com/tuanvipandpro/quiz-app/issues/96) tracks dated product-scope questions separately. Publication acceptance follows the #78 MR/deploy gates.
 
 ## Delivery
 
@@ -161,7 +167,7 @@ Link the issue and PR in both directions using `Tracking issue: #N` / `Refs #N`.
 
 CI uses [component routing and docs/assets/full profiles](docs/contributing.md#ci-profiles). `.github/workflows/test.yml` orchestrates the pipelines: `frontend.yml` runs frontend build/Rules/browser checks, while `backend.yml` runs Worker/shared-contract/auth/D1 tests and bundling. Worker-only changes do not run frontend builds or browser tests; frontend-only changes do not run the Worker suite. Shared prompt/validator modules, dependencies, CI and unrecognized paths select both components. The required `test-and-build` check keeps its name and validates every selected component. Full E2E remains split into two shards; Yarn downloads are cached by lockfile.
 
-After a push/merge to master and a passing gate, separate release flags examine **runtime files in the actual push `before..after`**, independently of CI selection. `src/`, `public/`, `index.html` and `vite.config.js` release the frontend; production Worker modules/config/migrations release the backend; the shared prompt/validator and package/lockfile may release both. Tests, development docs, workflow/check scripts, Firebase deployment configuration and staging configuration alone do not publish an app, even if CI checks both components. PRs neither deploy nor receive Cloudflare credentials; an unverifiable push diff blocks release.
+Issue PRs target a dated milestone release from `develop`; promotions into protected `develop` and then the production/default branch use PRs. Production PRs must come only from this repository's `develop`. See the canonical [Git process](docs/git-process.md). CI checks main/master, develop and `work/release-mN-yyyyMMdd`; only the main/master default branch deploys. After a production push/merge and a passing gate, separate release flags examine **runtime files in the actual push `before..after`**, independently of CI selection. `src/`, `public/`, `index.html` and `vite.config.js` release the frontend; production Worker modules/config/migrations release the backend; the shared prompt/validator and package/lockfile may release both. Tests, development docs, workflow/check scripts, Firebase deployment configuration and staging configuration alone do not publish an app, even if CI checks both components. PRs neither deploy nor receive Cloudflare credentials; an unverifiable push diff blocks release.
 
 `deploy-frontend.yml` publishes `site-build`; `deploy-backend.yml` publishes `worker-build`, uploading artifacts only when the component actually needs release. Artifacts belong to the same run and are not rebuilt during release. The frontend waits for the backend only when both need release. Master runs are serialized to avoid cancelling an active deployment; new PR commits still cancel older CI runs. Retry a failed runtime release through its corresponding run; a new docs push is not a deployment retry. No build-time Gemini key is required.
 
@@ -173,8 +179,8 @@ Before testing Google sign-in on the new origin, add `quizmos.runs-at.dev` to Fi
 
 ## Next setup increments
 
-- **Issue #42 rollout:** review the feature evidence, compare current published Rules/indexes with the preserved baseline, authorize and verify compatible Rules before merging/enabling the client, then smoke test production. The repository does not automatically deploy Firebase configuration.
-- Review the four published guides above against their expanded banks; this cleanup does not certify their new coverage.
+- **Issue #79 rollout follow-up:** the client from closed #42 is merged. A fresh Console review found only the original profile Rules and no questions index exemption published; [reconciliation and complete candidate](docs/m1-custom-quiz-rollout-79.md) distinguish this from local implementation. Authorize/verify compatible policy and designated-account persistence before calling rollout accepted. Firebase configuration is not automatically deployed.
+- Keep guide snapshots aligned through substantive content/mapping review; #78 tracks the reviewed four-guide publication and #96 the separate product-scope question follow-up.
 - Continue extracting App orchestration only around well-tested feature boundaries. Header extraction and stylesheet separation are the first step.
 - Add WebKit/real-device smoke coverage and selected visual baselines after the initial browser suite is stable.
 - Keep PR acceptance criteria mapped to evidence and mark partial work explicitly. Issue templates and the PR template capture this information.
