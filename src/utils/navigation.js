@@ -23,6 +23,13 @@ export function parseRoute(hash = '') {
       if (path === `/${page}` || path === `/${page}/`)
         return { page, params: new URLSearchParams(query) };
     const parts = path.split('/').filter(Boolean).map(decodeURIComponent);
+    if (
+      parts[0] === 'history' &&
+      parts.length <= 2 &&
+      (!parts[1] ||
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(parts[1]))
+    )
+      return { page: 'history', attemptId: parts[1] || null, params: new URLSearchParams(query) };
     if (parts[0] === 'my-quizzes')
       return { page: 'my-quizzes', params: new URLSearchParams(query) };
     if (parts[0] === 'quiz' && parts[1])
