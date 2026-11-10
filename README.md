@@ -144,6 +144,8 @@ Legacy Copilot instructions and old manual harnesses are not required to build o
 
 ## Data changes and study-guide review
 
+The Professional Agentic Architect (PAA) bank adds 75 Google Cloud practice questions (68 single-answer and seven multiple-answer). See the [source/content review](docs/gcp-paa-bank.md) for the supplied-file provenance, preserved IDs/answers and dated capability corrections.
+
 Preserve IDs and marked answers unless a review explicitly authorizes a correction. Check the actual content against the provider/exam before changing metadata. Schema, count and duplicate checks do not prove exam alignment.
 
 The historical Anthropic importer remains available as `node scripts/import-anthropic-quizzes.mjs <snapshot-directory> --check`. Remove `--check` only for an intentional reviewed import; generated reports go to ignored `artifacts/imports/`; keep them separate from development guidance.

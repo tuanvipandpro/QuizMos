@@ -1,0 +1,1216 @@
+[
+  {
+    "id": "q-1",
+    "question": "You are configuring an autonomous support agent in Agent Studio to handle multistep customer inquiries and invoke internal tools and connectors. During interactive testing in the console, the agent shows inconsistent execution trajectories and fails to trigger the correct tools. You need to improve the agent’s reliability and accuracy.\n\nWhat should you do first?",
+    "explanation": "Structured instructions can specify the workflow and when to select and invoke each tool, directly addressing inconsistent execution and incorrect tool selection. Targeted few-shot examples can demonstrate the expected tool calls and handling of their outputs when clear instructions alone are insufficient. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini/docs/discover/engineer-agentic-prompts))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Enable Agent Search grounding in the Agent Studio tools pane, and lower the model temperature setting in the console configuration panel.",
+      "B": "Configure Agent Platform Memory Bank in Agent Runtime to persist multiturn interaction logs, and increase the model’s thinking_level parameter.",
+      "C": "Use the side-by-side comparison view in Agent Studio to test alternative foundation models and select a Gemini Pro model variant.",
+      "D": "Define imperatively structured system instructions in Agent Studio and add few-shot prompt templates that incorporate step-by-step reasoning examples for tools usage."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-2",
+    "question": "You are designing a conversational agent in Gemini Enterprise to query proprietary internal engineering documentation stored across Cloud Storage and internal enterprise repositories. Your organization’s security governance policy requires that individual users receive search results only from documents they are authorized to access based on their enterprise identity.\n\nYour ingestion pipeline already supplies document ACL metadata, and the enterprise identity provider is configured. You need managed query-time enforcement of those ACLs without writing custom authorization code.\n\nWhat should you do?",
+    "explanation": "An access-controlled data store filters results using supplied document ACLs and the configured enterprise identity. Cloud Storage object IAM is not imported automatically; the ingestion pipeline must maintain the required ACL metadata. ([Google Cloud documentation](https://docs.cloud.google.com/gemini/enterprise/docs/identity))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Store the enterprise documents in Cloud Storage, and configure a RAG Engine serverless pipeline using a basic similarity threshold with IAM condition filters.",
+      "B": "Deploy an open-source vector database on Google Kubernetes Engine (GKE), and synchronize document metadata into a separate Firestore database collection.",
+      "C": "Index the raw documents into an Agent Retrieval vector index, and configure client-side query filters matching each user’s IAM group membership.",
+      "D": "Use an access-controlled Agent Search enterprise data store with the supplied document ACL metadata and configured enterprise identity provider."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-3",
+    "question": "You are creating a support voice assistant for a telecommunications organization using Customer Experience Agent Studio (CX Agent Studio). Inbound calls must be dynamically routed according to caller intent. If a caller requests billing details or account changes, PIN/OTP verification is required to establish a secure data-access boundary before any generative resolution steps can be performed. You want to configure the solution with minimal custom code.\n\nWhat should you do?",
+    "explanation": "A generative steering agent can classify caller intent and route account-sensitive requests to a deterministic flow for PIN/OTP verification. The flow can return the verified customer ID through its output mapping for subsequent use by the agent. Sensitive operations must be gated on successful verification, with authorization enforced by the service providing the data; a customer ID alone is not proof of authentication. This hybrid approach uses CX Agent Studio’s flow integration rather than relying on prompt instructions or building a separate orchestration system. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-cx/cx-agent-studio/flow))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Build a single generative agent with authentication and troubleshooting components configured as parallel tools.When a customer requests account-sensitive help, execute both tools concurrently to minimize latency, and configure safety filters to redact any diagnostic output if authentication fails.",
+      "B": "Build a sequential cascade of two independent generative agents.Configure the first agent to handle intent classification and the OTP verification, and store state in an external database.Have the second agent poll this database for customer ID and continue the conversation, triggering a custom session initiation protocol (SIP) transfer webhook if needed.",
+      "C": "Build a single generative agent.Use system instructions to classify intent.Use prompt-based guardrails and the model’s memory to enforce authentication before running troubleshooting steps.Execute a custom webhook tool to handle the OTP API call.",
+      "D": "Build a hybrid architecture.Use a generative steering node to classify intent.Route account-sensitive queries to a deterministic flow component for PIN/OTP authentication.Pass the verified customer ID as a session parameter to the runtime."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-4",
+    "question": "You are configuring an agentic workflow in Agent Studio for an enterprise customer analytics platform. The agent was initialized with default system instructions, prompt templates, and a Gemini Flash model family. In staging, you notice that the agent frequently hallucinates when synthesizing data across multiple knowledge documents and produces inconsistent output formats.\n\nYou need a first prompting improvement that encourages use of retrieved source context and demonstrates the expected output format. Runtime validation will enforce any mandatory output schema.\n\nWhat should you do first?",
+    "explanation": "System instructions can direct the agent to base its answers on retrieved source context, reducing unsupported claims. Reasoning steps can help structure synthesis across documents, while few-shot input-output examples demonstrate the required response format. These measures improve reliability but do not guarantee grounding or format compliance. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/prompts/prompt-design-strategies))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Update system instructions to use retrieved source data and abstain when evidence is missing; add clear task steps and few-shot input-output examples for the required format.",
+      "B": "Update the system instructions to reduce the temperature parameter and maximum top-p sampling to zero, and change the model to a Gemini Pro model family.",
+      "C": "Update the system instructions with explicit data redaction rules, and configure prompt templates to send all output through a Model Armor filter for schema enforcement.",
+      "D": "Update the system instructions to route date parsing requests to a custom Cloud Run OpenAPI extension tool, and reconfigure prompt templates to increase chunk overlap in Agent Search."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-5",
+    "question": "You are designing an automated hotel reservation workflow with Customer Experience Agent Studio (CX Agent Studio). On a dedicated booking page, the agent prompts the guest for check-in dates, room tier, and rewards membership status. If a guest chooses a luxury suite, the conversation flow should immediately branch to a specialized concierge flow, but only after the loyalty status parameter is confirmed. You need to configure this routing logic in the visual console without custom webhook middleware.\n\nWhat should you do?",
+    "explanation": "A page-level condition route can evaluate the room-tier value and loyalty-status confirmation before transitioning to the concierge flow. The route remains in scope while the booking page is active, so it can branch as soon as both conditions are met without a webhook. If explicit confirmation is required, the condition can also check a confirmation flag. ([docs.cloud.google.com](https://docs.cloud.google.com/dialogflow/cx/docs/concept/handler?hl=en))",
+    "topic": "Building agents using low-code tools",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Attach a custom JavaScript event handler to the start page to redirect the incoming user session.",
+      "B": "Configure a global intent route that overrides active page form parameters during conversation turns.",
+      "C": "Configure a conditional transition route on the page that evaluates form parameters before setting the target flow.",
+      "D": "Configure a conditional transition route in a session event handler that resets form parameters before setting the target flow."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-6",
+    "question": "You are developing an enterprise customer support agent in Customer Experience Agent Studio (CX Agent Studio). The agent handles an order cancellation workflow that requires customer identity verification before invoking an external payment refund tool. During testing, when end users submit complex, multi-sentence requests, the agent frequently skips the intermediate identity verification step and calls the refund tool prematurely.\n\nThe refund service already rejects unverified requests. You need to improve how the agent follows the intended step-by-step task flow using the console instruction editor.\n\nWhat should you do?",
+    "explanation": "Restructuring agent instructions with XML tags can help the model follow a task flow with explicit steps, triggers, and actions. The instructions can specify that identity verification must succeed before the refund tool is called. XML improves instruction adherence but does not guarantee enforcement; a refund tool should also validate authorization independently. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-cx/cx-agent-studio/instruction))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Define global instructions in CX Agent Studio’s advanced application settings with broad behavioral constraints to apply to every conversational turn.",
+      "B": "Restructure in-console system instructions in CX Agent Studio into XML tags.",
+      "C": "Attach a Model Armor security template to the endpoint to sanitize user conversational inputs.",
+      "D": "Configure a backward handoff rule on the agent node using a boolean variable check condition to handle transfer errors."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-7",
+    "question": "You are establishing team-wide engineering guidelines in an Antigravity workspace for a cloud-native Go project. You want the agent to automatically enforce a set of enterprise architecture conventions on every interaction, while providing a database migration workflow that developers can invoke on demand. You need to structure these customizations using native Antigravity configuration files.\n\nWhat should you do?",
+    "explanation": "A workspace `GEMINI.md` file supplies persistent architecture instructions to the agent. A workspace skill folder containing `SKILL.md` can hold the migration procedure and be invoked by developers when needed. ([antigravity.google](https://antigravity.google/docs/rules/))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Embed architecture directives and migration workflows inside individual source code comment blocks.",
+      "B": "Define migration workflows in GEMINI.md rules, and embed architecture directives in a skill folder.",
+      "C": "Configure architecture directives and migration workflows as raw shell scripts inside the skills directory.",
+      "D": "Define architecture directives in GEMINI.md rules, and create an on-demand migration workflow in a skill folder."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-8",
+    "question": "You are building a multiagent workflow in Antigravity in which a primary coordinator agent delegates code editing and testing tasks to concurrent subagents. During initial execution, the subagents edit files in the shared workspace simultaneously, causing write conflicts and filling the main chat history with verbose build logs. You want to eliminate file modification conflicts and prevent context rot in the primary coordinator agent.\n\nWhat should you do?",
+    "explanation": "Branched workspace isolation gives subagents separate Git worktrees, preventing concurrent edits from writing to the same working files. Running builds in isolated worker contexts keeps verbose logs out of the coordinator’s context while allowing workers to report relevant results. Changes may still need conflict resolution when merged. ([antigravity.google](https://antigravity.google/docs/subagents?tab=cli))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Instantiate subagents programmatically with a canary batch cap of three concurrent workers, and store context logs in BigQuery.",
+      "B": "Configure subagents to use inherited workspace contexts for code edits, and deploy a PreToolUse hook to upload context logs to a Cloud Storage bucket. Use the stored context for additional prompts.",
+      "C": "Configure subagents to use branched workspace isolation for code edits, and offload build execution to isolated worker context sessions.",
+      "D": "Define PreToolUse hooks to restrict subagent file write tools, and route build traces to Cloud Logging. Retrieve the stored logs for additional prompts."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-9",
+    "question": "You are setting up an automated unit testing pipeline in which Antigravity generates and executes test scripts for third-party Python packages. Your organization’s security requirements state that dynamic test suites generated by the LLM must never access local host credentials, private developer files, or unapproved internal network services. You need to configure a secure execution runtime for the coding agent.\n\nWhat should you do?",
+    "explanation": "Isolated execution sandboxes can enforce boundaries around generated test scripts. Configure the sandbox without host credential or private-file mounts and restrict network access to approved destinations; containerization alone does not guarantee these protections. ([docs.docker.com](https://docs.docker.com/ai/sandboxes/security/isolation))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure a .antigravityrules markdown file in the repository instructing the agent to never generate code that reads host files or connects to external domains.",
+      "B": "Assign a Google Cloud service account with restricted, least-privilege IAM roles to the pipeline execution host.",
+      "C": "Execute agent-generated test scripts inside isolated, containerized execution sandboxes.",
+      "D": "Configure a VPC Service Controls perimeter around the pipeline’s execution subnet."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-10",
+    "question": "You are implementing a custom skill in the Antigravity CLI to automate service deployments. When tasks run in Agent Mode, the CLI does not detect the skill and skips user confirmation before executing deployment commands. You want to enable effective global skill discovery while ensuring human approvals are required for high-risk actions.\n\nWhat should you do?",
+    "explanation": "A skill in `~/.gemini/antigravity-cli/skills/<skill-name>/SKILL.md`, with valid YAML frontmatter, is available globally to the Antigravity CLI. Avoiding auto-approval flags preserves confirmation prompts, but the permission configuration must also require approval for deployment commands; an explicit `ask` rule can enforce this. ([antigravity.google](https://antigravity.google/docs/skills?app=antigravity))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Verify that a skill folder containing SKILL.md with valid YAML frontmatter is present under ~/.gemini/antigravity-cli/skills/, and run Antigravity CLI with deployment commands configured to require approval.",
+      "B": "Upload the deployment script to Cloud Deploy as an agent extension, and run the agents-cli setup command with the -- force flag.",
+      "C": "Verify that a SKILL.md file containing valid YAML metadata is present in the .agents/skills directory, and execute the Agents CLI without auto-approval flags.",
+      "D": "Register the skill as an MCP server inside the .agents/skills/directory for each deployment, and launch the Agents CLI using the -y flag."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-11",
+    "question": "Your organization maintains an internal service registry listing the endpoints exposed by teams across the organization. Endpoints are added and removed throughout the day. Your team uses Antigravity to write client code for the endpoints. You discover that the agent is generating code that references stale, decommissioned endpoints. You need Antigravity to dynamically verify active endpoints from the registry in real time while generating code.\n\nWhat should you do?",
+    "explanation": "An MCP server can expose a registry lookup tool that Antigravity calls to retrieve current endpoint information while generating code. This provides live context as endpoints are added and removed, rather than relying on a static list that can become stale. ([antigravity.google](https://antigravity.google/docs/mcp))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Create an MCP server, and connect Antigravity to the registry using the MCP.",
+      "B": "Define a custom Antigravity subagent whose role is endpoint lookup.",
+      "C": "Add the endpoint list to an Antigravity workspace rule.",
+      "D": "Add an Antigravity PostToolUse hook that checks generated calls against the registry."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-12",
+    "question": "Your team uses the Antigravity coding agent for both app development and infrastructure as code (IaC) provisioning. Your organization maintains an extensive internal infrastructure style guide that the agent currently includes in its persistent workspace configuration, congesting the context window and degrading reasoning performance during noninfrastructure coding tasks. You need to configure the agent to automatically load and follow the style guide only when infrastructure tasks are initiated.\n\nWhat should you do?",
+    "explanation": "A custom skill can use the description in its `SKILL.md` frontmatter to indicate that it applies to infrastructure work. The agent sees the skill’s metadata initially and loads its detailed instructions when it determines the skill is relevant, keeping the extensive guide out of context for unrelated tasks. ([antigravity.google](https://antigravity.google/docs/skills?app=antigravity-ide))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Create a custom skill with the style guide containing a SKILL.md file that defines activation criteria in its frontmatter.",
+      "B": "Add the style guide to the global system instructions within the Antigravity agent settings.",
+      "C": "Add the style guide as a documentation resource by deploying an MCP server for the agent.",
+      "D": "Add the style guide to a .gemini/rules file in the root of the project workspace."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-13",
+    "question": "You are configuring custom coding agents with Antigravity for an enterprise engineering team. You find that the agent frequently attempts to run unauthorized terminal commands, despite instructions in the project’s markdown context files that specify command boundaries. You need to enforce strict, deterministic guardrails that validate shell command arguments before tool execution.\n\nWhat should you do?",
+    "explanation": "A `PreToolUse` hook can intercept `run_command` before execution and pass the proposed tool arguments to a validation script as JSON on stdin. The script can apply deterministic checks to the command and its flags, returning a `deny` decision for unauthorized calls. Markdown instructions alone do not enforce those boundaries. ([antigravity.google](https://antigravity.google/docs/hooks?tab=ide))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Define a specialized Antigravity subagent in the .agents/subagents/directory configured with a review prompt to evaluate and approve terminal commands prior to delegating execution.",
+      "B": "Configure an Antigravity PreToolUse hook in a .agents/hooks.json file to run a script that sends the command string to a remote LLM API for a semantic safety review.",
+      "C": "Update the Antigravity workspace rule activation mode to ‘Always On’ in the .agents/rules/directory to ensure system instructions for command boundary checking are prepended to every conversation turn.",
+      "D": "Configure an Antigravity PreToolUse hook in a .agents/hooks.json file to run a validation script to inspect command line flags from stdin."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-14",
+    "question": "You are customizing enterprise coding workflows by extending Antigravity CLI with Agents CLI. Your team needs to package reusable agent capabilities and safety guardrails across developer workspaces while running automated verifications before cloud deployment. You also need to maintain consistent governance and agent behavior across all local workspaces.\n\nWhat should you do?",
+    "explanation": "Extensions distribute skills and shared command policies across workspaces. Evaluate the deployable agent before release; skills remain guidance rather than a security enforcement boundary. ([Agents CLI extensions](https://google.github.io/agents-cli/guide/extensions/using/))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Transform system instructions into workspace context files, and use the agents-cli run command to validate behaviors before attaching them to Agent Gateway.",
+      "B": "Define persona subagents into workspace configuration files, and use the agents-cli deploy command to validate behaviors before publishing them to Agent Registry.",
+      "C": "Package the reusable guidance as Agent Skills in a versioned extension, and use agents-cli eval to evaluate the deployable agent before release.",
+      "D": "Deploy guardrails as server-side workspace hooks, and use the agents-cli scaffold command to validate behaviors before storing them in Model Armor."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-15",
+    "question": "You are setting up Claude Code on Google Cloud to help developers refactor microservices. You have created a custom tool service using an MCP server that runs locally through standard input/output (stdio). You need to configure Claude Code so that the coding agent automatically discovers and executes the tools exposed by the MCP server during interactive sessions.\n\nWhat should you do?",
+    "explanation": "A local stdio MCP server can be configured under `mcpServers` in `~/.claude.json`, with `command` identifying the executable and `args` supplying its arguments. Claude Code can start the server and access its tools through MCP, subject to applicable permissions. ([code.claude.com](https://code.claude.com/docs/en/mcp))",
+    "topic": "Using coding agents for application development",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Export the tool function signatures as a JSON-encoded string in the CLAUDE_CODE_TOOLS environment variable before launching the CLI.",
+      "B": "Define the custom tool definitions in a SKILLS.md file in the project’s root directory.",
+      "C": "Configure the local stdio server under mcpServers in ~/.claude.json, with its executable in command and its arguments in args.",
+      "D": "Register the MCP server to Agent Registry using Claude Code console."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-16",
+    "question": "You are evaluating CodeMender on a non-production test copy of a Python application containing a SQL injection vulnerability. You need to assess whether its proposed remediation addresses the root cause while preserving intended behavior, before human review and independent tests. Which CodeMender capability should you evaluate?",
+    "explanation": "CodeMender’s remediation workflow generates a patch for the vulnerability’s root cause and uses an LLM-as-a-judge framework to help validate that intended functionality remains intact. Developers should review the resulting diff and test the patch. ([cloud.google.com](https://cloud.google.com/security/codemender))\n\nCodeMender’s current documentation states that the preview is for limited testing and evaluation, not commercial or production use. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/agents/codemender?hl=en))",
+    "topic": "Using coding agents for application development",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure CodeMender’s patch generator to execute dynamic database schema migrations to sanitize incoming string inputs before query execution.",
+      "B": "Generate a patch using CodeMender’s automated remediation workflow, and use its built-in LLM-as-a-judge framework to validate program equivalence against the generated code diff.",
+      "C": "Grant CodeMender’s execution identity the roles/iam.securityUser IAM role to run commands.",
+      "D": "Instruct CodeMender to wrap dynamic SQL queries in try-except error handling blocks and retry failed queries using the default fallback parameters."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-17",
+    "question": "Your organization requires a scanner that checks for secrets and API keys to run before Antigravity writes to any file in a repository. You added an Antigravity workspace rule instructing the agent to run the scanner first. However, you find some commits where the scanner did not run. You need to ensure the scanner runs before every file write, regardless of what the agent considers relevant.\n\nWhat should you do?",
+    "explanation": "A `PreToolUse` hook in `hooks.json` runs a configured command before matching tool calls, rather than relying on the agent to follow an instruction. Configure it to run the scanner and match the file-writing tools and command-execution paths capable of writing files. ([antigravity.google](https://antigravity.google/docs/hooks?tab=ide))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Change the Antigravity rule’s activation mode to ‘Always On’.",
+      "B": "Configure an Antigravity PreToolUse hook in a hooks.json file that runs the scanner.",
+      "C": "Create an Antigravity subagent that runs the scanner before file writes.",
+      "D": "Create an Antigravity skill to run the scanner."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-18",
+    "question": "You are designing a multiagent workflow with Agent Development Kit (ADK) on Agent Runtime that includes an orchestrator agent and an interactive claim adjuster agent. The claim adjuster agent is currently implemented as an agent-as-a-tool, but it treats turns as isolated requests, loses conversation history, and cannot hand control back to the orchestrator agent.\n\nYou need to rearchitect the coordination pattern so that the claim adjuster maintains stateful multiturn history, accesses shared context, and supports fluid, bidirectional handoffs.\n\nWhat should you do?",
+    "explanation": "A hierarchical ADK subagent can share session state with the orchestrator and participate in model-driven delegation, allowing control to move between agents rather than treating the adjuster as an isolated tool call. A session service preserves conversation events and state across turns. These capabilities support the required shared context, multiturn history, and bidirectional handoffs. ([cloud.google.com](https://cloud.google.com/blog/topics/developers-practitioners/building-collaborative-ai-a-developers-guide-to-multi-agent-systems-with-adk))",
+    "topic": "Developing custom agents",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Enable use_shared_memory=True in the tool parameter schema to force the tool container to inherit the orchestrator agent’s active session history.",
+      "B": "Rearchitect the claim adjuster agent as a stateful subagent within a hierarchical multiagent graph workflow, enabling shared session state and model-driven delegation for context preservation and bidirectional handoffs.",
+      "C": "Configure the agent-as-a-tool execution policy with an asynchronous polling webhook that continuously queries the Agent Registry for updated stateful session context logs.",
+      "D": "Deploy the claim adjuster agent as a stateful Agent Runtime instance, and configure Agent Identity auth manager to pass session state tokens in the HTTP payload body."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-19",
+    "question": "You are troubleshooting a hierarchical multiagent architecture built with Agent Development Kit (ADK), in which a primary orchestrator delegates complex search tasks to specialized subagents. Execution traces show that subagents append their full tool execution histories to the orchestrator’s context window across multiturn exchanges, causing rapid context window bloat, agent drift, and severe tool invocation latency. You need to isolate subagent execution history and prevent context pollution in the orchestrator.\n\nWhat should you do?",
+    "explanation": "Wrapping each specialist in an `AgentTool` runs it in a separate nested session, so its internal tool events do not accumulate in the orchestrator’s conversation history. Setting `include_contents='none'` excludes prior conversation history from the specialist’s model requests. Selected findings can be returned or stored in session state for use across turns without retaining the full execution history. ([github.com](https://github.com/google/adk-python/blob/main/src/google/adk/tools/agent_tool.py))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Deploy subagents inside a sequential pipeline, and enable summarization compaction on the orchestrator’s Cloud Storage log bucket in Agent Designer.",
+      "B": "Wrap subagents using agent tool encapsulation, configure the subagent LLM settings to exclude previous conversation contents, and persist subagent findings to the session state.",
+      "C": "Configure a Pub/Sub topic to decouple subagent events from the orchestrator, and configure the orchestrator agent in Agent Runtime to prevent transferring control back to a parent agent.",
+      "D": "Increase the maximum iterations limit on the orchestrator’s looping agent definition, and configure Cloud Trace sampling to automatically drop duplicate tool payload traces."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-20",
+    "question": "You are building a non-medical research assistant to compare high-resolution industrial inspection photographs with handwritten equipment inspection notes stored in Cloud Storage. You want native multimodal analysis that retains useful visual detail instead of first reducing images to text or low-resolution thumbnails. Which approach should you evaluate, while respecting model-specific image limits and validating the results with domain experts?",
+    "explanation": "Native image input preserves visual information that would be lost by replacing photographs with labels or text. Use a supported resolution and validate outputs; model perception is not lossless or guaranteed accurate. ([Image understanding](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/image-understanding))",
+    "topic": "Developing custom agents",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Provide the images and notes to a supported native multimodal Gemini model using Cloud Storage file references and an appropriate supported media-resolution setting.",
+      "B": "Extract note text using OCR, and downsample every inspection photograph to a low-resolution JPEG before analysis.",
+      "C": "Use a separate image classifier and store only classification labels with plain-text notes.",
+      "D": "Convert image pixels into text arrays and append them to a text-only prompt."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-21",
+    "question": "You are developing a custom retail assistant agent using Agent Development Kit (ADK). The agent checks real-time stock levels by querying a proprietary internal inventory database. You have written a secure Python function that performs this query. You need to integrate the function so that the underlying Gemini model can autonomously decide when to invoke it and automatically format the required parameters based on user input.\n\nWhat should you do?",
+    "explanation": "An ADK function tool exposes the Python function to the agent. Its type hints define the parameter schema, while its docstring describes the tool’s purpose and inputs. Gemini can use that information to select the tool and generate arguments from the user’s request; ADK then executes the function. ([cloud.google.com](https://cloud.google.com/blog/topics/developers-practitioners/automate-agent-development-lifecycles-with-gemini-enterprise/))",
+    "topic": "Developing custom agents",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Inject the raw Python function code into the agent’s system prompt, and instruct the LLM to output a native Python eval() command containing the necessary variables.",
+      "B": "Deploy the Python function as a Cloud Run service, and configure an ADK preprocessing script to intercept the user’s prompt using regex keyword matching to trigger the service.",
+      "C": "Upload the Python script to Agent Registry, and configure the ADK agent’s orchestrator to perform a semantic vector search against the registry to execute the code dynamically.",
+      "D": "Wrap the Python function using an ADK function tool, explicitly define the input parameters using type hints, provide a detailed docstring explaining the tool’s purpose, and supply the tool to the agent during initialization."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-22",
+    "question": "You are developing an autonomous financial research agent using Agent Development Kit (ADK). The agent has access to a registry containing more than 50 distinct financial analysis tools. When you bind all 50 tools to the agent at once, the system prompt consumes too many tokens, causing high latency, increased costs, and frequent LLM hallucinations in which the agent selects the wrong tool schema. You need to improve the agent’s tool-calling accuracy and reduce token consumption while ensuring all 50 tools remain available for the workflow.\n\nWhat should you do?",
+    "explanation": "Semantic retrieval can rank tool descriptions against the current prompt and select a relevant top-K subset. Binding only that subset reduces the number of schemas sent to the model and narrows its selection, while the full registry remains available for subsequent retrieval. ADK supports filtering exposed tools; semantic retrieval can be implemented as a custom component rather than assumed to be a built-in ADK feature. The subset may need to be refreshed if a workflow requires additional tools. ([adk.dev](https://adk.dev/tools/google-cloud/api-registry/))",
+    "topic": "Developing custom agents",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Increase the model’s temperature parameter to allow the agent to find the correct tool schema from memory.",
+      "B": "Implement a custom semantic tool retriever for the ADK agent that ranks the full registry and selects the top-K tools relevant to the current request.",
+      "C": "Combine a subset of all 50 tools into a single ADK ToolChain object to compress the tool schemas into a single system prompt description.",
+      "D": "Configure an ADK asynchronous execution hook to run tools in parallel and return only the valid data payloads to the agent.",
+      "E": "Dynamically bind only a retrieved subset of tools to the agent’s execution context before initiating the reasoning loop."
+    },
+    "answer": [
+      "B",
+      "E"
+    ]
+  },
+  {
+    "id": "q-23",
+    "question": "You are designing an agentic workflow in Gemini Enterprise for a media organization. The agent will enable natural language search across thousands of hours of archived video training content. End users must be able to search the video library with text queries and receive precise video segment matches. Your solution must process video files stored in Cloud Storage, map visual content and user text queries into a shared vector space, and perform real-time similarity retrieval at scale.\n\nWhat should you do?",
+    "explanation": "The Multimodal embeddings API can generate embeddings for video segments stored in Cloud Storage and compatible embeddings for text queries. Segment timestamps can be retained to identify matching portions of a video. Vector Search can index the segment embeddings and retrieve approximate nearest neighbors for each query embedding at scale. ANN retrieval trades some recall for speed. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/embeddings/get-multimodal-embeddings))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Store video files with embeddings in BigQuery, create a vector index, and execute pattern matching queries against the index.",
+      "B": "Convert video files into Base64-encoded strings, and store them in the vector store. Send query requests to the Gemini API.",
+      "C": "Index the generated embedding vectors in Vector Search to perform approximate nearest neighbor (ANN) retrieval for user query embeddings.",
+      "D": "Use the Text embeddings API with the text-embedding-005 model to generate vectors from Cloud Storage video object path strings and file names.",
+      "E": "Generate vector representations for video segments using the Multimodal embeddings API in Agent Platform."
+    },
+    "answer": [
+      "C",
+      "E"
+    ]
+  },
+  {
+    "id": "q-24",
+    "question": "You are developing a customer support agent in Gemini Enterprise to analyze incoming customer incident reports. These reports include recorded audio calls in MP3 and WAV formats and long video-screen captures lasting up to 45 minutes. When you call the Gemini API with a raw Base64 payload, the request fails with a 413 error: size too large. You need to enable the agent workflow to process, analyze, and summarize these large audio and video files natively using Gemini models, while avoiding inline Base64 request-body inflation. Assume the files fit the chosen model’s documented duration, file-size and context limits.\n\nWhat should you do?",
+    "explanation": "The Gemini API can reference audio and video stored in Cloud Storage using a file URI and the appropriate MIME type. This avoids placing the entire Base64-encoded file in the request body, while supported Gemini models can analyze MP3, WAV, and video files natively. Model-specific file, duration, and context limits still apply. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/audio-understanding?hl=en))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Store compressed video and audio files in a Cloud SQL database, and configure a Gemini Enterprise database connector to stream binary objects.",
+      "B": "Upload the audio and video files to a Cloud Storage bucket, and pass the Cloud Storage URIs in the request content to the Gemini API.",
+      "C": "Convert audio files into 16-bit PCM WAV chunks, and embed them using the text-embeddings API.",
+      "D": "Transcode audio and video files into Base64 chunk strings, and send them sequentially through Pub/Sub messages to the Gemini API endpoint."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-25",
+    "question": "You are developing a custom financial analysis agent in Python with Agent Development Kit (ADK). The agent calls an exchange rate function when users request cross-border portfolio valuations, but in multi-turn interactions, the model often passes invalid currency codes or fails to trigger the function. Runtime checks already reject unsupported currency codes. You need to make the tool’s purpose and parameter types explicit to the model so it can select the function and form arguments more reliably.\n\nWhat should you do?",
+    "explanation": "ADK inspects a tool function’s type annotations and docstring to build the schema presented to the model. Explicit types and detailed descriptions help the model understand when to call the exchange rate function and what arguments it expects. ([github.com](https://github.com/google/adk-docs/blob/main/docs/tools-custom/function-tools.md))\n\nThis guidance improves reliability but does not guarantee valid currency codes; runtime validation is still needed when invalid values must be rejected.",
+    "topic": "Developing custom agents",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Implement a custom retry-loop wrapper around the tool execution call to catch malformed parameter exceptions and automatically reprompt the model.",
+      "B": "Define tool parameter schemas as unformatted string lists inside the agent system instructions.",
+      "C": "Apply a Pydantic @validate_call decorator parameter to the Python function to raise a runtime ValidationError result if an unapproved parameter value is passed to the function.",
+      "D": "Define explicit Python type annotations and detailed parameter docstrings in the tool function signature."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-26",
+    "question": "You are the lead architect at an organization where multiple engineering teams are building conversational agents. The teams frequently need their agents to query operational telemetry in BigQuery and inspect Cloud Logging logs. Currently, teams duplicate effort by writing custom API wrapper scripts and separate credential management logic for each agent tool.\n\nYou need to establish an enterprise-wide tool integration architecture that provides ready-to-use cloud capability connectors and a shared governance directory for team capabilities, without writing bespoke wrapper code.\n\nWhat should you do?",
+    "explanation": "Google Cloud MCP servers provide standardized tools for services including BigQuery and Cloud Logging, avoiding the need to write bespoke API wrappers. Agent Registry provides a shared catalog for discovering and managing MCP servers and their tools. Google Cloud MCP servers are automatically registered when their supported APIs are enabled; other shared MCP servers can be registered separately. Access remains subject to authentication and IAM permissions. ([docs.cloud.google.com](https://docs.cloud.google.com/mcp/supported-products))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Deploy serverless Cloud Run functions for each cloud service API, and configure direct HTTP webhooks inside each agent prompt.",
+      "B": "Configure Dialogflow conversational fulfillment webhooks to route all agent capability requests through a central proxy service.",
+      "C": "Connect the agents to Google Cloud MCP servers, and register shared tools in Agent Registry.",
+      "D": "Configure Agent Platform Feature Store to store key-value client profile attributes, and execute a custom feature retrieval API call during agent prompt construction to inject historical facts."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-27",
+    "question": "You built a document processing pipeline in which an extraction agent and a scoring agent exchange records through the Agent2Agent (A2A) protocol. The agents were written with Agent Development Kit (ADK) and deployed as two separate Agent Runtime agents, and neither agent is called from outside the pipeline.\n\nYou find that each record takes 400 milliseconds longer than expected to process. Your profiling tool attributes the extra time to serialization and network calls between the two agents. You want to minimize processing time while ensuring that each agent retains its current logic and continues to handle one record per invocation.\n\nWhat should you do?",
+    "explanation": "Deploying the agents together and using a local subagent removes the inter-agent A2A network calls and their associated protocol serialization overhead. The agents can retain their distinct processing logic and operate on one record per invocation, without requiring independent external access. ([adk.dev](https://adk.dev/a2a/intro/))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Replace A2A with an MCP server between the two Agent Runtime agents.",
+      "B": "Deploy both agents in the same Agent Runtime, and configure the scoring agent as a local subagent of the extraction agent.",
+      "C": "Deploy both Agent Runtime agents in the same region and use private networking.",
+      "D": "Use the gRPC binding for the A2A transport between the two Agent Runtime agents."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-28",
+    "question": "You are designing an automated code-refactoring assistant with the open-source Agent Development Kit (ADK) library. The solution requires a multistep process in which a generator agent drafts modernized code, a critic agent evaluates the draft against strict security rules, and a refiner agent modifies the code until the critic agent approves the output or an exit condition is met. You need to select an agentic workflow architecture that natively supports this continuous generation, evaluation, and revision cycle.\n\nWhat should you do?",
+    "explanation": "An ADK LoopAgent repeatedly runs its subagents in order, enabling the critic to evaluate the code and the refiner to revise it. The `max_iterations` setting bounds execution, while a tool that sets `tool_context.actions.escalate` can stop the loop when the critic approves. Reaching the iteration limit does not itself mean the code has been approved. ([adk.dev](https://adk.dev/agents/workflow-agents/loop-agents/))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Implement an ADK LoopAgent that contains the critic and refiner subagents using AgentTool. Configure a retry_options parameter on the Gemini model configuration object to limit repeated reasoning attempts.",
+      "B": "Configure an ADK SequentialAgent that chains the critic and refiner subagents. Implement an Agent Runtime event callback to retrigger the workflow when security checks fail.",
+      "C": "Implement an ADK LoopAgent that contains the critic and refiner subagents. Set max_iterations to bound loop execution, and provide the critic agent with a tool to exit the loop upon approval.",
+      "D": "Construct an ADK ParallelAgent that runs the critic and refiner subagents concurrently. Deploy the app to Cloud Run with a request timeout threshold to cap total execution time."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-29",
+    "question": "You are building a custom coding assistant agent with Agent Development Kit (ADK). The agent must recall user preferences, past architectural decisions, and previous debugging steps across completely independent interactive sessions over multiple weeks. You need to complete these tasks without continually growing the LLM context window and inflating inference costs, and you want the simplest solution.\n\nHow should you build the agent?",
+    "explanation": "Agent Platform Memory Bank provides managed long-term memory across sessions. An ADK agent can generate memories from session interactions and retrieve relevant memories in later sessions, rather than adding the entire conversation history to the prompt. This supports recall over multiple weeks without requiring a custom retrieval pipeline. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/memory-bank/adk-quickstart))",
+    "topic": "Developing custom agents",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Build a custom retrieval pipeline, embed each session’s conversation turns into Vector Search, and manually query the top-k relevant chunks.",
+      "B": "Serialize the conversation history to a Cloud SQL database at the end of each session, and use custom ADK logic to prepend the entire history to the system prompt of the next session.",
+      "C": "Enable the managed sessions feature in Agent Runtime, and configure a 30-day session_ttl parameter.",
+      "D": "Configure the agent to use Agent Platform Memory Bank to manage and retrieve long-term conversational state."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-30",
+    "question": "You are configuring Agent Platform Memory Bank for a wealth management advisor agent deployed on Gemini Enterprise Agent Platform.\n\nDuring the initial evaluation, you observe that Memory Bank creates duplicate and conflicting memory entries when users update their investment risk tolerance. You need to configure Memory Bank to properly consolidate updated user preferences over time, resolve conflicting information, and restrict memory extraction strictly to relevant personal information and user preferences.\n\nWhat should you do?",
+    "explanation": "Configuring only the personal-information and user-preferences managed topics restricts memory extraction to those categories. A consistent user identity scope lets Memory Bank compare new information with existing memories for that user during consolidation and retrieve memories from the same scope. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/memory-bank/generate-memories))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Add user risk tolerance values into the system instruction prompt as immutable string constants during session creation.",
+      "B": "Disable identity scoping on the Memory Bank instance to do a similarity search for user information during memory consolidation.",
+      "C": "Configure memory topic customization in Memory Bank to enable the USER_PERSONAL_INFO and USER_PREFERENCES managed topics.",
+      "D": "Set an in-memory FIFO eviction policy on the managed session service to automatically purge older session event logs when user profile updates occur.",
+      "E": "Specify a consistent user identity scope during memory generation and retrieval."
+    },
+    "answer": [
+      "C",
+      "E"
+    ]
+  },
+  {
+    "id": "q-31",
+    "question": "You are designing an enterprise multiagent system in which a primary supervisor agent delegates high-level autonomous subtasks to specialized agents owned by separate organizations. Each specialized agent needs standardized access to local databases and custom internal tool execution functions. You need to maximize system interoperability and architectural modularity by implementing the correct protocol abstraction for tool integration versus interagent delegation across organizational boundaries.\n\nWhat should you do?",
+    "explanation": "MCP servers provide standardized access to data and tool functions. A2A supports communication and task delegation between independently managed agents across organizational boundaries. Agent Cards advertise each agent’s capabilities, endpoint, and authentication requirements for discovery; A2A messages and tasks carry out the delegation. ([ts.sdk.modelcontextprotocol.io](https://ts.sdk.modelcontextprotocol.io/v2/))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Use MCP servers to expose local databases and tool functions to the specialized agents, and publish Agent2Agent (A2A) protocol Agent Cards to handle supervisor-to-agent task delegation.",
+      "B": "Deploy specialized agents to Agent Runtime as MCP servers for supervisor-to-agent task delegation, and wrap local databases as OpenAPI extension tools.",
+      "C": "Configure Agent Development Kit (ADK) OpenAPI schemas for supervisor-to-agent task delegation, and expose local databases to specialized agents by using Agent2Agent (A2A) protocol endpoints.",
+      "D": "Use Agent2Agent (A2A) protocol endpoints to expose local databases and tool functions to specialized agents, and configure MCP servers to handle supervisor-to-agent task delegation."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-32",
+    "question": "You are building a technical support agent with Gemini Enterprise Agent Platform to help internal field engineers. You need to ground the agent’s responses strictly in internal proprietary equipment manuals. You want to minimize hallucinations and maximize response accuracy.\n\nWhat should you do?",
+    "explanation": "A retrieval tool configured with `vertex_ai_search` can ground responses in relevant content from an Agent Search data store containing the proprietary manuals, rather than relying on public search results. Grounding can improve accuracy and reduce hallucinations, although it does not guarantee that every response is correct or strictly grounded. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/grounding/grounding-with-vertex-ai-search))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Convert the proprietary manuals into structured JSON arrays, and inject them as system_instructions.",
+      "B": "Export the proprietary manuals to a relational database, and define a custom Python FunctionTool to fetch document snippets.",
+      "C": "Enable the googleSearch tool in the agent’s runtime setup.",
+      "D": "Implement a retrieval tool in the agent’s configuration, and point the vertex_ai_search parameter to the resource path of your Agent Search data store."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-33",
+    "question": "You are orchestrating a distributed multiagent system on Google Cloud in which a primary supervisor agent, built using Agent Development Kit (ADK), must coordinate with multiple specialized subagents developed by different teams throughout the organization. You need to ensure language-agnostic interoperability and seamless, secure collaboration among these diverse agents without exposing internal context databases.\n\nWhat should you do?",
+    "explanation": "The Agent2Agent (A2A) protocol enables agents built with different languages and frameworks to communicate and delegate tasks without exposing their internal state or logic. An ADK supervisor can interact with remote A2A agents over HTTPS; authentication and authorization should also be configured to secure access. ([docs.cloud.google.com](https://docs.cloud.google.com/run/docs/ai/a2a-agents))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Implement the MCP using McpToolset on the supervisor agent to parse and execute internal JSON-RPC calls to the subagents.",
+      "B": "Have all agents bypass the application layer and interact with a shared, centralized TaskStore Spanner database to maintain state.",
+      "C": "Deploy the subagents in a single monolithic container, and use standard function calls.",
+      "D": "Expose the subagents over HTTPS using the Agent2Agent (A2A) protocol, and have the supervisor agent interact with the subagents using A2A."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-34",
+    "question": "You are designing a multiagent enterprise architecture on Google Cloud using the Agent2Agent (A2A) protocol. A central supervisor agent delegates complex subtasks to independently deployed, specialized subagent microservices hosted in separate projects. During high-volume batch runs, long-running subagent tasks fail because of connection timeouts caused by the supervisor agent blocking synchronous HTTP polling. You need to rearchitect the interagent communication layer.\n\nWhat should you do?",
+    "explanation": "A2A supports SSE for incremental task updates and asynchronous push notifications for significant state changes. For long-running batch tasks, subagents can send notifications to a supervisor-provided webhook without requiring the supervisor to maintain a connection while waiting. SSE is useful for live updates but still requires an open connection. ([a2a-protocol.org](https://a2a-protocol.org/v1.0.1/topics/streaming-and-async/))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure a Pub/Sub topic between projects and instruct the supervisor to issue system-level SIGCONT process signals to remote subagent container runtimes upon task completion.",
+      "B": "Wrap the subagent microservices in an MCP HTTP transport layer using Cloud Run container instances.",
+      "C": "Configure the subagents to expose A2A-compliant server-sent event (SSE) streaming endpoints and event webhooks.",
+      "D": "Increase the supervisor agent’s HTTP client connection timeout to 3,600 seconds, and set a stream=True parameter in the request payload body."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-35",
+    "question": "You maintain an inventory management agent that uses multiple APIs as tools. You need to automatically verify that the agent chooses the correct tool and forms the correct API arguments whenever a new agent configuration is pushed to the code repository. The evaluation must run programmatically and determine pass/fail status using semantic match criteria instead of exact string matching.\n\nWhat should you do?",
+    "explanation": "A CI/CD evaluation can run a golden dataset against each new agent configuration and apply pass/fail thresholds to the results. The Gen AI evaluation service supports rubric-based tool-use evaluation, including whether an agent called the right tools with the correct arguments; this permits semantic assessment rather than relying solely on exact string matching. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/optimize/evaluation/manage-metrics))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Integrate the gen AI evaluation service into your CI/CD pipeline to automatically execute a golden dataset of queries against the agent, and use autorater metrics for tool selection accuracy and parameter validity.",
+      "B": "Enable Model Monitoring on the deployed agent to continuously track prediction drift and alert the pipeline if the frequency of specific tool invocations deviates from the baseline distribution.",
+      "C": "Configure a Cloud Scheduler job that invokes the agent during the pipeline build with a set of test prompts, and write a custom script to verify if the agent’s final text response matches a hardcoded string.",
+      "D": "Configure a Cloud Monitoring alerting policy on the Agent Runtime metrics to automatically halt the CI/CD deployment if the rate of HTTP 5xx errors from tool invocations exceeds your established threshold."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-36",
+    "question": "You are building a social media monitoring agent pipeline in Google Cloud that analyzes five million incoming customer feedback posts per day. The pipeline must classify each post into one of three sentiment categories: positive, negative, or neutral. It must also generate a one-sentence summary for each post. Results may be delivered asynchronously within the daily processing window. You need to reduce inference cost at the required throughput while meeting validated classification and summary quality targets.\n\nWhat should you do?",
+    "explanation": "A fine-tuned small language model can be adapted to sentiment classification and concise summarization while using fewer resources than a larger model. High-throughput batch processing suits the volume of five million posts per day and can reduce inference costs. However, batch processing is asynchronous and does not minimize end-to-end response latency; this approach is suitable only if delayed results are acceptable. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/tuning))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Route incoming posts in real time to an LLM using a provisioned throughput endpoint.",
+      "B": "Route the classification task to a high-capacity reasoning LLM, and offload the summarization task to a local regex pipeline.",
+      "C": "Deploy a generalized pre-trained small language model (SLM) on an autoscaling online prediction endpoint with GPU acceleration.",
+      "D": "Deploy a fine-tuned small language model (SLM) on Gemini Enterprise optimized for high-throughput batch classification."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-37",
+    "question": "You are troubleshooting a production customer device support agent built with Customer Experience Agent Studio (CX Agent Studio). Users report that the agent occasionally provides inaccurate warranty extension terms and device repair procedures that do not exist in the connected enterprise Knowledge Base datastore or tool outputs. You have inspected the affected sessions and raw JSON responses and verified the system instructions, variable states, and tool outputs.\n\nYou need to diagnose unsupported answers and improve source-grounding adherence without inserting a custom diagnostic step into every live conversation.\n\nWhat should you do?",
+    "explanation": "Explicitly instructing the agent to answer from the Knowledge Base and tool outputs, rather than its internal knowledge, targets the unsupported warranty and repair details. XML-structured constraints can help the model follow those instructions. AI-assisted evaluations generate a loss_report that can highlight agent performance issues without adding a diagnostic step to every production turn. This approach reduces hallucination risk but does not guarantee strict grounding. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-cx/cx-agent-studio/instruction))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Refine the system instructions using XML tags to explicitly prohibit the agent from answering using its own internal parametric memory, and run evaluation test cases with the “Find issues with AI” option enabled to generate a loss_report.",
+      "B": "Configure Cloud Monitoring log-based metrics and alerting policies to track HTTP 500 status code errors across downstream Knowledge Base endpoints, and increase the API execution timeout threshold within the CX Agent Studio global connector settings.",
+      "C": "Implement a custom before_model_callback Python function to intercept the conversation call, programmatically analyze the current agent behavior and conversational state to test for missing logic pieces, and dynamically inject hardcoded corrective instructions into the session variables before each model turn.",
+      "D": "Export the conversation logs to BigQuery, run SQL queries to calculate overall session latency and token consumption, and decrease the Gemini model’s temperature setting in CX Agent Studio to 0.0."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-38",
+    "question": "You are evaluating a multitool customer support agent built with Agent Development Kit (ADK) against a curated golden dataset of complex, multiturn user queries. During initial testing, the agent often returns plausible final answers but skips intermediate knowledge retrieval steps or produces responses unsupported by retrieved context, leading to ungrounded claims in production. You need to systematically isolate retrieval quality failures from response generation errors while preventing regressions in tool sequence trajectory accuracy.\n\nWhat should you do?",
+    "explanation": "Assess retrieved-document relevance and coverage separately from whether the answer is supported by that context. Add trajectory metrics for skipped or reordered tools. Capture reference documents, retrieved context and tool events in the evaluation dataset. ([Evaluation metrics](https://docs.cloud.google.com/gemini-enterprise-agent-platform/optimize/evaluation/manage-metrics))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure supervised fine-tuning using the golden dataset as training pairs to enforce deterministic tool call parameters and eliminate ungrounded response generation. Execute a gen AI evaluation service EvalTask.",
+      "B": "Deploy a Cloud Monitoring dashboard linked to Cloud Logging telemetry to alert on low vector similarity scores from Agent Search retrieval calls. Execute a gen AI evaluation service EvalTask.",
+      "C": "Evaluate the golden dataset with retrieval precision/recall against reference documents, response groundedness against retrieved context, and tool-trajectory sequence metrics; configure custom metrics where the selected evaluation tooling requires them.",
+      "D": "Implement Agent Designer guardrails with mandatory retrieval filters to automatically drop agent responses that do not achieve high lexical similarity to reference documents. Add a human-in-the-loop approval workflow."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-39",
+    "question": "You are preparing to deploy an enterprise technical troubleshooting agent built with Agent Development Kit (ADK). Your company’s QA team has compiled 500 representative customer support test cases paired with authoritative reference documents and expected answer trajectories. You need to establish a continuous integration testing process to measure document retrieval precision and answer faithfulness before releasing software updates.\n\nWhich evaluation strategy should you configure for the pipeline, using supported or custom metrics as appropriate for the selected ADK/CLI version?",
+    "explanation": "Retrieval precision/recall assess relevant-document selection and coverage; a separate grounding assessment checks answer support. Preserve both reference documents and retrieved evidence, and implement compatible custom metrics where needed. ([Evaluation metrics](https://docs.cloud.google.com/gemini-enterprise-agent-platform/optimize/evaluation/manage-metrics))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Implement a scoring script that computes raw cosine similarity between embedding vectors of agent responses and reference answers.",
+      "B": "Measure task trajectory completion rates and exact-match tool call argument accuracy against baseline test logs.",
+      "C": "Measure context precision and recall against reference documents, and separately assess whether generated answers are grounded in the retrieved evidence.",
+      "D": "Assess model response trajectories using semantic BLEU and ROUGE n-gram overlap scoring against reference answers."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-40",
+    "question": "You are implementing a continuous evaluation pipeline for an agent built with Agent Development Kit (ADK) that invokes multiple external API tools. During evaluation runs, the agent often selects the wrong tools or executes them in the wrong order, causing errors in multistep workflows. You need to establish automated evaluation gates in your CI/CD pipeline to improve execution reliability before promoting model or prompt changes to production.\n\nWhat should you do?",
+    "explanation": "The Gen AI evaluation service provides trajectory metrics that compare an agent’s tool calls with expected reference trajectories. Exact-match and in-order metrics can detect incorrect tool selection or sequencing, allowing CI/CD gates to block changes that fail the required evaluation thresholds before production promotion. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/evaluation-agents))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure Agent Gateway policies with Model Armor templates to inspect function-calling payloads at runtime trajectories and automatically trigger fallback routes when unexpected tool call arguments are detected.",
+      "B": "Configure continuous evaluation runs in the CI/CD pipeline using the gen AI evaluation service configured with trajectory metrics to evaluate the agent’s tool call sequence against golden datasets.",
+      "C": "Configure Agent Platform Memory Bank session persistence and Agent Registry governance rules to replay historical user session trajectory and automatically downgrade agent revisions when tool call errors occur.",
+      "D": "Configure automated presubmit tests in Cloud Build using the gen AI evaluation service configured with response-level metrics to score the final text generated by the agent."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-41",
+    "question": "You are developing an autonomous agent flow deployed on Gemini Enterprise Agent Platform that executes function calling tools against backend cloud APIs. Changes to the API schemas have caused intermittent tool execution failures, leading the agent to generate invalid parameter payloads. You need to improve your diagnostics, identify regressions, and establish quality metrics to benchmark full user interactions.\n\nWhat should you do?",
+    "explanation": "The Gen AI evaluation service can compare an agent’s tool-call trajectory with a reference trajectory and produce per-interaction and aggregate metrics. Repeated evaluations can reveal regressions, while recorded experiment results provide a basis for comparison. For the invalid-parameter issue, tool-use quality or custom schema-validation metrics can supplement trajectory metrics; matching tool sequences alone does not guarantee valid arguments. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/evaluation-agents))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure a continuous evaluation pipeline using the gen AI evaluation service to compare tool call histories against reference trajectories using trajectory metrics, and log the results in Experiments on Agent Platform.",
+      "B": "Create custom Cloud Logging log metrics to extract function calling HTTP 400 error codes from production agent trace logs, route the metrics to BigQuery, and trigger Cloud Monitoring alert policies when tool execution failure rates cross established thresholds.",
+      "C": "Build an automated evaluation workflow using the gen AI evaluation service to evaluate the agent’s final text responses using pointwise LLM-as-a-judge and ROUGE-L similarity metrics against ground-truth response datasets.",
+      "D": "Deploy a Model Armor security template on the agent runtime to validate tool schema compliance, inspect request payloads for malformed JSON parameters, and sanitize invalid function arguments before API invocation."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-42",
+    "question": "You are deploying a custom AI assistant written in Python with Agent Development Kit (ADK). You want to maximize developer velocity by deploying the agent code with minimal infrastructure plumbing, while ensuring that the agent has built-in, out-of-the-box access to manage conversational session history and memory persistence.\n\nHow should you deploy the agent?",
+    "explanation": "Agent Runtime provides managed hosting for ADK agents, minimizing infrastructure work. Its `AdkApp` template uses managed sessions and Memory Bank by default after deployment, providing access to conversational history and long-term memory. The agent must still use the relevant memory operations or tools to generate and retrieve memories. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/runtime/create-an-adk-agent))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Deploy the agent to Agent Runtime with Agent Platform Sessions and Agent Platform Memory Bank.",
+      "B": "Deploy the agent as a containerized workload on Cloud Run. Configure an external BigQuery table to log and retrieve session messages.",
+      "C": "Package the agent logic into a standard container. Deploy the container to Google Kubernetes Engine (GKE) with Agent Platform Sessions and Agent Platform Memory Bank.",
+      "D": "Deploy the agent on Cloud Run. Attach a Bigtable instance to manage conversational state and session history."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-43",
+    "question": "You are designing an enterprise agentic system in Google Cloud. The workload includes two distinct microservices: a stateful orchestrator that manages multistep reasoning workflows with asynchronous tool execution loops and agent-level security boundaries, and a stateless transformation service that handles unpredictable, bursty data processing workloads. You need to deploy these services using managed Google Cloud runtimes while minimizing operational management overhead and infrastructure cost.\n\nWhat should you do?",
+    "explanation": "Agent Runtime is a fully managed runtime for agentic applications, with managed session and security capabilities suited to the stateful orchestrator. ([docs.cloud.google.com](https://docs.cloud.google.com/architecture/choose-agentic-ai-architecture-components)) Cloud Run is a fully managed platform for stateless services that automatically scales with demand and can scale to zero. Its request-based billing is recommended for bursty traffic, making it well suited to the transformation service. ([docs.cloud.google.com](https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Deploy the orchestrator service on Agent Runtime, and host the transformation service in a Code Execution sandbox.",
+      "B": "Deploy the orchestrator and the transformation service on Agent Runtime as unified agent capability endpoints.",
+      "C": "Deploy the orchestrator on Agent Runtime for managed workflow lifecycles, and deploy the transformation service on Cloud Run.",
+      "D": "Deploy the transformation service on Agent Runtime, and host the orchestrator on Google Kubernetes Engine (GKE) Autopilot clusters."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-44",
+    "question": "You are designing an enterprise agent system to process sensitive financial records. The traffic consists of high-volume, high-token classification tasks. The bank permits processing in its approved private Google Cloud environment and authorizes selected complex requests to an approved enterprise model API. You need to reduce managed-model request volume and evaluate operational cost for this workload.\n\nWhat should you do?",
+    "explanation": "A small language model can handle routine classification with less compute than a larger model, while routing only complex reasoning to a managed LLM reduces the volume of managed-model requests. A private GKE deployment and appropriate perimeter controls help protect sensitive records. Actual cost savings depend on utilization and infrastructure costs, and a private Google Cloud perimeter is not automatically the bank's on-premises network. ([docs.cloud.google.com](https://docs.cloud.google.com/kubernetes-engine/docs/best-practices/machine-learning/inference))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Deploy an open-weight small language model (SLM) on Cloud Run functions with public HTTPS endpoints. Forward unparsed financial payloads to Gemini using LLM Gateway.",
+      "B": "Provision dedicated Google Kubernetes Engine (GKE) GPU nodes to host an open-source LLM that processes all agent subtasks within the VPC.",
+      "C": "Configure Agent Platform Provisioned Throughput on a managed Gemini model to handle both routine high-volume subtasks and complex agent reasoning under a fixed monthly quota.",
+      "D": "Deploy an open-weight small language model (SLM) on Google Kubernetes Engine (GKE) in a private Google Cloud perimeter for routine subtasks. Dynamically route complex reasoning steps to a managed enterprise LLM API."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-45",
+    "question": "You are designing research AI infrastructure for a university computing facility that supports two distinct academic workloads:\n\n- A high-volume, 24/7 data extraction pipeline handling sensitive student records that are subject to strict data residency rules.\n\n- An intermittent, complex research workload requiring advanced multimodal reasoning over large context windows, with unpredictable usage spikes.\n\nYou need to minimize total operational expenditure and meet data governance requirements while satisfying the latency and capability needs of both workloads.\n\nWhat should you do?",
+    "explanation": "A Gemma deployment on GKE can keep the continuously used extraction infrastructure under the university’s control and potentially achieve high utilization. The cluster, storage, and data flows must be configured in locations that meet the residency rules; a private VPC alone does not establish residency. Managed Gemini provides multimodal and long-context capabilities without maintaining dedicated GPUs for an intermittent workload. Actual costs and latency should be validated against workload volume and service capacity. ([docs.cloud.google.com](https://docs.cloud.google.com/kubernetes-engine/docs/how-to/machine-learning/inference/inference-quickstart))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure the managed Gemini API on Agent Platform for both workloads, enforcing VPC Service Controls and zero data retention to process all extraction and research requests.",
+      "B": "Deploy a suitable Gemma model on private GKE infrastructure with storage and processing restricted to approved locations for the continuous extraction pipeline; use a compatible managed Gemini deployment in an approved location for the intermittent multimodal workload.",
+      "C": "Use the managed Gemini API on Agent Platform for the 24/7 data extraction pipeline, and deploy an open-weight Gemma model on dedicated Google Kubernetes Engine (GKE) GPU nodes for the intermittent multimodal research workload.",
+      "D": "Deploy open-weight Gemma models on self-hosted Compute Engine GPU instances using Dynamic Workload Scheduler for both the 24/7 data extraction pipeline and the intermittent multimodal research workload."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-46",
+    "question": "You manage an agent built with Agent Development Kit (ADK) that has six tools. You discover that the agent’s 95th percentile response time has doubled over the last 7 days. Dashboards show the increased time but not its source. One of the six tools calls an internal pricing service maintained by another team in your organization. The service reports its own internal timings to the same observability backend, preserving the caller’s request context.\n\nYou need to identify the step responsible for the added time, including any work performed inside the pricing service.\n\nWhat should you do?",
+    "explanation": "A Cloud Trace span waterfall shows the timing and hierarchy of operations across a distributed request. Because the pricing service preserves the caller’s request context, its reported spans can be linked to the agent’s trace, making it possible to inspect work inside the service as well as the tool call. Tool-duration metrics alone do not provide that internal breakdown. ([docs.cloud.google.com](https://docs.cloud.google.com/trace/docs/trace-context))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Correlate the agent and pricing service logs in Cloud Logging by trace identifier.",
+      "B": "Compare the gen_ai.tool.execution.duration metric for the tools in Cloud Monitoring.",
+      "C": "Read the agent’s OpenTelemetry traces in Cloud Trace as a span waterfall.",
+      "D": "Enable Cloud Profiler for the agent service."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-47",
+    "question": "You have deployed a custom, multistep financial agent on Cloud Run. The agent queries a Vector Search index, calls an external stock market API, and uses a Gemini LLM to synthesize an answer, in that order. In production, you find that responses have intermittent latency spikes. You need to identify which step in the agent’s execution workflow is causing the bottleneck.\n\nWhat should you do?",
+    "explanation": "OpenTelemetry traces can capture individual spans for the Vector Search query, external API call, and Gemini interaction. Comparing their durations in Cloud Trace for slow requests identifies which operation contributes to the latency spikes. An overall average request latency cannot isolate the responsible step. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/runtime/tracing))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Instrument the ADK agent with OpenTelemetry to export distributed traces to Cloud Trace, and analyze the individual trace spans.",
+      "B": "Query Cloud Logging for the Cloud Run service, and aggregate the httpRequest.latency field to calculate the average response time of the agent.",
+      "C": "Configure the gen AI evaluation service to execute a batch latency test against a golden dataset to find the slowest prompt.",
+      "D": "Enable Model Monitoring on the deployed agent to track prediction latency anomalies and feature drift across the LLM."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-48",
+    "question": "You are assessing a multitool customer support agent. In CI/CD, you find that changes in live API data cause unpredictable test failures, making it difficult to detect regressions in reasoning trajectories or tool selection. You need to improve evaluation reliability in CI/CD and accurately validate the agent’s behavior independently of shifts in live backend data.\n\nWhat should you do?",
+    "explanation": "Mock tool cassettes replay fixed API responses, reducing failures caused by changes in live backend data. Trajectory metrics compare the agent’s tool calls with a reference trajectory, helping detect regressions in tool selection and call order. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/evaluation-agents))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Create mock tool cassettes to replay recorded API responses during test execution. Evaluate the agent’s multistep tool call sequence using trajectory metrics in the gen AI evaluation service.",
+      "B": "Deploy a fine-tuned Gemini model to simulate external API responses at runtime, and evaluate agent responses against live production endpoints using exact string matching.",
+      "C": "Fetch real-time API responses into BigQuery before each test run, and dynamically update expected ground-truth answers in the golden dataset.",
+      "D": "Configure exponential backoff retry policies, and increase timeout thresholds for live API calls during dataset evaluation runs in the gen AI evaluation service."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-49",
+    "question": "You are designing a continuous evaluation pipeline for an autonomous agent deployed on Agent Runtime. The agent uses multiple valid, non-linear sequences of function calls to resolve user requests rather than hardcoded golden trajectories. You want to continuously assess the semantic validity of tool selection and parameter generation without using hardcoded reference files.\n\nWhat should you do?",
+    "explanation": "The managed `types.RubricMetric.TOOL_USE_QUALITY` metric uses adaptive rubrics to evaluate whether an agent selects appropriate tools and uses their parameters correctly. It accepts the prompt, agent instructions, tool declarations, and intermediate events without requiring a hardcoded reference trajectory, allowing valid alternative call sequences to be assessed. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/rubric-metric-details))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure the pipeline to use custom function metrics in the gen AI evaluation service.",
+      "B": "Configure the pipeline to use the managed types.RubricMetric.TOOL_USE_QUALITY metric in the gen AI evaluation service.",
+      "C": "Configure the pipeline to use the managed types.RubricMetric.FINAL_RESPONSE_QUALITY metric in the gen AI evaluation service.",
+      "D": "Export the agent’s intermediate tool calls to BigQuery, generate vector embeddings using the ML.GENERATE_EMBEDDING function, and execute the VECTOR_SEARCH command."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-50",
+    "question": "You maintain a production customer support agent for an ecommerce company, built using Agent Development Kit (ADK) and deployed to Agent Runtime. The agent coordinates tools to look up customer accounts, verify order statuses, and check warehouse inventory. You observe that intermittent requests take much longer than expected to return an answer. You need to identify the root cause of the increased latency using Google-recommended best practices.\n\nWhat should you do?",
+    "explanation": "Cloud Trace shows a timeline of operations for each agent request. Examining the spans for tool executions and model interactions in slow requests can reveal which operation is contributing to the latency. This per-request breakdown is particularly useful when the delays are intermittent. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/runtime/tracing))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Enable distributed trace header propagation on Agent Gateway, and analyze upstream proxy latencies and client connection durations.",
+      "B": "Filter Cloud Trace by request latency, and inspect the breakdown of child spans for tool executions and model generation steps.",
+      "C": "Configure OpenTelemetry metric in the agent to export latency percentiles for individual tools to Cloud Monitoring.",
+      "D": "Export structured agent logs to BigQuery, and query the elapsed timestamps between tool invocation start and finish events."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-51",
+    "question": "You are developing an automated evaluation benchmark suite for a multiturn enterprise support agent that interacts with dynamic backend tools. In your current CI/CD pipeline, static golden datasets frequently produce failure signals because live backend dependencies return state that changes over time, while the current evaluation prompts do not assess tool-trajectory correctness, ambiguous user inputs, or API fault conditions. You need to ensure evaluation fidelity, ambiguity handling, and environment resilience.\n\nWhat should you do?",
+    "explanation": "Simulated tool responses decouple benchmark runs from changing backend state, making results more repeatable. Evaluation cases can cover ambiguous requests and simulated API errors, while trajectory metrics check the agent’s tool calls as well as its final responses. Those cases and metrics must be explicitly configured; mocking alone does not provide that coverage. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/optimize/evaluation/agent-evaluation))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Use static simulated tool responses to decouple evaluation from dynamic backend state changes, and construct test sets in the gen AI evaluation service.",
+      "B": "Run trigger-based CI/CD pipelines, and trigger Cloud Monitoring alerts when LLM-as-a-judge response evaluation metrics fall below baseline thresholds during live tool calls.",
+      "C": "Replace the trigger-based CI/CD evaluation pipeline with an online LLM-as-a-judge mechanism that evaluates the live agent’s trajectory and outputs in production using continuous monitoring.",
+      "D": "Deploy automated human-in-the-loop review tasks using Agent Designer to evaluate expected outputs when backend API dependencies return variable tool states."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-52",
+    "question": "You manage a support agent that uses RAG to answer questions based on a document corpus in RAG Engine. Each query retrieves the top 50 chunks. While reviewing a set of failing questions, you determine that the chunk containing the answer is among the 50 returned but is ranked near the bottom, and the agent answers from a higher-ranked chunk instead.\n\nYou want to improve the answering chunk’s relevance ranking without re-indexing the corpus. The retrieval step has 200 milliseconds of headroom.\n\nWhat should you do?",
+    "explanation": "The Agent Platform ranking API reranks retrieved chunks by their relevance to the query, so it can promote an answer-bearing chunk without re-indexing the corpus. Google describes the reranker as having latency of less than 100 milliseconds, making it suitable for the available 200-millisecond headroom. Reranking improves relevance but does not guarantee that the correct chunk will always rank first. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/retrieval-and-ranking))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Update the RAG Engine deployment configuration from the Spanner mode Basic tier to the Scaled tier.",
+      "B": "Add the Agent Platform ranking API as the Agent Search reranker to reorder the chunks.",
+      "C": "Set a vector_distance_threshold on the RAG Engine retrieval configuration to return more relevant chunks.",
+      "D": "Add a reranker that calls a Gemini model to score each retrieved chunk, and reorder the chunks based on the user’s input."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-53",
+    "question": "You are evaluating a policy question-answering agent with an Agent Development Kit (ADK) eval set. Each case stores one reference answer, and the ADK eval suite scores responses using the ADK `response_match_score` criterion. Reviewers have been asked to evaluate the agent’s responses and identify acceptable responses that cite the policy section and provide any exception applicable to the prompt. However, reviewers cannot agree on which answer to store because several substantially different answers are acceptable.\n\nYou want ADK evaluations to score responses against those two explicit semantic criteria instead of similarity to a single reference answer, with judge verdicts validated by reviewers.\n\nWhat should you do?",
+    "explanation": "Define rubrics for citing the policy section and providing any applicable exception, and use `rubric_based_final_response_quality_v1` to evaluate responses against them without relying on one reference answer. Set the combined-score threshold to 1.0 to require both rubrics to pass. The criterion uses an LLM judge, so its verdicts are not guaranteed to be error-free. ([github.com](https://github.com/google/adk-docs/blob/main/docs/evaluate/criteria.md))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Store several reference answers in each ADK eval case.",
+      "B": "Lower the response_match_score threshold that the ADK eval set requires to pass.",
+      "C": "Score the cases using the ADK final_response_match_v2 criterion against the stored reference answer.",
+      "D": "Define evaluation rubrics, and score the responses using the ADK rubric_based_final_response_quality_v1 criterion."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-54",
+    "question": "You are building a custom customer service agent and have compiled a golden dataset of historical user questions, reference documents, ideal answers and captured retrieval/tool traces. Before deploying the agent, you need to programmatically evaluate both the relevance of retrieved documents and the groundedness of the agent’s generated responses. You want to minimize custom evaluation code.\n\nWhat should you do?",
+    "explanation": "ADK evaluation tooling can run the agent against a golden dataset and use LLM-based autoraters to assess its behavior before deployment. Configured criteria can assess retrieved-document relevance, while grounding or hallucination metrics can check whether responses are supported by retrieved context. The evaluation must capture that context or the relevant tool traces; ideal answers alone are not sufficient. BLEU and ROUGE measure textual overlap rather than these RAG-specific properties. ([google.github.io](https://google.github.io/agents-cli/guide/evaluation/))",
+    "topic": "Evaluating and deploying agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Deploy the agent to Agent Runtime, run the agent against the golden dataset, and review the metrics using Google Cloud Observability.",
+      "B": "Run ADK evaluation tooling with compatible custom rubrics/autoraters that inspect retrieved context and generated answers against the reference evidence.",
+      "C": "Configure a continuous evaluation pipeline using the Agent Search ranking API to compare the semantic similarity between the agent’s generated response and the golden dataset’s ideal answer.",
+      "D": "Run a batch evaluation job against the agent using the golden dataset to calculate BLEU and ROUGE scores for the generated responses."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-55",
+    "question": "You are prototyping human-in-the-loop controls for a TypeScript ADK agent. Sensitive tool calls must be intercepted before execution, and an authenticated reviewer must approve the exact pending call through a trusted UI. The evaluation keeps the same live runner/session available while waiting; restart durability is outside this prototype. Which documented policy-based pattern should you use?",
+    "explanation": "The TypeScript SecurityPlugin consults a policy engine and requests confirmation before sensitive tool execution. The application must authenticate the approver and bind the response to the pending call. This prototype does not assume managed-session or restart persistence. ([ADK policy pattern](https://github.com/google/adk-docs/blob/main/docs/workflows/patterns.md))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Attach SecurityPlugin with a BasePolicyEngine that returns PolicyOutcome.CONFIRM, keep the live runner/session available, and return the authenticated reviewer’s decision through the matching confirmation FunctionResponse.",
+      "B": "Configure Agent Gateway using GatewayPolicyInterceptor to intercept tool payloads, log execution traces using CloudLoggingService, and allow the agent model to parse user natural language confirmation responses from the chat stream.",
+      "C": "Configure event notifications using PubSubEventBridge, persist pending execution state using a custom GcsStateStore, and deploy a Cloud Run function that evaluates user approvals using an LLM classification prompt to update the confirmation flag.",
+      "D": "Configure Model Armor security templates using FilterConfig to detect sensitive tool requests, pause agent containers using ContainerLifecycleManager, and resume execution when a user submits a natural language approval prompt."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-56",
+    "question": "A managed credential integration already obtains and refreshes short-lived Google OAuth access tokens for the authorized calling principal. Your agent must call a data agent through the Conversational Analytics API in another project. Which HTTP authentication header and baseline data-agent role should the integration use? Additional source-data permissions are handled separately.",
+    "explanation": "Use Authorization: Bearer with the short-lived Google OAuth access token. The dataAgentUser role supports chatting with the target data agent; underlying source access still needs its own permissions. Header formatting alone is not a credential-refresh implementation. ([Conversational Analytics authentication](https://docs.cloud.google.com/gemini/data-agents/conversational-analytics-api/build-agent-http))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "- Generate a long-lived service account key in the downstream project, and pass the service account key JSON in the request payload. 2. Grant the service account the roles/geminidataanalytics.dataAgentCreator IAM role hosting the Conversational Analytics API.",
+      "B": "- Configure the tool execution calls to pass an OIDC Identity Token in a custom X-Goog-IAP-JWT-Assertion header. 2. Grant the calling principal the roles/geminidataanalytics.dataAgentViewer IAM role on the downstream project hosting the Conversational Analytics API.",
+      "C": "- Configure the tool execution calls to pass a standard Google OAuth 2.0 bearer token in the HTTP Authorization header. 2. Grant the calling principal the roles/geminidataanalytics.dataAgentUser IAM role on the downstream project hosting the Conversational Analytics API.",
+      "D": "- Implement tool execution calls to pass a signed OAuth 2.0 refresh token as an HTTP query parameter. 2. Grant the calling principal the roles/geminidataanalytics.queryDataUser IAM role on the downstream project hosting the Conversational Analytics API."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-57",
+    "question": "You are deploying an autonomous coding agent on Google Kubernetes Engine (GKE) to run user-requested Python scripts. To isolate untrusted code execution, you enabled GKE Agent Sandbox with gVisor to intercept container system calls in user space. During a security audit, you find that an untrusted Python script generated by a prompt injection attack successfully fetched IAM identity tokens by sending an HTTP request to the link-local instance metadata server at 169.254.169.254.\n\nYou need to prevent sandboxed code from exfiltrating metadata tokens while maintaining container kernel isolation.\n\nWhat should you do?",
+    "explanation": "An egress NetworkPolicy can prevent the sandbox Pod from initiating requests to the metadata server while gVisor continues to provide kernel isolation. Configure the policy so that no applicable egress rule permits metadata access; the effective metadata address depends on the GKE dataplane. ([docs.cloud.google.com](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/sandbox-pods))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Apply domain restrictions to the sandbox Pod.",
+      "B": "Apply an enforced egress NetworkPolicy allowlist to the sandbox Pod that excludes the observed metadata endpoint and other unapproved metadata paths; retain gVisor kernel isolation.",
+      "C": "Apply a Kubernetes NetworkPolicy to the sandbox Pod that blocks ingress traffic to 169.254.169.254.",
+      "D": "Reconfigure the gVisor Sentry process to disable the execve system call for child Python processes."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-58",
+    "question": "You are designing an enterprise multiagent procurement system in Google Cloud. An orchestrator agent processes vendor purchase orders, retrieves contract terms, and invokes downstream tools. Vendor document text reaches the gateway through supported tool-response payloads. Your organization requires inspection to reduce prompt-injection risk, and high-risk financial actions must receive explicit compliance officer authorization before execution.\n\nHow should you meet these requirements?",
+    "explanation": "Model Armor security templates on Agent Gateway can inspect supported agent and tool traffic for prompt injection, including malicious instructions in retrieved content. Human-in-the-loop approval controls can pause high-risk financial tool calls until a compliance officer authorizes them, before execution. ([docs.cloud.google.com](https://docs.cloud.google.com/architecture/multiagent-ai-system))\n\nGateway integration does not screen document or file uploads such as PDFs directly; those require direct Model Armor document screening. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/configure-model-armor))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure Model Armor baseline harm category filters in Model Garden, and implement prompt rules directing the model to ignore embedded commands.",
+      "B": "Configure Model Armor post-execution log sink filters in Cloud Logging, and implement a Cloud Run functions webhook to notify compliance officers after transaction completion.",
+      "C": "Configure Model Armor security templates on downstream tool invocation outputs, and implement an asynchronous Workflows execution logic with a human-approval step using a persistent database.",
+      "D": "Configure Model Armor security templates at Agent Gateway for dynamic payload inspection, and implement human-in-the-loop approval policies on tools."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-59",
+    "question": "You are designing a secure, multiagent framework on Gemini Enterprise Agent Platform. An administrative assistant agent needs access to internal corporate wikis and external communication APIs to synthesize daily updates and draft emails.\n\nYou need to establish a security architecture integrated with Agent Gateway to protect against indirect prompt injections and data exfiltration. You want the framework to scan user input prompts and retrieved message content in real time, while enforcing an explicit authorization boundary for critical, state-modifying operations.\n\nWhat should you do?",
+    "explanation": "Model Armor templates integrated with Agent Gateway can screen user prompts and supported tool requests and responses for prompt injection and sensitive data leakage. A human-in-the-loop checkpoint can require explicit approval before a critical state-modifying API operation proceeds. Screening depends on the payload types supported by the gateway integration. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/configure-model-armor))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure Model Armor templates to scan ingress prompts and egress responses, and implement human-in-the-loop approval policies for mutating API execution flows.",
+      "B": "Configure Model Armor to perform network-level packet filtering and IP address blocking at the Agent Gateway ingress subnet, and schedule daily offline Model Armor batch jobs to sanitize prompt histories stored in backend databases.",
+      "C": "Create VPC Service Controls perimeter configurations around the Agent Gateway, and apply IAM Conditions to restrict backend API access permissions based on temporal context.",
+      "D": "Configure Model Armor templates on the Agent Gateway to scan ingress prompts only, and assign resource-level IAM roles to authorize downstream API tool executions."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-60",
+    "question": "You are building a customer support agent. To meet corporate governance policies, you must apply centrally enforced screening/redaction of configured PII types before supported responses reach users, and validate the detector’s coverage. You want to enforce these guardrails without changing the agent’s core app code.\n\nHow should you configure this governance?",
+    "explanation": "Model Armor can use Sensitive Data Protection to detect configured types of sensitive information in agent responses. Applied through Agent Gateway with enforcement enabled, it can block or redact detected violations without adding filtering logic to the agent’s core code. For redaction, configure advanced Sensitive Data Protection settings with a de-identification template and use `INSPECT_AND_BLOCK`. Detection is not a guarantee that every possible PII instance will be identified. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/configure-model-armor))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure an Agent Gateway routing rule to intercept traffic and route the traffic through a custom Cloud Run webhook that performs regex string matching for PII.",
+      "B": "Deploy the agent within a VPC Service Controls perimeter, and configure an egress rule that drops HTTP responses containing PII payloads.",
+      "C": "Configure a Model Armor template with advanced Sensitive Data Protection settings and a de-identification template, and enforce it through Agent Gateway using INSPECT_AND_BLOCK.",
+      "D": "Update the agent’s system prompt with strict negative instructions forbidding the generation of PII."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-61",
+    "question": "You are designing the enterprise governance and observability layer for a distributed multiagent deployment in Google Cloud. You want autonomous subagents to communicate across microservices and external capability servers using agentic communication protocols. You need a solution that meets the following compliance controls:\n\n- Provide unified visibility to catalog active agent instances.\n\n- Capture protocol interaction payloads for compliance auditing.\n\n- Monitor interagent communication traffic without requiring code modifications to individual agent services.\n\nHow should you design the solution?",
+    "explanation": "Gateway request metadata alone does not meet a full-body audit requirement. Use the documented service-extension integration for supported request/response body capture and validate redaction, access and retention separately. ([Apigee extension for Agent Gateway](https://docs.cloud.google.com/apigee/docs/api-platform/service-extensions/extension-processor-agent-gateway))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Use Agent Gateway with Agent Registry for centralized discovery and traffic governance, and configure a supported Apigee service extension/body-logging integration for the required audited payloads with appropriate redaction and access controls.",
+      "B": "Deploy Agent Gateway as an egress-only web proxy to inspect outbound internet endpoints and validate external domain service queries.",
+      "C": "Deploy Apigee API Gateway with message logging policies to manage agent endpoints and capture outbound API payload traffic.",
+      "D": "Configure Cloud Service Mesh with egress-only L7 policies to inspect outbound internet endpoints and validate external domain service queries for authorized agent traffic."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-62",
+    "question": "You are deploying an enterprise conversational agent in Google Cloud that connects to sensitive human resources (HR) databases. Your organization’s compliance policy requires all user queries and model completions to be filtered in real time to prevent prompt injection attacks, block harmful content, and sanitize personally identifiable information (PII) before responses reach the user interface. You need to implement a managed security enforcement layer that meets these requirements with minimal latency.\n\nWhat should you do?",
+    "explanation": "Agent Gateway can centrally apply Model Armor filters to supported client requests and agent responses, blocking prompt injection and harmful content. Advanced Sensitive Data Protection settings link inspection and de-identification templates to sanitize matching PII. Configure the Model Armor template with INSPECT_AND_BLOCK enforcement: PII-only violations are redacted, while payloads that also violate other detectors are blocked. Gateway coverage depends on the traffic and methods supported by the integration. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/configure-model-armor))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Apply a Sensitive Data Protection de-identification template at the Agent Gateway, and filter for injection and harmful content using Model Armor’s input and output templates",
+      "B": "Enforce Model Armor filter templates with linked Sensitive Data Protection de-identification templates at the Agent Gateway for all agent traffic.",
+      "C": "Deploy a custom Llama Guard model on Model Garden behind the Agent Gateway, and add a Sensitive Data Protection inspection template for PII.",
+      "D": "Configure Model Armor filter templates with linked Sensitive Data Protection de-identification templates, and attach them to each agent’s runtime."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-63",
+    "question": "You are implementing an agent built with Agent Development Kit (ADK) and deployed in Google Kubernetes Engine (GKE). The agent automatically generates and runs Python data analysis scripts based on user-provided datasets. You want to ensure that the AI-generated code runs safely, preventing potentially malicious code from accessing the internet, exfiltrating data, or reading the host system’s environment variables.\n\nYou need to implement a deterministic, infrastructure-level boundary specifically for the code execution phase without breaking the agent’s primary reasoning loop.\n\nWhat should you do?",
+    "explanation": "A sandbox provides an infrastructure boundary for generated code while allowing the ADK agent to continue its reasoning loop and receive execution results. Configure the sandbox to deny internet egress and keep host environment variables and credentials inaccessible. Sandbox defaults must be checked: for example, Agent Sandbox on GKE allows public internet egress by default. ([google.github.io](https://google.github.io/adk-docs/tools/google-cloud/code-exec-agent-engine/))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Update the agent’s system prompt with explicit system instructions forbidding the LLM from generating code that imports external network libraries or reads local variables.",
+      "B": "Wrap the agent’s deployment in a VPC Service Controls perimeter, and configure an egress rule that drops all outbound internet traffic from the agent’s service account.",
+      "C": "Route generated scripts to a supported isolated execution sandbox configured without host credentials/environment mounts and with internet egress denied, while the primary agent receives only the execution results.",
+      "D": "Configure a Model Armor policy with a custom Sensitive Data Protection dictionary to scan and block any Python network or OS library imports in the agent’s generated code."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-64",
+    "question": "You are deploying an agent on Gemini Enterprise Agent Platform in Project-A, a dedicated runtime Google Cloud project. The agent needs to retrieve database API credentials from Secret Manager in Project-B, a centralized governance project, and query an Agent Search data store also hosted in Project-B. You are using Agent Identity to govern the agent’s permissions across projects. You need to grant the minimum required cross-project IAM access while following the principle of least privilege.\n\nWhat should you do?",
+    "explanation": "Grant the agent identity Secret Manager Secret Accessor on the specific secret containing the database API credentials, and Discovery Engine Viewer on the target data store. The former permits access to the secret payload; the latter includes search permission without granting editor access. ([docs.cloud.google.com](https://docs.cloud.google.com/secret-manager/docs/access-control))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Grant the roles/secretmanager.user IAM role to the agent’s identity at the Project-B project level.",
+      "B": "Grant roles/secretmanager.secretAccessor to the agent identity on the specific Secret Manager secret containing the database credentials in Project-B.",
+      "C": "Grant the roles/discoveryengine.editor IAM role to Project-A’s agent identity at the Project-B project level.",
+      "D": "Grant the roles/discoveryengine.viewer IAM role to the agent’s identity scoped to the target Agent Search data store resource in Project-B.",
+      "E": "Grant the roles/iam.serviceAccountTokenCreator IAM role to Project-B’s agent identity to allow cross-project impersonation."
+    },
+    "answer": [
+      "B",
+      "D"
+    ]
+  },
+  {
+    "id": "q-65",
+    "question": "You are designing an enterprise agentic platform that connects autonomous agents to internal managed databases, custom API endpoints, and third-party software-as-a-service (SaaS) integrations. Individual product teams build redundant integration adapters and connect to remote services, resulting in fragmented security boundaries and high maintenance overhead. You need to implement a unified architecture to standardize these integrations securely.\n\nWhat should you do?",
+    "explanation": "MCP servers provide reusable, standardized access to data and APIs. Agent Registry Service resources can register custom endpoints for centralized discovery and governance. IAM policies control access, while Model Armor floor settings provide complementary content screening—not authorization—for supported integrations. Automatic MCP floor-setting enforcement should not be assumed to cover every custom server. ([docs.cloud.google.com](https://docs.cloud.google.com/agent-registry/register-mcp-servers))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Deploy MCP servers for data and API access.Register API endpoints in Cloud API Gateway using OpenAPI specifications.Enforce VPC Service Controls perimeters.",
+      "B": "Deploy MCP servers hosted alongside each agent instance.Store the configuration manifests in Artifact Registry.Grant the Service Account User IAM role to the agent identities.",
+      "C": "Deploy MCP servers for each external service.Index the endpoints in Agent Search data stores for dynamic agent discovery.Manage tool access using the Restrict Resource Service Usage constraint.",
+      "D": "Expose data/API capabilities through MCP servers, register custom endpoints as Agent Registry Service resources, enforce authorization with IAM, and apply supported Model Armor screening separately."
+    },
+    "answer": [
+      "D"
+    ]
+  },
+  {
+    "id": "q-66",
+    "question": "A healthcare organization has separately reviewed its contractual and regulatory requirements. Its technical policy requires approved processing locations, restricted private connectivity, customer-managed encryption for all in-scope persisted resources and a model validated for tool calling. Which TWO deployment patterns could satisfy these technical controls when the selected services/model versions explicitly support them? Neither pattern alone certifies legal compliance.",
+    "explanation": "Both patterns require validation of the chosen model, service features, locations and every persisted-data path. PSC alone is not an air gap; private networking does not establish residency or encrypt every resource with a customer-managed key. ([Private access](https://docs.cloud.google.com/vpc/docs/private-access-options), [GKE CMEK](https://docs.cloud.google.com/kubernetes-engine/docs/how-to/using-cmek))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Self-host a fine-tuned open-weights model on Cloud Run using default private endpoints with IAM user authentication.",
+      "B": "Deploy a self-hosted LLM through a HTTP webhook using public internet routing and TLS 1.3 encryption.",
+      "C": "Use the private Gemini API with standard API keys and rely on client-side prompt obfuscation to anonymize patient health records.",
+      "D": "Choose a managed Gemini deployment documented to support the required private API connectivity, approved locations and customer-managed encryption for every in-scope resource, with access and data flows restricted accordingly.",
+      "E": "Self-host a verified tool-capable Gemma variant with vLLM on private GKE infrastructure in approved locations, configure the required CMEK-backed resources and explicitly restrict egress and data flows."
+    },
+    "answer": [
+      "D",
+      "E"
+    ]
+  },
+  {
+    "id": "q-67",
+    "question": "You are setting up a custom agent in Gemini Enterprise that uses a dedicated service account to query an Agent Search data store. During testing, grounded search queries fail with a 403 Permission Denied error indicating that the principal lacks the `discoveryengine.servingConfigs.search` permission on the data store resource. You need to fix this permission error while following the principle of least privilege.\n\nWhat should you do?",
+    "explanation": "The Discovery Engine Viewer role includes `discoveryengine.servingConfigs.search` and can be granted directly on a data store, limiting the grant to the resource the agent needs. It avoids the write or administrative access of broader roles; Cloud Storage object access does not provide the missing Discovery Engine permission. ([docs.cloud.google.com](https://docs.cloud.google.com/iam/docs/roles-permissions/discoveryengine))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Grant the roles/discoveryengine.editor IAM role to the agent’s service account on the Google Cloud project hosting the data store.",
+      "B": "Grant the roles/discoveryengine.agentspaceAdmin IAM role to the agent’s service account on the target Gemini Enterprise app.",
+      "C": "Grant the roles/discoveryengine.viewer IAM role to the agent’s service account on the data store resource.",
+      "D": "Grant the roles/storage.objectViewer IAM role to the agent’s service account on a Cloud Storage bucket containing the original source documents."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-68",
+    "question": "You are configuring a secure agent-to-tool API integration for a financial agent on Gemini Enterprise Agent Platform. The agent calls an internal payment processing microservice protected by OAuth 2.0.\n\nTo comply with strict enterprise security policy, you must ensure that:\n\n- OAuth client credentials used for service-to-service tool authentication are encrypted at rest and never hardcoded in tool definitions or repository source code.\n\n- Tool execution is strictly limited to the minimum required API permissions, so the agent cannot perform unauthorized administrative operations on the payment microservice.\n\nWhat should you do?",
+    "explanation": "Use a managed OAuth provider for client credentials and restrict/enforce the issued scopes. Provision credentials securely using the supported provider schema; a Secret Manager resource URI is not assumed to be an accepted client-secret field. ([2-legged OAuth](https://docs.cloud.google.com/iam/docs/auth-with-2lo-v2))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Grant the roles/owner IAM role on the payment microservice project to the agent’s identity.",
+      "B": "Configure only the OAuth scopes required by the payment tool, associate the auth provider with that tool, and ensure the authorization server and payment service enforce those scopes.",
+      "C": "Encode the OAuth client secret in Base64, and pass the secret in the tools.py environment variable map.",
+      "D": "Configure the tool definition to use OAUTH2_IMPLICIT_GRANT with wildcard scopes (*).",
+      "E": "Provision the OAuth client credentials securely into the Agent Identity auth manager’s managed 2-legged OAuth provider/vault, keeping them out of tool source and repository configuration."
+    },
+    "answer": [
+      "B",
+      "E"
+    ]
+  },
+  {
+    "id": "q-69",
+    "question": "You are configuring enterprise agents that must dynamically discover and invoke capabilities across managed databases, third-party SaaS tools, and Google Cloud services. Your architecture hosts custom MCP servers on Cloud Run alongside pre-built Google Cloud MCP servers. Your operations team requires a centralized catalog to govern access controls, register JSON tool specifications, and manage IAM identities across all remote HTTP transport endpoints.\n\nYou need to maximize operational efficiency and maintain strict governance by establishing a single point of discovery and access control for both native and custom agent capabilities.\n\nWhat should you do?",
+    "explanation": "Agent Registry provides a centralized catalog for MCP servers and their tools. Custom servers can be registered as Service resources with JSON tool specifications, while supported Google Cloud MCP servers are automatically registered when their APIs are enabled. ([docs.cloud.google.com](https://docs.cloud.google.com/agent-registry/register-mcp-servers))\n\nAccess to the actual endpoints must also be enforced through the appropriate authentication and authorization controls. For example, Cloud Run IAM can restrict invocation of a custom MCP server to authorized agent identities. ([docs.cloud.google.com](https://docs.cloud.google.com/run/docs/ai/authenticate-agents))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Register custom Cloud Run MCP servers as Service resources within Agent Registry, upload their JSON tool specifications, and enable built-in Google Cloud MCP servers to centralize agent capability discovery and IAM access governance.",
+      "B": "Store local client configuration files containing remote HTTP endpoints in Secret Manager, and mount them across agent execution environments to handle tool discovery and endpoint authentication.",
+      "C": "Deploy OpenAPI specifications for custom Cloud Run MCP servers using Cloud Endpoints, and register these endpoints in Service Directory to enable dynamic agent service discovery and endpoint-level IAM security.",
+      "D": "Configure custom MCP servers on Cloud Run, and grant granular IAM roles to extension service accounts to manage agent access controls within defined VPC Service Controls perimeters."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-70",
+    "question": "You are evaluating an ADK payment-tool prototype in a controlled environment. Calls above a threshold must pause for an authenticated officer’s approval before execution. The same live runner and supported in-memory session remain available while the decision is pending; crash recovery is not part of this evaluation. Which approach uses the native tool-confirmation flow with the least additional infrastructure?",
+    "explanation": "Native tool confirmation can pause a sensitive call and accept a matching FunctionResponse from the trusted application. Authenticate the approver separately. Current documentation lists DatabaseSessionService and VertexAiSessionService as unsupported, so do not infer durable managed-session support from this prototype. ([ADK confirmation](https://adk.dev/tools-custom/confirmation/))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure Cloud Tasks queues with rate limiting to delay tool calls, and execute Cloud Run functions to poll a database for approval status.",
+      "B": "Configure conditional ADK tool confirmation, present the pending call in a trusted approval UI, and return the authorized decision with the matching confirmation call ID while retaining the live session.",
+      "C": "Configure a Cloud Run function as an execution wrapper around all banking tools, and implement an approval tracking database.",
+      "D": "Configure Pub/Sub message topics to buffer transaction payloads, and deploy Cloud Run functions to process approval tokens."
+    },
+    "answer": [
+      "B"
+    ]
+  },
+  {
+    "id": "q-71",
+    "question": "You are deploying a custom Antigravity CLI plugin to enforce enterprise data loss prevention compliance across developer workstations. You must configure an event hook that intercepts tool calls immediately before file execution, automatically redacts sensitive API keys from generated code diffs in transit, and stops tool execution if sanitization fails.\n\nWhat should you do?",
+    "explanation": "A command PreToolUse hook receives the proposed toolCall and can return a gating decision plus overwrite arguments. Sanitization failure must produce deny; an unhandled process error must not be assumed to block. Inspect/Decide/Transform are not documented hook types. ([Antigravity hooks](https://antigravity.google/docs/hooks))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure a command PreToolUse hook whose wrapper validates/sanitizes proposed arguments and emits allow with overwrite only on success; emit deny on a handled sanitization failure, and verify timeout/crash handling is fail-closed.",
+      "B": "Define a Decide hook in a hooks.json file bound to the pre-tool execution event, and implement a handler function that evaluates policy rules and modifies sensitive text strings in-place.",
+      "C": "Define a postToolUse hook in a hooks.json file bound to the post-tool execution event, and implement an asynchronous handler function that cleans the modified file on disk after execution completes.",
+      "D": "Define a Transform hook in a hooks.json file bound to the pre-tool execution event, and implement a handler function that mutates the payload parameter stream before returning it to the execution context."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-72",
+    "question": "A dedicated agent identity needs a financial-data bucket in a dedicated approved project. Bucket-scoped IAM already grants only its required operations, and all other storage buckets are in other projects. You need an additional resource-eligibility boundary so a later broad allow role cannot enable access to those other projects, for permissions supported by the chosen enforcement version. What should you do?",
+    "explanation": "PABs restrict eligibility at supported Resource Manager scopes and do not grant access. Keep bucket IAM separate, verify supported permissions and account for the union of all applicable PABs. A project boundary does not distinguish buckets inside that project. ([PAB policies](https://docs.cloud.google.com/iam/docs/principal-access-boundary-policies))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Apply IAM Conditions to the agent identity’s IAM policy bindings, and restrict storage.objects.* permissions to resource names matching the designated financial bucket.",
+      "B": "Configure a VPC Service Controls perimeter around the storage project, and define an ingress policy that permits Cloud Storage API operations only when invoked by the specific agent identity principal.",
+      "C": "Bind a principal access boundary to the principal set containing the agent identity, allowing eligibility only for the approved project; retain the bucket-scoped IAM grant and ensure no other applicable PAB expands eligibility.",
+      "D": "Configure an IAM Deny policy on the organization node to block all service accounts from accessing the storage buckets."
+    },
+    "answer": [
+      "C"
+    ]
+  },
+  {
+    "id": "q-73",
+    "question": "An enterprise financial agent sends supported tool payloads through Agent Gateway. You need to screen these payloads for sensitive-data leakage before forwarding and centralize request status/latency telemetry. Token usage is captured separately at the model layer with an agent correlation ID. Which TWO configuration steps should you take?",
+    "explanation": "Use supported Model Armor screening and documented gateway logs; export logs through Cloud Logging sinks. Token accounting requires model-layer usage instrumentation and correlation, not an assumed route-level exporter. ([Gateway screening](https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/configure-model-armor))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Configure the Agent Gateway ingress route to disable TLS decryption.",
+      "B": "Enable documented gateway request logging/tracing, and configure a Cloud Logging sink to BigQuery for centralized analysis; correlate separately instrumented model usage by agent identity.",
+      "C": "Apply a supported Model Armor gateway template with Sensitive Data Protection inspection/de-identification settings and the required blocking/redaction enforcement mode.",
+      "D": "Deploy an in-container eviction hook in the third-party partner API server to push telemetry metrics back to Agent Gateway.",
+      "E": "Configure a VPC Service Controls perimeter around external third-party API private IP addresses to perform deep packet inspection and sanitization on egress HTTPS traffic."
+    },
+    "answer": [
+      "B",
+      "C"
+    ]
+  },
+  {
+    "id": "q-74",
+    "question": "You are designing a multiagent system on Google Cloud in which multiple autonomous agents deployed in Agent Runtime collaborate through a graph workflow and pass context along sequential task routes. You want to ensure that each agent operates with least-privilege access and that its specific actions can be traced independently.\n\nWhat should you do?",
+    "explanation": "Agent Runtime can provision a unique agent identity for each deployment. Granting each identity only the IAM permissions needed for its target resources supports least privilege, while logs can identify the agent responsible for an action. Agent Registry supports discovery of agents and their endpoints for agent-to-agent communication. ([docs.cloud.google.com](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/runtime/agent-identity))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Create a unique agent identity for each agent in Agent Runtime, register the agents in the Agent Registry, and grant the agent identity principal the necessary IAM roles for specific endpoints.",
+      "B": "Use Agent Development Kit (ADK) local session state using the ToolContext parameter to dynamically store and propagate user authorization credentials in memory.",
+      "C": "Configure a dedicated service account for each agent in Agent Runtime, grant least-privilege IAM roles to each service account for target resources, and use standard Cloud Audit Logs for auditability.",
+      "D": "Store API keys in Secret Manager, and enable agents to retrieve keys to authorize communications."
+    },
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "q-75",
+    "question": "You are designing authentication controls for an Agent Development Kit (ADK) agent on Gemini Enterprise Agent Platform. The agent queries internal BigQuery datasets and will soon expand to call external third-party APIs. You want to enable secure, granular outbound tool authentication without managing custom credential vaults or hardcoding secrets in backend code.\n\nWhat should you do?",
+    "explanation": "An agent’s SPIFFE-based identity can be granted IAM permissions to access BigQuery using its own authority. Agent Identity auth manager securely stores third-party credentials and integrates with ADK to retrieve credentials and inject authentication headers, avoiding custom vault management and hardcoded secrets. ([docs.cloud.google.com](https://docs.cloud.google.com/iam/docs/auth-agent-own-identity))",
+    "topic": "Securing and governing agentic workflows",
+    "type": "multiple_choice",
+    "options": {
+      "A": "Attach a service account to the ADK agent runtime for BigQuery access, and store third-party API keys in Secret Manager for backend code to retrieve during tool execution.",
+      "B": "Enable Identity-Aware Proxy (IAP) on the Agent Platform host to secure BigQuery access, and configure OAuth 2.0 client IDs to broker outbound tokens for external APIs.",
+      "C": "Assign IAM permissions for BigQuery to the agent’s Secure Production Identity Framework for Everyone (SPIFFE)-based agent identity, and store third-party credentials in Agent Identity auth manager to let ADK handle token retrieval and header injection.",
+      "D": "Configure Cloud Key Management Service (Cloud KMS) to encrypt third-party API credentials in backend configuration files, and grant the Cloud KMS Decrypter IAM role to the agent’s compute service account."
+    },
+    "answer": [
+      "C"
+    ]
+  }
+]
