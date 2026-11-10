@@ -52,6 +52,16 @@ export const quizzes = [
     code: 'ACE',
   },
   {
+    id: 'gcp-paa',
+    name: 'Professional Agentic Architect (PAA)',
+    file: 'quiz/Google/GCP_PAA.json',
+    category: 'Google Cloud',
+    difficulty: 'Professional',
+    totalQuestions: 75,
+    code: 'PAA',
+    aliases: ['GCP-PAA', 'GCP_PAA'],
+  },
+  {
     id: 'gcp-pca',
     name: 'Professional Cloud Architect (PCA)',
     file: 'quiz/Google/GCP-PCA.json',
