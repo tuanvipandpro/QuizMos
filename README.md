@@ -179,7 +179,7 @@ Before testing Google sign-in on the new origin, add `quizmos.runs-at.dev` to Fi
 
 ## Next setup increments
 
-- **Issue #42 rollout:** review the feature evidence, compare current published Rules/indexes with the preserved baseline, authorize and verify compatible Rules before merging/enabling the client, then smoke test production. The repository does not automatically deploy Firebase configuration.
+- **Issue #79 rollout follow-up:** the client from closed #42 is merged. A fresh Console review found only the original profile Rules and no questions index exemption published; [reconciliation and complete candidate](docs/m1-custom-quiz-rollout-79.md) distinguish this from local implementation. Authorize/verify compatible policy and designated-account persistence before calling rollout accepted. Firebase configuration is not automatically deployed.
 - Keep guide snapshots aligned through substantive content/mapping review; #78 tracks the reviewed four-guide publication and #96 the separate product-scope question follow-up.
 - Continue extracting App orchestration only around well-tested feature boundaries. Header extraction and stylesheet separation are the first step.
 - Add WebKit/real-device smoke coverage and selected visual baselines after the initial browser suite is stable.
