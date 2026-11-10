@@ -107,6 +107,15 @@ export const quizzes = [
     code: 'GH-300',
   },
   {
+    id: 'gh-600',
+    name: 'GitHub Certified: Agentic AI Developer (GH-600)',
+    file: 'quiz/Azure/GH-600_QuizMos.json',
+    category: 'Microsoft',
+    difficulty: 'Intermediate',
+    totalQuestions: 98,
+    code: 'GH-600',
+  },
+  {
     id: 'ab-100',
     name: 'Microsoft Agentic AI Business Solutions Architect Expert (AB-100)',
     file: 'quiz/Azure/AB-100.json',

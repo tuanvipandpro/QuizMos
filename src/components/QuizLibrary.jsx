@@ -92,6 +92,7 @@ export default function QuizLibrary({
         <span>{t('Find a certification')}</span>
         <Input
           ref={search}
+          aria-label={t('Find a certification')}
           size="large"
           prefix={<SearchOutlined aria-hidden="true" />}
           placeholder={t('Name, exam code or provider…')}
