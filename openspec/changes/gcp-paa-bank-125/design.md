@@ -34,3 +34,13 @@ CQ-PAA-03: catalog/provider/search and update/deep-link/guard tests; 320/360/390
 ## Migration Plan
 
 One data PR into work/release-m2-20261110, followed only by requested checked release/develop/production promotion. Keep #125 open until publication/public smoke. Rollback removes the new bank/catalog/update entry without rewriting other question IDs or deleting account data. No private-data migration is introduced.
+
+## Local acceptance results
+
+- CQ-PAA-01: three bank-specific unit tests and catalog/format/provenance checks pass. Catalog contains 22 unique banks; physical JSON count is 23 because the unchanged legacy ACE alias file is retained.
+- CQ-PAA-02/03: all 60 relevant desktop/phone E2E cases pass across gcpPaaBank (16), quizNotifications (18), accountWorkspace (18) and gh600Bank (8). Six app smoke cases also pass, including the updated 22-bank expectation and unchanged Google ACE alias.
+- yarn verify passes all 260 Node tests, lint/format, pinned UI skill check, strict SDD/catalog validation, production build and fixture isolation.
+- Geometry/keyboard/long-reference checks cover 320/360/390/412/768/1280 and 844x390, all VN/EN and theme combinations, reduced/default motion. Inspected rendered 320px VN/dark and 1280px EN/light long-reference screenshots. This is Chromium emulation, not physical Samsung verification.
+- Initial harness assumptions were corrected to the existing contract: a single chosen answer is a scalar at runtime, and active exams hide option letters. A physical-file count assertion was updated from 22 to 23 after confirming the added bank. No assertion timeout/retry/coverage was relaxed. A PowerShell smoke-filter invocation was retried with literal quoting; all six intended cases then passed.
+
+Disposable evidence stays under ignored artifacts/ (paa-regression, paa-smoke, verify-final.log). Hosted CI and delivery remain in #125/PR; no merge, production rollout, account write or live inference was performed.

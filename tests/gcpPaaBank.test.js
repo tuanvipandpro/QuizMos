@@ -64,3 +64,24 @@ test('PAA corrected premises do not teach unsupported security or medical guaran
   assert.match(q('q-73').options.C, /Model Armor/);
   assert.equal(review.corrections.length, 36);
 });
+import { findQuiz, FEATURED_QUIZ_IDS, PROVIDERS } from '../src/data/quizzes.js';
+import { quizUpdates } from '../src/data/quizUpdates.js';
+import { translate } from '../src/i18n/messages.js';
+
+test('PAA catalog and reviewed update use a canonical Google identity with localized discovery', () => {
+  const meta = findQuiz('gcp-paa');
+  assert.equal(meta.category, 'Google Cloud');
+  assert.equal(meta.code, 'PAA');
+  assert.equal(meta.name, 'Professional Agentic Architect (PAA)');
+  assert.equal(meta.totalQuestions, 75);
+  assert.deepEqual(meta.aliases, ['GCP-PAA', 'GCP_PAA']);
+  assert.equal(meta.file, 'quiz/Google/GCP_PAA.json');
+  assert.deepEqual(FEATURED_QUIZ_IDS, ['aws-aip-c01', 'anthropic-ccar-p']);
+  assert.equal(PROVIDERS.length, 5);
+  const update = quizUpdates.find((e) => e.bankId === meta.id);
+  assert.equal(update.date, '2026-11-10');
+  assert.equal(update.kind, 'added');
+  assert.match(update.sourceRevision, /^[a-f0-9]{40}$/);
+  assert.match(update.summary, /75.*PAA.*7 multiple-answer/);
+  assert.notEqual(translate('vi', update.summary), update.summary);
+});
