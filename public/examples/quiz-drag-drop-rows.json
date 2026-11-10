@@ -1,0 +1,35 @@
+[
+  {
+    "id": "q1",
+    "type": "drag_drop",
+    "layout": "rows",
+    "question": "Place the required access for each worker. Both workers only read files.",
+    "instruction": "Drag a choice to each slot. A choice can be reused.",
+    "slots": [
+      {
+        "id": "first",
+        "label": "Worker one"
+      },
+      {
+        "id": "second",
+        "label": "Worker two"
+      }
+    ],
+    "options": {
+      "first": {
+        "A": "Read",
+        "B": "Write",
+        "C": "Admin"
+      },
+      "second": {
+        "A": "Read",
+        "B": "Write",
+        "C": "Admin"
+      }
+    },
+    "answer": {
+      "first": "A",
+      "second": "A"
+    }
+  }
+]
