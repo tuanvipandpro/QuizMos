@@ -37,7 +37,7 @@ test('every built-in bank remains loadable with legacy placeholder compatibility
       count++;
     }
   }
-  assert.equal(count, 22);
+  assert.equal(count, 23);
 });
 
 test('all imported banks validate and include five dropdown and five yes-no questions', () => {

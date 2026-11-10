@@ -1,0 +1,889 @@
+{
+  "reviewedOn": "2026-11-10",
+  "bankId": "gcp-paa",
+  "certification": "Professional Agentic Architect",
+  "sourceFilename": "GCP_PAA.json",
+  "sourceBytes": 144819,
+  "sourceSha256": "5d141af6f36ac5fdc1e2fc549f68c1aa5f18942e39a5da759c6afe618234bc9f",
+  "publishedSha256": "705fccb1eade2cc297b130f2a0f92754d5abeedc98f547245eeee486348cfd37",
+  "sourceIdAnswerSha256": "3e16c60c0f00749159da46e3c12851ddeeb49709e9304a0e2e1a331e9ede8c31",
+  "reviewedOptionsSha256": "bb1b0fcaea79a3ae4868380d6e90651f5a8e008ebb9d634803b1e989dca12b19",
+  "totalQuestions": 75,
+  "singleAnswer": 68,
+  "multipleAnswer": 7,
+  "duplicateStems": [],
+  "identitySources": [
+    "https://cloud.google.com/learn/certification/agentic-architect",
+    "https://services.google.com/fh/files/misc/professional_agentic_architect_exam_guide_english.pdf"
+  ],
+  "reviewScope": "All 75 stems, option sets, marked answer arrays and explanations read; dated primary-source checks distinguish supported behavior from guarantees, incomplete choices and unsupported APIs. Owner-provided practice content, not an official answer key.",
+  "corrections": [
+    {
+      "id": "q-2",
+      "fields": ["question", "explanation", "options"],
+      "reason": "Make source ACL metadata/identity prerequisites explicit; Cloud Storage IAM is not automatically synchronized.",
+      "sources": ["https://docs.cloud.google.com/gemini/enterprise/docs/identity"]
+    },
+    {
+      "id": "q-4",
+      "fields": ["question", "explanation", "options"],
+      "reason": "Ask for improved grounding/format adherence rather than a guarantee; demonstrate concise reasoning rather than require hidden reasoning disclosure.",
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/prompts/prompt-design-strategies"
+      ]
+    },
+    {
+      "id": "q-6",
+      "fields": ["question", "explanation"],
+      "reason": "XML can improve instruction adherence, not enforce authorization or deterministic sequencing.",
+      "sources": ["https://docs.cloud.google.com/gemini-enterprise-cx/cx-agent-studio/instruction"]
+    },
+    {
+      "id": "q-10",
+      "fields": ["explanation", "options"],
+      "reason": "Disambiguate Antigravity CLI skill discovery from the separate Agents CLI; fix spacing.",
+      "sources": [
+        "https://antigravity.google/docs/skills",
+        "https://antigravity.google/docs/skills?app=antigravity"
+      ]
+    },
+    {
+      "id": "q-14",
+      "fields": ["explanation", "options"],
+      "reason": "Do not claim standalone skill publication to Agent Registry; use supported extension distribution and agent evaluation.",
+      "sources": ["https://google.github.io/agents-cli/guide/extensions/using/"]
+    },
+    {
+      "id": "q-15",
+      "fields": ["options"],
+      "reason": "Make the user-scoped Claude configuration location explicit.",
+      "sources": ["https://code.claude.com/docs/en/mcp"]
+    },
+    {
+      "id": "q-16",
+      "fields": ["question", "explanation"],
+      "reason": "Scope CodeMender preview to evaluation of a test copy, not production/commercial deployment.",
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/agents/codemender",
+        "https://cloud.google.com/security/codemender",
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/agents/codemender?hl=en"
+      ]
+    },
+    {
+      "id": "q-20",
+      "fields": ["question", "explanation", "options"],
+      "reason": "Replace unsupported medical-image diagnosis with non-medical multimodal document analysis; remove full-resolution preservation guarantee.",
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/image-understanding"
+      ]
+    },
+    {
+      "id": "q-22",
+      "fields": ["explanation", "options"],
+      "reason": "Identify semantic tool retrieval as a custom component, not an assumed built-in ADK class.",
+      "sources": ["https://adk.dev/tools/google-cloud/api-registry/"]
+    },
+    {
+      "id": "q-24",
+      "fields": ["question", "explanation"],
+      "reason": "Cloud Storage references avoid inline body inflation, not model file/context/duration limits.",
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/audio-understanding?hl=en"
+      ]
+    },
+    {
+      "id": "q-25",
+      "fields": ["question", "explanation"],
+      "reason": "Separate model-facing schema clarity from runtime validation of currency values.",
+      "sources": [
+        "https://github.com/google/adk-docs/blob/main/docs/tools-custom/function-tools.md"
+      ]
+    },
+    {
+      "id": "q-30",
+      "fields": ["explanation", "options"],
+      "reason": "Correct the managed topic enum USER_PREFERENCES; remove the now-obsolete typo note.",
+      "sources": [
+        "https://docs.cloud.google.com/nodejs/docs/reference/agentplatform/latest/agentplatform/managedtopicenum",
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/memory-bank/generate-memories"
+      ]
+    },
+    {
+      "id": "q-36",
+      "fields": ["question", "explanation"],
+      "reason": "Batch inference trades response latency for throughput; give an explicit asynchronous daily deadline.",
+      "sources": ["https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/tuning"]
+    },
+    {
+      "id": "q-37",
+      "fields": ["question", "explanation"],
+      "reason": "Do not promise strict grounding from XML prompts or claim zero conversational latency.",
+      "sources": ["https://docs.cloud.google.com/gemini-enterprise-cx/cx-agent-studio/instruction"]
+    },
+    {
+      "id": "q-38",
+      "fields": ["explanation", "options"],
+      "reason": "Groundedness is not retrieval precision/recall; explicitly assess both retrieved evidence and tool trajectories.",
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/optimize/evaluation/manage-metrics"
+      ]
+    },
+    {
+      "id": "q-39",
+      "fields": ["question", "explanation", "options"],
+      "reason": "Measure answer faithfulness as well as retrieval; do not imply native named retrieval metrics in every ADK/CLI version.",
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/optimize/evaluation/manage-metrics"
+      ]
+    },
+    {
+      "id": "q-44",
+      "fields": ["question", "explanation"],
+      "reason": "Clarify the approved cloud boundary and permitted selective managed API use; private GKE is not automatically an on-premises bank network.",
+      "sources": [
+        "https://docs.cloud.google.com/kubernetes-engine/docs/best-practices/machine-learning/inference"
+      ]
+    },
+    {
+      "id": "q-45",
+      "fields": ["explanation", "options"],
+      "reason": "Make region/data-flow controls explicit rather than equating a private VPC with residency.",
+      "sources": [
+        "https://docs.cloud.google.com/kubernetes-engine/docs/how-to/machine-learning/inference/inference-quickstart"
+      ]
+    },
+    {
+      "id": "q-52",
+      "fields": ["question", "explanation"],
+      "reason": "Reranking improves relevance, not guaranteed first position; treat latency as measured headroom.",
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/retrieval-and-ranking"
+      ]
+    },
+    {
+      "id": "q-53",
+      "fields": ["question", "explanation"],
+      "reason": "Rubric judges support semantic criteria but cannot guarantee perfect verdicts.",
+      "sources": ["https://github.com/google/adk-docs/blob/main/docs/evaluate/criteria.md"]
+    },
+    {
+      "id": "q-54",
+      "fields": ["question", "explanation", "options"],
+      "reason": "Reference evidence and retrieved traces are required for RAG relevance/grounding judgments.",
+      "sources": ["https://google.github.io/agents-cli/guide/evaluation/"]
+    },
+    {
+      "id": "q-55",
+      "fields": ["question", "explanation", "options"],
+      "reason": "Replace invented SecureRunner and unsupported VertexAiSessionService confirmation with the documented TypeScript policy pattern in a live evaluation runner.",
+      "sources": [
+        "https://github.com/google/adk-docs/blob/main/docs/workflows/patterns.md",
+        "https://adk.dev/tools-custom/confirmation/"
+      ]
+    },
+    {
+      "id": "q-56",
+      "fields": ["question", "explanation"],
+      "reason": "Separate the OAuth header/IAM question from credential refresh already provided by the managed integration.",
+      "sources": [
+        "https://docs.cloud.google.com/gemini/data-agents/conversational-analytics-api/build-agent-http"
+      ]
+    },
+    {
+      "id": "q-57",
+      "fields": ["explanation", "options"],
+      "reason": "Describe enforceable egress allowlisting rather than an unsupported explicit NetworkPolicy deny rule.",
+      "sources": ["https://docs.cloud.google.com/kubernetes-engine/docs/concepts/sandbox-pods"]
+    },
+    {
+      "id": "q-58",
+      "fields": ["question", "explanation"],
+      "reason": "Scope inspection to supported extracted-text payloads and risk reduction, not guaranteed prevention or raw-file gateway screening.",
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/configure-model-armor",
+        "https://docs.cloud.google.com/architecture/multiagent-ai-system"
+      ]
+    },
+    {
+      "id": "q-60",
+      "fields": ["question", "explanation", "options"],
+      "reason": "PII screening is not an infallible guarantee; specify supported gateway enforcement rather than a vague agent-policy attachment.",
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/configure-model-armor"
+      ]
+    },
+    {
+      "id": "q-61",
+      "fields": ["explanation", "options"],
+      "reason": "Default gateway telemetry does not log full payloads; add explicit supported payload capture to satisfy the stated auditing requirement.",
+      "sources": [
+        "https://docs.cloud.google.com/apigee/docs/api-platform/service-extensions/extension-processor-agent-gateway"
+      ]
+    },
+    {
+      "id": "q-63",
+      "fields": ["explanation", "options"],
+      "reason": "Sandboxing requires explicit network/credential policy; defaults may permit internet egress.",
+      "sources": ["https://google.github.io/adk-docs/tools/google-cloud/code-exec-agent-engine/"]
+    },
+    {
+      "id": "q-64",
+      "fields": ["explanation", "options"],
+      "reason": "Secret Accessor must be scoped to the Secret Manager secret, not the database resource.",
+      "sources": ["https://docs.cloud.google.com/secret-manager/docs/access-control"]
+    },
+    {
+      "id": "q-65",
+      "fields": ["explanation", "options"],
+      "reason": "Separate IAM authorization from complementary Model Armor content screening.",
+      "sources": ["https://docs.cloud.google.com/agent-registry/register-mcp-servers"]
+    },
+    {
+      "id": "q-66",
+      "fields": ["question", "explanation", "options"],
+      "reason": "Remove air-gap/CMEK/compliance guarantees; require supported private connectivity, encryption and location controls explicitly.",
+      "sources": [
+        "https://docs.cloud.google.com/vpc/docs/private-access-options",
+        "https://docs.cloud.google.com/kubernetes-engine/docs/how-to/using-cmek"
+      ]
+    },
+    {
+      "id": "q-68",
+      "fields": ["explanation", "options"],
+      "reason": "Do not invent Secret Manager URI support in the auth provider schema; use the documented managed credential vault.",
+      "sources": ["https://docs.cloud.google.com/iam/docs/auth-with-2lo-v2"]
+    },
+    {
+      "id": "q-70",
+      "fields": ["question", "explanation", "options"],
+      "reason": "Do not claim managed Agent Runtime session persistence for unsupported ADK tool confirmation; scope a supported live-runner prototype.",
+      "sources": ["https://adk.dev/tools-custom/confirmation/"]
+    },
+    {
+      "id": "q-71",
+      "fields": ["explanation", "options"],
+      "reason": "Replace fictional Inspect/Decide/Transform hook types with the documented command PreToolUse decision/overwrite contract.",
+      "sources": ["https://antigravity.google/docs/hooks"]
+    },
+    {
+      "id": "q-72",
+      "fields": ["question", "explanation", "options"],
+      "reason": "PAB eligibility uses Resource Manager scopes, not a direct per-bucket allow grant; retain bucket IAM as a separate control.",
+      "sources": ["https://docs.cloud.google.com/iam/docs/principal-access-boundary-policies"]
+    },
+    {
+      "id": "q-73",
+      "fields": ["question", "explanation", "options"],
+      "reason": "Use actual gateway logging and Model Armor integration; do not claim direct SDP route filters or automatic per-agent token exporters.",
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/configure-model-armor"
+      ]
+    }
+  ],
+  "reviewedQuestions": [
+    {
+      "id": "q-1",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["D"],
+      "contentCorrection": false,
+      "sources": ["https://docs.cloud.google.com/gemini/docs/discover/engineer-agentic-prompts"]
+    },
+    {
+      "id": "q-2",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["D"],
+      "contentCorrection": true,
+      "sources": ["https://docs.cloud.google.com/gemini/enterprise/docs/identity"]
+    },
+    {
+      "id": "q-3",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["D"],
+      "contentCorrection": false,
+      "sources": ["https://docs.cloud.google.com/gemini-enterprise-cx/cx-agent-studio/flow"]
+    },
+    {
+      "id": "q-4",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/prompts/prompt-design-strategies"
+      ]
+    },
+    {
+      "id": "q-5",
+      "topic": "Building agents using low-code tools",
+      "answer": ["C"],
+      "contentCorrection": false,
+      "sources": ["https://docs.cloud.google.com/dialogflow/cx/docs/concept/handler?hl=en"]
+    },
+    {
+      "id": "q-6",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": true,
+      "sources": ["https://docs.cloud.google.com/gemini-enterprise-cx/cx-agent-studio/instruction"]
+    },
+    {
+      "id": "q-7",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["D"],
+      "contentCorrection": false,
+      "sources": ["https://antigravity.google/docs/rules/"]
+    },
+    {
+      "id": "q-8",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": false,
+      "sources": ["https://antigravity.google/docs/subagents?tab=cli"]
+    },
+    {
+      "id": "q-9",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": false,
+      "sources": ["https://docs.docker.com/ai/sandboxes/security/isolation"]
+    },
+    {
+      "id": "q-10",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": true,
+      "sources": ["https://antigravity.google/docs/skills?app=antigravity"]
+    },
+    {
+      "id": "q-11",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": false,
+      "sources": ["https://antigravity.google/docs/mcp"]
+    },
+    {
+      "id": "q-12",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": false,
+      "sources": ["https://antigravity.google/docs/skills?app=antigravity-ide"]
+    },
+    {
+      "id": "q-13",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["D"],
+      "contentCorrection": false,
+      "sources": ["https://antigravity.google/docs/hooks?tab=ide"]
+    },
+    {
+      "id": "q-14",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": true,
+      "sources": ["https://google.github.io/agents-cli/guide/extensions/using/"]
+    },
+    {
+      "id": "q-15",
+      "topic": "Using coding agents for application development",
+      "answer": ["C"],
+      "contentCorrection": true,
+      "sources": ["https://code.claude.com/docs/en/mcp"]
+    },
+    {
+      "id": "q-16",
+      "topic": "Using coding agents for application development",
+      "answer": ["B"],
+      "contentCorrection": true,
+      "sources": [
+        "https://cloud.google.com/security/codemender",
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/agents/codemender?hl=en"
+      ]
+    },
+    {
+      "id": "q-17",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": false,
+      "sources": ["https://antigravity.google/docs/hooks?tab=ide"]
+    },
+    {
+      "id": "q-18",
+      "topic": "Developing custom agents",
+      "answer": ["B"],
+      "contentCorrection": false,
+      "sources": [
+        "https://cloud.google.com/blog/topics/developers-practitioners/building-collaborative-ai-a-developers-guide-to-multi-agent-systems-with-adk"
+      ]
+    },
+    {
+      "id": "q-19",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": false,
+      "sources": [
+        "https://github.com/google/adk-python/blob/main/src/google/adk/tools/agent_tool.py"
+      ]
+    },
+    {
+      "id": "q-20",
+      "topic": "Developing custom agents",
+      "answer": ["A"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/image-understanding"
+      ]
+    },
+    {
+      "id": "q-21",
+      "topic": "Developing custom agents",
+      "answer": ["D"],
+      "contentCorrection": false,
+      "sources": [
+        "https://cloud.google.com/blog/topics/developers-practitioners/automate-agent-development-lifecycles-with-gemini-enterprise/"
+      ]
+    },
+    {
+      "id": "q-22",
+      "topic": "Developing custom agents",
+      "answer": ["B", "E"],
+      "contentCorrection": true,
+      "sources": ["https://adk.dev/tools/google-cloud/api-registry/"]
+    },
+    {
+      "id": "q-23",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["C", "E"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/embeddings/get-multimodal-embeddings"
+      ]
+    },
+    {
+      "id": "q-24",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/audio-understanding?hl=en"
+      ]
+    },
+    {
+      "id": "q-25",
+      "topic": "Developing custom agents",
+      "answer": ["D"],
+      "contentCorrection": true,
+      "sources": [
+        "https://github.com/google/adk-docs/blob/main/docs/tools-custom/function-tools.md"
+      ]
+    },
+    {
+      "id": "q-26",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": false,
+      "sources": ["https://docs.cloud.google.com/mcp/supported-products"]
+    },
+    {
+      "id": "q-27",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": false,
+      "sources": ["https://adk.dev/a2a/intro/"]
+    },
+    {
+      "id": "q-28",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": false,
+      "sources": ["https://adk.dev/agents/workflow-agents/loop-agents/"]
+    },
+    {
+      "id": "q-29",
+      "topic": "Developing custom agents",
+      "answer": ["D"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/memory-bank/adk-quickstart"
+      ]
+    },
+    {
+      "id": "q-30",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["C", "E"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/memory-bank/generate-memories"
+      ]
+    },
+    {
+      "id": "q-31",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": false,
+      "sources": ["https://ts.sdk.modelcontextprotocol.io/v2/"]
+    },
+    {
+      "id": "q-32",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["D"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/grounding/grounding-with-vertex-ai-search"
+      ]
+    },
+    {
+      "id": "q-33",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["D"],
+      "contentCorrection": false,
+      "sources": ["https://docs.cloud.google.com/run/docs/ai/a2a-agents"]
+    },
+    {
+      "id": "q-34",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": false,
+      "sources": ["https://a2a-protocol.org/v1.0.1/topics/streaming-and-async/"]
+    },
+    {
+      "id": "q-35",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/optimize/evaluation/manage-metrics"
+      ]
+    },
+    {
+      "id": "q-36",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["D"],
+      "contentCorrection": true,
+      "sources": ["https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/tuning"]
+    },
+    {
+      "id": "q-37",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": true,
+      "sources": ["https://docs.cloud.google.com/gemini-enterprise-cx/cx-agent-studio/instruction"]
+    },
+    {
+      "id": "q-38",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/optimize/evaluation/manage-metrics"
+      ]
+    },
+    {
+      "id": "q-39",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/optimize/evaluation/manage-metrics"
+      ]
+    },
+    {
+      "id": "q-40",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/evaluation-agents"
+      ]
+    },
+    {
+      "id": "q-41",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/evaluation-agents"
+      ]
+    },
+    {
+      "id": "q-42",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/runtime/create-an-adk-agent"
+      ]
+    },
+    {
+      "id": "q-43",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/architecture/choose-agentic-ai-architecture-components",
+        "https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run"
+      ]
+    },
+    {
+      "id": "q-44",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["D"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/kubernetes-engine/docs/best-practices/machine-learning/inference"
+      ]
+    },
+    {
+      "id": "q-45",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/kubernetes-engine/docs/how-to/machine-learning/inference/inference-quickstart"
+      ]
+    },
+    {
+      "id": "q-46",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": false,
+      "sources": ["https://docs.cloud.google.com/trace/docs/trace-context"]
+    },
+    {
+      "id": "q-47",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/runtime/tracing"
+      ]
+    },
+    {
+      "id": "q-48",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/evaluation-agents"
+      ]
+    },
+    {
+      "id": "q-49",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/rubric-metric-details"
+      ]
+    },
+    {
+      "id": "q-50",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/runtime/tracing"
+      ]
+    },
+    {
+      "id": "q-51",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/optimize/evaluation/agent-evaluation"
+      ]
+    },
+    {
+      "id": "q-52",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/retrieval-and-ranking"
+      ]
+    },
+    {
+      "id": "q-53",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["D"],
+      "contentCorrection": true,
+      "sources": ["https://github.com/google/adk-docs/blob/main/docs/evaluate/criteria.md"]
+    },
+    {
+      "id": "q-54",
+      "topic": "Evaluating and deploying agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": true,
+      "sources": ["https://google.github.io/agents-cli/guide/evaluation/"]
+    },
+    {
+      "id": "q-55",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": true,
+      "sources": ["https://github.com/google/adk-docs/blob/main/docs/workflows/patterns.md"]
+    },
+    {
+      "id": "q-56",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/gemini/data-agents/conversational-analytics-api/build-agent-http"
+      ]
+    },
+    {
+      "id": "q-57",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": true,
+      "sources": ["https://docs.cloud.google.com/kubernetes-engine/docs/concepts/sandbox-pods"]
+    },
+    {
+      "id": "q-58",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["D"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/architecture/multiagent-ai-system",
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/configure-model-armor"
+      ]
+    },
+    {
+      "id": "q-59",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/configure-model-armor"
+      ]
+    },
+    {
+      "id": "q-60",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/configure-model-armor"
+      ]
+    },
+    {
+      "id": "q-61",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/apigee/docs/api-platform/service-extensions/extension-processor-agent-gateway"
+      ]
+    },
+    {
+      "id": "q-62",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/configure-model-armor"
+      ]
+    },
+    {
+      "id": "q-63",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": true,
+      "sources": ["https://google.github.io/adk-docs/tools/google-cloud/code-exec-agent-engine/"]
+    },
+    {
+      "id": "q-64",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["B", "D"],
+      "contentCorrection": true,
+      "sources": ["https://docs.cloud.google.com/secret-manager/docs/access-control"]
+    },
+    {
+      "id": "q-65",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["D"],
+      "contentCorrection": true,
+      "sources": ["https://docs.cloud.google.com/agent-registry/register-mcp-servers"]
+    },
+    {
+      "id": "q-66",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["D", "E"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/vpc/docs/private-access-options",
+        "https://docs.cloud.google.com/kubernetes-engine/docs/how-to/using-cmek"
+      ]
+    },
+    {
+      "id": "q-67",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": false,
+      "sources": ["https://docs.cloud.google.com/iam/docs/roles-permissions/discoveryengine"]
+    },
+    {
+      "id": "q-68",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["B", "E"],
+      "contentCorrection": true,
+      "sources": ["https://docs.cloud.google.com/iam/docs/auth-with-2lo-v2"]
+    },
+    {
+      "id": "q-69",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/agent-registry/register-mcp-servers",
+        "https://docs.cloud.google.com/run/docs/ai/authenticate-agents"
+      ]
+    },
+    {
+      "id": "q-70",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["B"],
+      "contentCorrection": true,
+      "sources": ["https://adk.dev/tools-custom/confirmation/"]
+    },
+    {
+      "id": "q-71",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": true,
+      "sources": ["https://antigravity.google/docs/hooks"]
+    },
+    {
+      "id": "q-72",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": true,
+      "sources": ["https://docs.cloud.google.com/iam/docs/principal-access-boundary-policies"]
+    },
+    {
+      "id": "q-73",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["B", "C"],
+      "contentCorrection": true,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/govern/configure-model-armor"
+      ]
+    },
+    {
+      "id": "q-74",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["A"],
+      "contentCorrection": false,
+      "sources": [
+        "https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/runtime/agent-identity"
+      ]
+    },
+    {
+      "id": "q-75",
+      "topic": "Securing and governing agentic workflows",
+      "answer": ["C"],
+      "contentCorrection": false,
+      "sources": ["https://docs.cloud.google.com/iam/docs/auth-agent-own-identity"]
+    }
+  ]
+}
