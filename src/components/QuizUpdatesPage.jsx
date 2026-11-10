@@ -7,7 +7,7 @@ import { quizzes } from '../data/quizzes';
 import { validateQuizUpdates } from '../utils/quizUpdates';
 import { quizUrl } from '../utils/navigation';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 const updates = validateQuizUpdates(quizUpdates, quizzes);
 
 export default function QuizUpdatesPage({ onNavigate }) {
@@ -61,16 +61,6 @@ export default function QuizUpdatesPage({ onNavigate }) {
                     >
                       {t('Open quiz')}
                     </Button>
-                    <Text type="secondary">
-                      {t('Reviewed source')}:{' '}
-                      <a
-                        href={`https://github.com/tuanvipandpro/quiz-app/commit/${entry.sourceRevision}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {entry.sourceRevision.slice(0, 7)}
-                      </a>
-                    </Text>
                   </div>
                 </Card>
               </li>

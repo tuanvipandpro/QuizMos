@@ -17,6 +17,8 @@ export function parseRoute(hash = '') {
   try {
     const [path, query = ''] = hash.replace(/^#/, '').split('?');
     if (path === '' || path === '/') return { page: 'home', params: new URLSearchParams(query) };
+    if (path === '/library' || path === '/library/')
+      return { page: 'library', params: new URLSearchParams(query) };
     if (path === '/donate' || path === '/donate/')
       return { page: 'donate', params: new URLSearchParams(query) };
     for (const page of ['profile', 'updates'])
