@@ -86,4 +86,49 @@ export const questionFormats = [
       },
     ],
   },
+  {
+    id: 'drag-drop-rows',
+    label: 'Drag and drop rows',
+    description: 'Use native choices and labelled drop slots with an answer mapping.',
+    questions: [
+      {
+        id: 'q1',
+        type: 'drag_drop',
+        layout: 'rows',
+        question: 'Place the required access for each worker. Both workers only read files.',
+        instruction: 'Drag a choice to each slot. A choice can be reused.',
+        slots: [
+          { id: 'first', label: 'Worker one' },
+          { id: 'second', label: 'Worker two' },
+        ],
+        options: {
+          first: { A: 'Read', B: 'Write', C: 'Admin' },
+          second: { A: 'Read', B: 'Write', C: 'Admin' },
+        },
+        answer: { first: 'A', second: 'A' },
+      },
+    ],
+  },
+  {
+    id: 'drag-drop-inline',
+    label: 'Inline drag and drop',
+    description: 'Place native choices in {{slotId}} blanks; GitHub code expressions stay literal.',
+    questions: [
+      {
+        id: 'q1',
+        type: 'drag_drop',
+        layout: 'inline',
+        question: 'Complete the workflow: log start, then finish for the current branch.',
+        instruction: 'Drag a message into each blank.',
+        template:
+          'steps:\n  - run: echo "{{first}}"\n  - run: echo "{{second}} for ${{ github.ref }}"',
+        slots: [
+          { id: 'first', label: 'First message' },
+          { id: 'second', label: 'Second message' },
+        ],
+        options: { first: { A: 'start', B: 'finish' }, second: { A: 'start', B: 'finish' } },
+        answer: { first: 'A', second: 'B' },
+      },
+    ],
+  },
 ];

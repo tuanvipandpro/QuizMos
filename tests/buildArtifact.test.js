@@ -49,7 +49,13 @@ test('the production fixture-leak guard remains enforced', async (t) => {
   await assert.rejects(checkBuild({ directory, base: '/' }), /E2E fixture leaked/);
 });
 
-for (const marker of ['__test/token', 'http://127.0.0.1:5176', 'quiz-e2e-app-ai-disabled']) {
+for (const marker of [
+  '__test/token',
+  'http://127.0.0.1:5176',
+  'quiz-e2e-app-ai-disabled',
+  'quiz-e2e-history-enabled',
+  'quiz-e2e-native-drag',
+]) {
   test(`the custom-domain build rejects the App AI test boundary ${marker}`, async (t) => {
     const directory = await fixture(t);
     await fs.writeFile(

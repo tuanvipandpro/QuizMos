@@ -96,8 +96,14 @@ export default function QuestionFormatGuide() {
             {[
               ['id', 'A unique string or number for each question.'],
               ['question', 'The question text.'],
-              ['options', 'Choice keys mapped to their text. Dropdowns use one map per slot.'],
-              ['answer', 'An array of option keys, or a mapping for yes/no and dropdown parts.'],
+              [
+                'options',
+                'Choice keys mapped to text. Dropdown and drag/drop questions use one map per slot.',
+              ],
+              [
+                'answer',
+                'An array of option keys, or a mapping for yes/no, dropdown and drag/drop parts.',
+              ],
             ].map(([field, description]) => (
               <div key={field}>
                 <dt>
