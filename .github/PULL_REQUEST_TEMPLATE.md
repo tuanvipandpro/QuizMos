@@ -18,6 +18,11 @@ What problem does this solve, and what does the user see now?
 
 - Source → target follows the [Git process](https://github.com/tuanvipandpro/quiz-app/blob/develop/docs/git-process.md): production PRs must come only from this repository's `develop`; issue PRs target their milestone release.
 
+- Merge class/method: <!-- issue = squash; milestone/baseline/production promotion = preserve ancestry per Git process -->
+- Issue/PR-to-squash-commit mapping, for promotions:
+- Branch cleanup: <!-- issue branch only, after verified develop integration; retain protected/shared branches -->
+- Milestone release notes, for develop → master: <!-- grouped changes, verification, rollout/known gates, rollback -->
+
 - Completed acceptance criteria:
 - Partial/deferred work:
 
