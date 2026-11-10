@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { classifyTargets, classifyReleases } from '../scripts/ci-plan.mjs';
+import { classifyTargets, classifyReleases, browserShards } from '../scripts/ci-plan.mjs';
 import { checkGate, checkFrontendGate, checkReleaseSelection } from '../scripts/ci-gate.mjs';
 
 const change = (file, extra = {}) => ({
@@ -254,4 +254,26 @@ test('workflow gate parses false release flags literally and blocks missing or i
   const missing = { ...env };
   delete missing.CI_RELEASE_BACKEND;
   assert.notEqual(run(missing).status, 0);
+});
+
+test('full browser plans cover four jobs while the smoke profile stays single-job', () => {
+  assert.deepEqual(browserShards('full'), [1, 2, 3, 4]);
+  assert.deepEqual(browserShards('assets'), [1]);
+  assert.deepEqual(browserShards('docs'), [1]);
+  const source = fs.readFileSync('.github/workflows/frontend.yml', 'utf8');
+  assert.match(source, /SHARD_TOTAL: \$\{\{ strategy\.job-total \}\}/);
+  assert.ok(source.includes('--shard="$SHARD_INDEX/$SHARD_TOTAL"'));
+  assert.ok(source.includes('fail-fast: false'));
+});
+test('dependency cache is exact and keeps frozen installation validation on hits', () => {
+  const source = fs.readFileSync('.github/actions/setup/action.yml', 'utf8');
+  const moduleBlock = source.slice(source.indexOf('path: node_modules'));
+  assert.match(moduleBlock, /runner\.os/);
+  assert.match(moduleBlock, /runner\.arch/);
+  for (const name of ['yarn.lock', 'package.json', '.nvmrc']) assert.ok(moduleBlock.includes(name));
+  assert.ok(!moduleBlock.includes('restore-keys:'));
+  assert.match(moduleBlock, /yarn install --frozen-lockfile --check-files/);
+  assert.ok(!moduleBlock.includes('if:'));
+  const frontend = fs.readFileSync('.github/workflows/frontend.yml', 'utf8');
+  assert.ok(frontend.includes('yarn playwright install --with-deps chromium'));
 });
