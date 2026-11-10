@@ -17,6 +17,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useAuth } from './contexts/AuthContext';
 import { useLanguage } from './contexts/LanguageContext';
 import { useSignIn } from './hooks/useSignIn';
+import { usePublicQuizRefresh } from './hooks/usePublicQuizRefresh';
 import { useReducedMotion } from './hooks/useReducedMotion';
 import { useHashRoute } from './hooks/useHashRoute';
 import { useQuizProgress } from './hooks/useQuizProgress';
@@ -123,7 +124,16 @@ export default function App() {
   });
   const cloudRoute = parseCloudQuizId(route.quizId);
   const cloud = useCustomQuizzes(uid, route.page === 'my-quizzes' || !!cloudRoute);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(() =>
+    route.page === 'library' ? route.params.get('search') || '' : ''
+  );
+  const publicRefresh = usePublicQuizRefresh({
+    page: route.page,
+    owner: uid,
+    routeHash: hash,
+    query,
+    examActive,
+  });
   const [expanded, setExpanded] = useState({});
   const [loaded, setLoaded] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -477,7 +487,7 @@ export default function App() {
         onExpandedChange={setExpanded}
         progressState={progressState}
         onOpen={openQuiz}
-        onUpdates={() => go('#/updates')}
+        refreshState={publicRefresh}
       />
     );
   else if (route.page === 'my-quizzes')

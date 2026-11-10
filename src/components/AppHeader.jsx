@@ -4,6 +4,7 @@ import { HeartOutlined, LoginOutlined, MoonOutlined, SunOutlined } from '@ant-de
 import { useLanguage } from '../contexts/LanguageContext';
 import { appBrand } from '../data/appBrand';
 import AccountMenu from './AccountMenu';
+import QuizUpdateNotifications from './QuizUpdateNotifications';
 const { Header } = Layout;
 export default function AppHeader({
   headerRef,
@@ -66,6 +67,7 @@ export default function AppHeader({
           </Button>
         </nav>
         <div className="header-actions">
+          <QuizUpdateNotifications key={page} onNavigate={onNavigate} />
           <Button
             type="text"
             className="theme-toggle"

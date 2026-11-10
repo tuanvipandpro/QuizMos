@@ -1,4 +1,10 @@
 export const vi = {
+  'Refresh quizzes': 'Làm mới danh sách quiz',
+  'Could not refresh quizzes. Check your connection and try again.':
+    'Chưa thể làm mới danh sách quiz. Kiểm tra kết nối rồi thử lại.',
+  'Close quiz updates': 'Đóng cập nhật quiz',
+  'View all updates': 'Xem tất cả cập nhật',
+  '{count} new quiz updates': '{count} cập nhật quiz mới',
   'Added 98 GH-600 practice questions, including 19 drag-and-drop questions.':
     'Bổ sung 98 câu luyện tập GH-600, gồm 19 câu kéo thả.',
   Intermediate: 'Trung cấp',

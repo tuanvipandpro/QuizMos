@@ -128,10 +128,8 @@ test('the reviewed GH-600 addition is visible in updates and opens its canonical
   });
   await expect(entry).toContainText('Added 98 GH-600 practice questions');
   await expect(entry.locator('time')).toHaveAttribute('datetime', '2026-11-10');
-  await expect(entry.getByRole('link')).toHaveAttribute(
-    'href',
-    /\/commit\/ed026d08b94d62e67f6a29d3b3e52c77dd12c1d0$/
-  );
+  await expect(entry.getByRole('link')).toHaveCount(0);
+  await expect(entry).not.toContainText('ed026d0');
   await entry.getByRole('button', { name: 'Open quiz', exact: true }).click();
   await expect(page).toHaveURL(/#\/quiz\/gh-600$/);
   await expect(page.locator('.quiz-overview-identity')).toContainText('98');

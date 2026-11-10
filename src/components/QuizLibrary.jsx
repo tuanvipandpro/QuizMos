@@ -6,6 +6,7 @@ import {
   ReadOutlined,
   SearchOutlined,
   StarOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { FEATURED_QUIZ_IDS, PROVIDERS, quizzes, findQuiz } from '../data/quizzes';
@@ -24,7 +25,7 @@ export default function QuizLibrary({
   onExpandedChange,
   progressState,
   onOpen,
-  onUpdates,
+  refreshState,
 }) {
   const { t } = useLanguage();
   const search = useRef(null);
@@ -86,7 +87,23 @@ export default function QuizLibrary({
         <Paragraph type="secondary">
           {t('Start with a featured exam or explore each provider.')}
         </Paragraph>
-        <Button onClick={onUpdates}>{t('Quiz updates')}</Button>
+        <Button
+          icon={<ReloadOutlined aria-hidden="true" />}
+          aria-label={t('Refresh quizzes')}
+          loading={refreshState.loading}
+          disabled={refreshState.disabled || refreshState.loading}
+          onClick={refreshState.refresh}
+        >
+          {t('Refresh quizzes')}
+        </Button>
+        {refreshState.error && (
+          <Alert
+            type="error"
+            showIcon
+            role="alert"
+            message={t('Could not refresh quizzes. Check your connection and try again.')}
+          />
+        )}
       </div>
       <label className="library-search">
         <span>{t('Find a certification')}</span>
