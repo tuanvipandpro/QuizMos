@@ -69,6 +69,7 @@ jobs:
     env:
       CI_PROFILE: ${{ inputs.profile }}
       SHARD_INDEX: ${{ matrix.shard }}
+      SHARD_TOTAL: ${{ strategy.job-total }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -78,7 +79,7 @@ jobs:
           if [ "$CI_PROFILE" = "assets" ]; then
             yarn test:e2e --grep @smoke
           else
-            yarn test:e2e --shard="$SHARD_INDEX/2"
+            yarn test:e2e --shard="$SHARD_INDEX/$SHARD_TOTAL"
           fi
       - uses: actions/upload-artifact@v4
         if: failure()

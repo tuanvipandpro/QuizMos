@@ -1,3 +1,5 @@
+export const browserShards = (profile) => (profile === 'full' ? [1, 2, 3, 4] : [1]);
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -281,7 +283,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
     }),
     branch: branch || null,
   };
-  const shards = plan.profile === 'full' ? [1, 2] : [1];
+  const shards = browserShards(plan.profile);
   if (process.env.GITHUB_OUTPUT)
     fs.appendFileSync(
       process.env.GITHUB_OUTPUT,
