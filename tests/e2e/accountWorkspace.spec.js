@@ -165,17 +165,19 @@ test('public update discovery preserves bank identity, provenance, reload and Ba
 }) => {
   await page.goto('./#/library');
   await page
-    .locator('.quiz-library')
+    .locator('.app-header')
     .getByRole('button', { name: 'Quiz updates', exact: true })
+    .click();
+  await page
+    .getByRole('dialog', { name: 'Quiz updates', exact: true })
+    .getByRole('button', { name: 'View all updates', exact: true })
     .click();
   await expect(page.getByRole('heading', { name: 'Quiz updates', exact: true })).toBeVisible();
   const entry = page.locator('.quiz-update').filter({ hasText: 'CTFL' });
   await expect(entry).toContainText('Added 36 questions');
   await expect(entry.locator('time')).toHaveAttribute('datetime', '2026-11-01');
-  await expect(entry.getByRole('link', { name: '241c5b1', exact: true })).toHaveAttribute(
-    'href',
-    'https://github.com/tuanvipandpro/quiz-app/commit/241c5b16dc23b04eb9ce0a5c7a63e4833b492a46'
-  );
+  await expect(entry.getByRole('link')).toHaveCount(0);
+  await expect(entry).not.toContainText('241c5b1');
   await page.reload();
   await entry.getByRole('button', { name: 'Open quiz', exact: true }).click();
   await expect(page).toHaveURL(/#\/quiz\/istqb-ctfl-v4-0$/);
