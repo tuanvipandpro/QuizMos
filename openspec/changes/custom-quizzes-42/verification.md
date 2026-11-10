@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation/local acceptance has evidence. **Production has not been enabled or verified**: tasks 5.2 (published Rules/index comparison) and 5.3 (rollout) remain pending. Keep the feature PR in Draft until prerequisites are resolved. Do not close #42 or archive based only on local tests/CI.
+Implementation/local acceptance and the bounded custom-quiz production smoke now have evidence. On 10 November 2026, owner-published compatible Rules/index exemptions were verified and the explicitly authorized disposable quiz passed persistence/checkpoint/management/cleanup checks. Tasks 5.2 and 5.3 reflect this actual evidence; they do not claim Rules were published before the already-integrated client. [#131](https://github.com/tuanvipandpro/QuizMos/issues/131) reconciles the record for #79; its PR/CI/merge gates remain separate. Preserve historically closed #42 and do not archive merely because tasks are checked. History and AI acceptance remain separate.
 
 ## Preserved baseline
 
@@ -62,13 +62,21 @@ New danger controls use semantic tokens; the browser matrix measures rendered fo
 
 Before is the historical production My quizzes upload page before this feature. After is explicitly local/emulated using a test account/sample content, not a production persistence test.
 
-## Production prerequisites — unfinished
+## Production acceptance — 10 November 2026
 
-**Current follow-up:** [#79 reconciliation](../../../docs/m1-custom-quiz-rollout-79.md) records a fresh 6 November 2026 read-only Console observation. An admin session is now available; the starred published policy still contains only the original profile grant, with no custom-quiz descendants or question-field exemption. The historical findings below describe the original implementation session. They do not describe current login availability. Raw export/publication and designated-account persistence remain open. #42 is closed historically; #79 now owns release acceptance, without converting its unchecked tasks into passes.
+The owner published the combined policy; the Console revision `Today • 10:42 PM` was read at `2026-11-10T15:52:28.636Z`. Its UI-copied transcript SHA-256 is `f8e21f695c185439a9f6f69148fc5a164c5972eea6316b4151359e63de4a046c`, token-equivalent to `firebase/firestore.rules` after ignoring comments/whitespace while preserving strings. This is not a raw API export/ruleset ID. No manual indexes were present. Collection Ascending/Descending/Arrays were disabled for `customQuizzes.questions` and `examAttemptSnapshots.payload`; Collection group inherited disabled defaults. Baseline provenance was not changed.
+
+Production release #129 (`f968175873bf9d588a54f8377f040e06d78e1c17`) passed [post-merge CI](https://github.com/tuanvipandpro/QuizMos/actions/runs/42833739336) and [Pages](https://github.com/tuanvipandpro/QuizMos/actions/runs/42835020686). With the designated signed-in account and explicit one-quiz/cleanup authorization, a 3,503-byte, seven-format synthetic quiz passed save (0/3 → 1/3), reload and a separate same-browser tab read. A cloud checkpoint at question 2 resumed at question 2 in that tab. Rename preserved the checkpoint; replacing with a one-question synthetic file advanced contentVersion 1 → 2 and reset it. Only that disposable quiz was deleted; quota returned to 0/3 and the old study tab reported that the quiz was no longer available.
+
+This focused smoke does not establish a second physical device/profile, adversarial production tests or a new complete UI matrix. Those boundaries remain the existing fixture/emulator/CI evidence above. No personal quiz was modified. Screenshots/transcripts remain ignored local artifacts; the durable summary is [the rollout record](../../../docs/m1-custom-quiz-rollout-79.md) and the linked #79 acceptance comment. This documentation PR does not republish policy or activate History/AI.
+
+## Historical production prerequisites — superseded
+
+The [6 November observation](../../../docs/m1-custom-quiz-rollout-79.md#historical-production-observation--6-november-2026) found only the original profile policy. The findings below describe the original implementation session and are superseded by the 10 November verification above; they do not describe current credentials or published policy. #42 is closed historically and #79 owns release acceptance.
 
 - Firebase CLI authorized-account count was **0**; no credential values printed. Read-only project Console navigation redirected to Google Sign in; no login/grant performed.
 - Current published Rules revision/hash and complete indexes/field overrides have **not** been independently retrieved or compared. The supplied baseline provenance remains unchanged.
 - `firestore.indexes.fragment.json` is only a questions exemption fragment, not a complete deploy configuration. Reconcile with full production indexes; no fragment/empty indexes were deployed.
 - No Firebase production policy/data deployment or production cloud save occurred. Publish and verify compatible Rules before merging/enabling the client, then smoke test with an explicitly designated test account. [Release/rollback procedure](../../../firebase/README.md).
 
-Implementation/local acceptance and release readiness are separate. Keep #42 open until production prerequisites and post-deploy evidence are complete.
+Implementation/local acceptance and release readiness remain separate. The later production evidence above completes the bounded runtime rollout; #79/#131 closure still follows the documentation PR's required checks and requested merge.
