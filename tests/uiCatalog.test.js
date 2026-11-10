@@ -76,7 +76,7 @@ test('the catalog contains unique question banks and the mislabeled AWS copy onl
     assert.equal(hashes.has(hash), false, `${quiz.id} duplicates ${hashes.get(hash)}`);
     hashes.set(hash, quiz.id);
   }
-  assert.equal(quizzes.length, 20);
+  assert.equal(quizzes.length, 21);
   assert.equal(quizzes.filter((quiz) => quiz.category === 'AWS').length, 4);
   assert.equal(
     quizzes.some((quiz) => quiz.code === 'CLF-C02' || quiz.id === 'aws-ace'),

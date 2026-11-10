@@ -169,7 +169,7 @@ test('public update discovery preserves bank identity, provenance, reload and Ba
     .getByRole('button', { name: 'Quiz updates', exact: true })
     .click();
   await expect(page.getByRole('heading', { name: 'Quiz updates', exact: true })).toBeVisible();
-  const entry = page.locator('.quiz-update');
+  const entry = page.locator('.quiz-update').filter({ hasText: 'CTFL' });
   await expect(entry).toContainText('Added 36 questions');
   await expect(entry.locator('time')).toHaveAttribute('datetime', '2026-11-01');
   await expect(entry.getByRole('link', { name: '241c5b1', exact: true })).toHaveAttribute(
@@ -278,7 +278,7 @@ test('Profile, dropdown and update pages fit languages, themes and phone-to-land
         exact: true,
       })
       .click();
-    await expect(page.locator('.quiz-update')).toBeVisible();
+    await expect(page.locator('.quiz-update').filter({ hasText: 'CTFL' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true
     );

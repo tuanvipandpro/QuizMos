@@ -43,6 +43,8 @@ import { validateQuizQuestions } from './utils/questionModel';
 import { clearStudySessions, readStudySession, sessionKey } from './utils/studySession';
 import { canonicalQuizHash, DEFAULT_HASH, quizUrl, resolveLoadedQuiz } from './utils/navigation';
 import { readDarkMode, THEME_KEY } from './utils/appearance';
+import { examHistorySource } from './utils/examHistory.js';
+import { EXAM_HISTORY_ENABLED } from './config/examHistoryConfig';
 import 'antd/dist/reset.css';
 import './App.css';
 import './markdown.css';
@@ -54,6 +56,7 @@ const PracticeMode = lazy(() => import('./components/PracticeMode'));
 const ExamMode = lazy(() => import('./components/ExamMode'));
 const QuickSummaryMode = lazy(() => import('./components/QuickSummaryMode'));
 const SettingsModal = lazy(() => import('./components/SettingsModal'));
+const ExamHistoryPage = lazy(() => import('./components/ExamHistoryPage'));
 const LandingPage = lazy(() => import('./components/LandingPage'));
 const DonatePage = lazy(() => import('./components/DonatePage'));
 const ProfilePage = lazy(() => import('./components/ProfilePage'));
@@ -316,19 +319,21 @@ export default function App() {
   const guide = getQuickSummary(route.quizId);
   useEffect(() => {
     document.title =
-      (route.page === 'home'
-        ? t('Small quizzes. Big confidence.')
-        : route.page === 'donate'
-          ? t('Support QuizMos')
-          : route.page === 'library'
-            ? t('Quiz Bank')
-            : route.page === 'my-quizzes'
-              ? t('My quizzes')
-              : route.page === 'profile'
-                ? t('Profile')
-                : route.page === 'updates'
-                  ? t('Quiz updates')
-                  : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
+      (route.page === 'history'
+        ? t('Exam history')
+        : route.page === 'home'
+          ? t('Small quizzes. Big confidence.')
+          : route.page === 'donate'
+            ? t('Support QuizMos')
+            : route.page === 'library'
+              ? t('Quiz Bank')
+              : route.page === 'my-quizzes'
+                ? t('My quizzes')
+                : route.page === 'profile'
+                  ? t('Profile')
+                  : route.page === 'updates'
+                    ? t('Quiz updates')
+                    : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
   }, [route.page, active?.name, t]);
   let examDraft = null;
   if (active && route.mode === 'overview') {
@@ -424,6 +429,23 @@ export default function App() {
 
   let screen;
   if (route.page === 'home') screen = <LandingPage onNavigate={go} />;
+  else if (route.page === 'history')
+    screen = (
+      <ExamHistoryPage
+        key={uid || 'guest'}
+        user={authLoading ? null : user}
+        authLoading={authLoading}
+        attemptId={route.attemptId}
+        pageNumber={
+          Number.isInteger(Number(route.params.get('page'))) && Number(route.params.get('page')) > 0
+            ? Number(route.params.get('page'))
+            : 1
+        }
+        onNavigate={go}
+        onSignIn={openLogin}
+        initialScroll={scrollPositions.current.get(hash) || 0}
+      />
+    );
   else if (route.page === 'donate')
     screen = (
       <DonatePage
@@ -570,6 +592,9 @@ export default function App() {
         }
         fresh={route.params.get('fresh')}
         onRunningChange={setExamActive}
+        historySource={examHistorySource(active, uid)}
+        onHistory={(id) => go(id ? `#/history/${id}` : '#/history')}
+        onSignIn={openLogin}
         onExit={() => go(activeQuizUrl('overview', { mode: 'exam' }))}
         onRestart={() => go(activeQuizUrl('overview', { mode: 'exam' }))}
       />
@@ -652,7 +677,9 @@ export default function App() {
       </div>
     );
 
-  const studying = route.page === 'quiz' && ['practice', 'exam', 'summary'].includes(route.mode);
+  const studying =
+    (route.page === 'quiz' && ['practice', 'exam', 'summary'].includes(route.mode)) ||
+    (EXAM_HISTORY_ENABLED && !!uid && route.page === 'history' && !!route.attemptId);
   return (
     <ConfigProvider
       locale={language === 'vi' ? viVN : enUS}
