@@ -16,5 +16,11 @@ runs:
         path: ${{ steps.yarn-cache.outputs.directory }}
         key: ${{ runner.os }}-node24-yarn-${{ hashFiles('yarn.lock') }}
         restore-keys: ${{ runner.os }}-node24-yarn-
-    - run: yarn install --frozen-lockfile
+    # Exact dependency-tree cache; never include runtime env or service state.
+    # GitHub cache ref scopes keep PR-created entries out of trusted branch restores.
+    - uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: modules-v1-${{ runner.os }}-${{ runner.arch }}-node24-${{ hashFiles('yarn.lock', 'package.json', '.nvmrc') }}
+    - run: yarn install --frozen-lockfile --check-files
       shell: bash
