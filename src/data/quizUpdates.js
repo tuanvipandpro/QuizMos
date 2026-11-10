@@ -2,6 +2,14 @@
 // Review the referenced bank diff before adding or revising an entry.
 export const quizUpdates = [
   {
+    id: 'gh600-2026-11-10',
+    bankId: 'gh-600',
+    kind: 'added',
+    date: '2026-11-10',
+    summary: 'Added 98 GH-600 practice questions, including 19 drag-and-drop questions.',
+    sourceRevision: 'ed026d08b94d62e67f6a29d3b3e52c77dd12c1d0',
+  },
+  {
     id: 'ctfl-2026-11-01',
     bankId: 'istqb-ctfl-v4-0',
     kind: 'updated',

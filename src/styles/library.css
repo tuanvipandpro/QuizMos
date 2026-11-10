@@ -82,6 +82,8 @@
   font-size: 14px;
 }
 .quiz-title-link {
+  min-width: 44px;
+  min-height: 44px;
   padding: 0;
   border: 0;
   background: none;
@@ -287,7 +289,7 @@
 }
 .library-quiz-row .library-quiz-actions .ant-btn {
   font-size: 14px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 6px 10px;
 }
 .library-quiz-row:last-child {

@@ -1,4 +1,7 @@
 export const vi = {
+  'Added 98 GH-600 practice questions, including 19 drag-and-drop questions.':
+    'Bổ sung 98 câu luyện tập GH-600, gồm 19 câu kéo thả.',
+  Intermediate: 'Trung cấp',
   Profile: 'Hồ sơ',
   'Your account and QuizMos settings.': 'Tài khoản và cài đặt QuizMos của bạn.',
   'Loading account…': 'Đang tải tài khoản…',
