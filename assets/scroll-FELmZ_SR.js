@@ -1,0 +1,1 @@
+function o(){return document.body.scrollHeight>document.body.clientHeight?document.body:window}function t(){window.scrollTo({top:0,behavior:"auto"}),document.body.scrollTo({top:0,behavior:"auto"})}export{o as g,t as s};
