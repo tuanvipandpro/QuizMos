@@ -62,6 +62,8 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -74,7 +76,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - run: yarn playwright install --with-deps chromium
+        with:
+          dependency-platform: playwright-${{ hashFiles('.github/workflows/frontend.yml') }}
+      - run: node scripts/check-browser-image.mjs
       - name: Run selected browser checks
         run: |
           if [ "$CI_PROFILE" = "assets" ]; then
