@@ -275,7 +275,13 @@ test('dependency cache is exact and keeps frozen installation validation on hits
   assert.match(moduleBlock, /yarn install --frozen-lockfile --check-files/);
   assert.ok(!moduleBlock.includes('if:'));
   const frontend = fs.readFileSync('.github/workflows/frontend.yml', 'utf8');
-  assert.ok(frontend.includes('yarn playwright install --with-deps chromium'));
+  assert.ok(frontend.includes('node scripts/check-browser-image.mjs'));
+  assert.ok(
+    frontend.includes(
+      "dependency-platform: playwright-${{ hashFiles('.github/workflows/frontend.yml') }}"
+    )
+  );
+  assert.match(source, /inputs\.dependency-platform/);
 });
 
 test('the frontend build receives the explicit History rollout variable with a disabled default', () => {
