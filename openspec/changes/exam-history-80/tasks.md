@@ -19,10 +19,12 @@
 
 ## 4. Integrate and release safely
 
-- [ ] 4.1 After accepted governance baseline #102, dock #89 and native format #103 are integrated on the release, update #92 against the current milestone release; run yarn verify, test:rules and E2E, inspect the disabled-client build for fixture leakage, review/secret-scan the #80 feature PR and wait for latest-head required CI, recording actual acceptance evidence.
+- [x] 4.1 After accepted governance baseline #102, dock #89 and native format #103 are integrated on the release, update #92 against the current milestone release; run yarn verify, test:rules and E2E, inspect the disabled-client build for fixture leakage, review/secret-scan the #80 feature PR and wait for latest-head required CI, recording actual acceptance evidence.
 - [ ] 4.2 Use #79's reconciled baseline plus the new history policy/index contract; publish/verify compatible policy through the authorized release procedure before enabling history, and record source revisions/rollback rather than deploying a fragment.
 - [ ] 4.3 After owner-requested milestone promotion/enablement and production CI/deploy, perform bounded designated-account save/reload/read/delete smoke, confirm unrelated bank/custom progress remains compatible and close #80 only after actual rollout acceptance.
 
 ## Workflow follow-up
+
+- Integration evidence: #92 entered the accepted M1 implementation; current production source `dfc758b` passed master CI [42929142335](https://github.com/tuanvipandpro/QuizMos/actions/runs/42929142335). Fresh local verification also passed 261 Node tests/build/isolation, 29 demo Rules/SDK cases and 32 History browser cases. #130/#132 supplied the reviewed exact-true build wiring. These results support 4.1 only; 4.2/4.3 remain open pending fresh policy access and real activation/smoke under [#141](https://github.com/tuanvipandpro/QuizMos/issues/141).
 
 - Sync/archive after feature acceptance. Practice history and M2 revision queues are separate changes using this stable result contract.
