@@ -10,15 +10,57 @@ import { canonicalQuizHash } from './navigation.js';
 import { getExamFeedbackMode } from '../data/examModes.js';
 import { EXAM_GRADING_VERSION } from '../data/examHistoryLimits.js';
 import { secureId, UUID_PATTERN } from './secureId.js';
+import { orderObjectKeys } from './questionFingerprint.js';
+import { parseCloudQuizId } from './customQuizModel.js';
 
 export const SESSION_PREFIX = 'quiz-study-v1:';
 
-export function questionFingerprint(questions) {
+function rawQuestionFingerprint(questions) {
   const text = JSON.stringify(questions);
   let hash = 2166136261;
   for (let index = 0; index < text.length; index++)
     hash = Math.imul(hash ^ text.charCodeAt(index), 16777619);
   return (hash >>> 0).toString(36) + ':' + questions.length;
+}
+
+export function questionFingerprint(questions) {
+  return 'v2:' + rawQuestionFingerprint(orderObjectKeys(questions));
+}
+
+function compatibleLegacyCloudDraft(key, saved, questions, mode) {
+  // The caller's current cloud key comes from a server-confirmed owner/instance/
+  // contentVersion. Rules require a new version for any actual content edit.
+  const match = /^quiz-study-v1:(.+):(cloud:slot-[123]:[^:]+):v([1-9][0-9]*):(exam|practice)$/.exec(
+    key
+  );
+  const identity = match && parseCloudQuizId(match[2]);
+  if (
+    !identity ||
+    match[1] === 'guest' ||
+    match[4] !== mode ||
+    !Number.isSafeInteger(Number(match[3])) ||
+    !new RegExp(`^[0-9a-z]+:${questions.length}$`).test(saved.signature || '') ||
+    (Object.hasOwn(saved, 'historyOwner') && saved.historyOwner !== match[1])
+  )
+    return false;
+  const source = saved.historySource;
+  if (
+    source &&
+    (source.kind !== 'custom' ||
+      source.id !== identity.instanceId ||
+      source.instanceId !== identity.instanceId ||
+      source.slotId !== identity.slotId ||
+      source.contentVersion !== Number(match[3]))
+  )
+    return false;
+  if (mode === 'practice') return true;
+  validateQuizQuestions(saved.questions, { allowLegacyIncomplete: true });
+  const current = new Map(questions.map((question) => [String(question.id), question]));
+  return saved.questions.every(
+    (question) =>
+      JSON.stringify(orderObjectKeys(question)) ===
+      JSON.stringify(orderObjectKeys(current.get(String(question.id))))
+  );
 }
 
 export function sessionKey(uid, quizId, mode) {
@@ -161,14 +203,19 @@ export function readStudySession(storage, key, questions, mode) {
 
 function readStoredStudySession(storage, key, questions, mode) {
   try {
-    const saved = JSON.parse(storage.getItem(key));
-    if (
-      !saved ||
-      saved.signature !== questionFingerprint(questions) ||
-      !Number.isInteger(saved.index) ||
-      saved.index < 0
-    )
-      return null;
+    let saved = JSON.parse(storage.getItem(key));
+    if (!saved || !Number.isInteger(saved.index) || saved.index < 0) return null;
+    const signature = questionFingerprint(questions);
+    if (saved.signature !== signature) {
+      if (
+        saved.signature !== rawQuestionFingerprint(questions) &&
+        !compatibleLegacyCloudDraft(key, saved, questions, mode)
+      )
+        return null;
+      // Migrate metadata only, including completed eligible History drafts.
+      // Keep the saved questions/option order, answers and absolute deadline.
+      saved = { ...saved, signature };
+    }
     if (mode === 'practice') {
       if (
         saved.index >= questions.length ||
