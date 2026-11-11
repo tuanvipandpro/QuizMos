@@ -1,10 +1,5 @@
-// Public synthetic questions for manual prompt-v6 quality review. These are not
+// Public synthetic questions for manual App AI quality review. These are not
 // model outputs and their marked answers are deliberately fallible input.
-import {
-  explanationPrompt,
-  explanationSystemPrompt,
-} from '../../src/services/llm/explanationPrompt.js';
-import { AI_POLICY } from '../../worker/config.js';
 
 const aws = 'https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html';
 const iam = 'https://docs.cloud.google.com/iam/docs/overview';
@@ -191,17 +186,14 @@ export const appAiQualityCases = [
   },
 ];
 
-// Keep the long-input sample near the current prompt ceiling without exceeding
-// it. Stable public diagnostic text exercises Unicode and long-token wrapping.
+// Keep the approved question bytes stable across prompt revisions. Request and
+// prompt ceilings are checked separately by the real Worker boundary test.
 const long = appAiQualityCases.at(-1).question;
-const size = () =>
-  new TextEncoder().encode(explanationSystemPrompt() + explanationPrompt(long, { compact: true }))
-    .length;
-let label = 0;
 const paddingChoices = Object.values(long.options).flatMap((pool) =>
   Object.keys(pool).map((key) => ({ pool, key }))
 );
-while (size() < AI_POLICY.maxPromptBytes - 192) {
+const QUALITY_TRACE_LABELS = 242;
+for (let label = 0; label < QUALITY_TRACE_LABELS; label++) {
   const { pool, key } = paddingChoices[label % paddingChoices.length];
-  pool[key] += ` trace_${String(label++).padStart(5, '0')}_kiểm_tra`;
+  pool[key] += ` trace_${String(label).padStart(5, '0')}_kiểm_tra`;
 }

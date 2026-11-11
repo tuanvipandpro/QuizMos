@@ -157,6 +157,29 @@ test('idempotent result, changed payload conflict and owner-scoped request IDs',
     AI_POLICY.userLimit - 1
   );
 });
+
+test('v7 does not reuse an existing v6 result or charge a rejected legacy retry', async (t) => {
+  const h = await workerHarness({ now: () => stamp });
+  t.after(h.dispose);
+  const body = input();
+  // Canonical v6 fingerprint for the fixed question/language/model above.
+  const legacyV6Fingerprint = 'ae538d0e33e7b7b41aee147e02fa8313b5a531d69f5231b64c208c51d852eaa1';
+  const repo = createUsageRepository(h.db);
+  await repo.reserve('alice', body.requestId, legacyV6Fingerprint, stamp);
+  await repo.finish('alice', body.requestId, {
+    text: 'Legacy v6 result',
+    model: AI_POLICY.model,
+    provider: 'app',
+  });
+  assert.equal((await call(h, body)).status, 409);
+  assert.equal(h.calls(), 0);
+  assert.equal((await repo.get('alice', body.requestId)).fingerprint, legacyV6Fingerprint);
+  assert.equal((await repo.usage('alice', stamp)).remaining, AI_POLICY.userLimit - 1);
+  const fresh = { ...body, requestId: input().requestId };
+  assert.equal((await call(h, fresh)).status, 200);
+  assert.equal(h.calls(), 1);
+  assert.equal((await repo.usage('alice', stamp)).remaining, AI_POLICY.userLimit - 2);
+});
 test('parallel reservations enforce user last slot and global last slot atomically', async (t) => {
   const h = await workerHarness({ now: () => stamp });
   t.after(h.dispose);

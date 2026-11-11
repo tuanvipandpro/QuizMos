@@ -1,5 +1,13 @@
 # App AI quality acceptance — 2026-11-06
 
+## Current correction status — 2026-11-11
+
+The bounded v6 pilot ran Q02 once through the normal designated-account local UI with real staging AI/D1. Quota changed 20 → 19 and all four Vietnamese sections completed; A/B were selected correctly. However, the reason for C incorrectly said removing error handlers lets failures continue successfully. [AWS documents unhandled errors as failing the execution](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html). The sampler stopped at this first semantic failure: one attempt used, seven cases unsampled. Raw output is retained privately in ignored artifacts; no retry, quota reset or remote Worker deployment occurred.
+
+The local transport methodology used real Google-key signature/claim verification with a live-HTTPS public-JWK transport cache and real staging bindings. A temporary local client timeout of 300 seconds accommodated proxy overhead; the Worker inference deadline stayed 25 seconds. Astra accepted this only for output-quality sampling, not production auth-network/latency/CPU acceptance. The original 35-second client file was restored after the pilot.
+
+[#144](https://github.com/tuanvipandpro/QuizMos/issues/144) prepares a generic false-premise correction and source prompt/cache version 7. It preserves the approved question bytes (same pack hash below) by fixing diagnostic padding independently of prompt length. Combined v7 prompt sizes for Q02–Q09 are 4,508 / 4,262 / 4,243 / 4,188 / 3,954 / 4,063 / 5,581 / 12,234 bytes. Existing caps, model, four sections and Vietnamese policy are unchanged. Local contracts/stubs cannot establish a v7 semantic pass; all new-version live review remains pending a new bounded scope after the required stop. Keep this backend candidate unmerged during the separate History-only promotion while remote Worker deployment remains prohibited. Historical v6 records below are preserved, not promoted to v7 evidence.
+
 Tracking issue: [#53](https://github.com/tuanvipandpro/quiz-app/issues/53). Coordination: [#87](https://github.com/tuanvipandpro/quiz-app/issues/87).
 
 Type: chore/docs with public test fixtures; low implementation risk because runtime, model, prompt version, quotas and production configuration are unchanged. App AI activation is delivered; wider output-quality acceptance remains open. The owner-deferred boundary CPU benchmark stays deferred.
