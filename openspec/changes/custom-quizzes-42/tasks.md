@@ -1,6 +1,6 @@
 # Tasks
 
-These checkboxes track implementation and rollout for #42. The setup PR left every task open; this implementation marks only tasks backed by actual evidence. Production comparison/deployment remains separate and is not completed merely because local tests pass.
+These checkboxes track implementation and rollout for #42. The setup PR left every task open; only evidence-backed tasks are checked. #131 reconciles the later production evidence for #79. The original plan required policy verification before client enablement; that ordering was not followed by the already-integrated client. The owner subsequently published compatible policy and the 10 November verification/smoke passed. Tasks 5.2/5.3 below record that actual later acceptance, not retroactive compliance with the original ordering. See [verification](verification.md#production-acceptance--10-november-2026). Documentation delivery and archival remain separate.
 
 ## 1. Contracts and validation
 
@@ -32,10 +32,10 @@ These checkboxes track implementation and rollout for #42. The setup PR left eve
 ## 5. Acceptance and rollout
 
 - [x] 5.1 Run the full CQ-01..CQ-12 acceptance matrix and `yarn verify:all`, review scope and update verification.md with actual evidence; do not treat planningComplete as feature-completion evidence.
-- [ ] 5.2 Compare published Rules/indexes and inspect drift against the supplied baseline (CQ-01, CQ-12); record verified source/hash/revision before rollout.
-- [ ] 5.3 Prepare release/rollback and perform owner-directed rollout (CQ-01, CQ-12); verify compatible Rules are effective before enabling the client and record actual production status.
+- [x] 5.2 Compare published Rules/indexes and inspect drift against the supplied baseline (CQ-01, CQ-12); record the verified publication source/hash/revision and actual release ordering.
+- [x] 5.3 Retain release/rollback instructions and verify owner-directed publication and bounded production save/reload/checkpoint/management/cleanup smoke (CQ-01, CQ-12); record compatible effective Rules, actual ordering and production status.
 
 ## Workflow follow-up
 
 - Archive the change and sync main specs only after implementation/evidence review and explicit rollout status.
-- Close issue #42 only when acceptance criteria are actually met; the setup PR does not close it.
+- Preserve historically closed #42; #79/#131 closure requires the reconciliation PR's checks and requested integration. A checked rollout task does not merge that PR or archive the change.
