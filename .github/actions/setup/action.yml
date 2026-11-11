@@ -1,5 +1,9 @@
 name: Pinned Node and Yarn dependencies
 description: Install the locked dependencies with a shared Yarn download cache
+inputs:
+  dependency-platform:
+    description: Separate native dependency caches for host and container environments
+    default: host
 runs:
   using: composite
   steps:
@@ -21,6 +25,6 @@ runs:
     - uses: actions/cache@v4
       with:
         path: node_modules
-        key: modules-v1-${{ runner.os }}-${{ runner.arch }}-node24-${{ hashFiles('yarn.lock', 'package.json', '.nvmrc') }}
+        key: modules-v2-${{ inputs.dependency-platform }}-${{ runner.os }}-${{ runner.arch }}-node24-${{ hashFiles('yarn.lock', 'package.json', '.nvmrc') }}
     - run: yarn install --frozen-lockfile --check-files
       shell: bash
