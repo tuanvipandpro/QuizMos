@@ -1,6 +1,14 @@
 # Exam history contract
 
-Tracking: [#80](https://github.com/tuanvipandpro/quiz-app/issues/80), MR #92. History is an Exam-only private archive. Practice drafts/checkpoints and guest/unsaved-upload results retain their existing scope. Client capture and navigation remain disabled until compatible Rules/indexes are published and verified; see the change's release tasks. This document describes the implementation contract, not production activation.
+Tracking: [#80](https://github.com/tuanvipandpro/quiz-app/issues/80), MR #92; build-wiring follow-up [#130](https://github.com/tuanvipandpro/QuizMos/issues/130). History is an Exam-only private archive. Practice drafts/checkpoints and guest/unsaved-upload results retain their existing scope. Compatible production policy was verified after owner publication; capture/navigation remain disabled pending explicit client activation and designated-account archive acceptance. This document describes the implementation contract, not production activation.
+
+## Build-time activation and rollback
+
+The frontend workflow forwards the public repository Actions variable `VITE_EXAM_HISTORY_ENABLED` to the verified build, defaulting to `false` when unset. Only the exact value `true` enables capture/navigation; `false`, an empty value or any other spelling keeps it disabled. This is a build-time switch, so changing the variable requires a new reviewed frontend release; it does not change an already-published bundle. Local development uses the same variable from an ignored environment file, with `.env.example` retaining the disabled default.
+
+Production Rules and both field exemptions were verified after owner publication on 10 November 2026; see [the acceptance checkpoint](https://github.com/tuanvipandpro/QuizMos/issues/80#issuecomment-6772934140). Before activation, review that compatible policy is still current and authorize designated-account archive/reload/review/delete acceptance. This wiring change does not set the repository variable or establish History production acceptance. Follow [the Git process](git-process.md) and existing frontend publication pipeline for release.
+
+To stop new capture and hide History navigation, set the public variable to `false` (or remove it) and publish a reviewed frontend build. Preserve existing private archives and compatible Rules. Users with an older enabled bundle may remain active until reloading; the flag is not a server-side revocation control. Never delete user history or broaden access as rollback.
 
 ## Limits and identity
 

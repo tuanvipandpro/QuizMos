@@ -277,3 +277,13 @@ test('dependency cache is exact and keeps frozen installation validation on hits
   const frontend = fs.readFileSync('.github/workflows/frontend.yml', 'utf8');
   assert.ok(frontend.includes('yarn playwright install --with-deps chromium'));
 });
+
+test('the frontend build receives the explicit History rollout variable with a disabled default', () => {
+  const source = fs.readFileSync('.github/workflows/frontend.yml', 'utf8');
+  const buildStep = source.match(/- run: yarn verify\r?\n((?:[ \t]+.*\r?\n)+?)(?= {6}-)/)?.[1];
+  assert.ok(buildStep, 'the verified build step must exist');
+  assert.match(
+    buildStep,
+    /VITE_EXAM_HISTORY_ENABLED: \$\{\{ vars\.VITE_EXAM_HISTORY_ENABLED \|\| 'false' \}\}/
+  );
+});

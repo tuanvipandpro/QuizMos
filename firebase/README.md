@@ -1,6 +1,6 @@
 # Custom quiz Rules and release procedure
 
-`baseline/firestore.rules` preserves the exact user-supplied published baseline (LF-normalized SHA-256 in `rules-baseline.json`). This source was supplied in chat, not exported from Firebase. `firestore.rules` is the proposed custom-quiz policy under review; its presence in Git does not establish that it is deployed.
+`baseline/firestore.rules` preserves the exact user-supplied historical baseline (LF-normalized SHA-256 in `rules-baseline.json`). This source was supplied in chat, not exported from Firebase. `firestore.rules` contains the combined custom-quiz/History policy. Its presence in Git alone does not establish deployment; the current verified publication is recorded below.
 
 ## Contract and cost
 
@@ -10,7 +10,7 @@
 - Checkpoints stay in the custom document. Rename keeps progress; replacement increments contentVersion and resets its checkpoint atomically; deletion removes the document/checkpoint. Bank progress stays in the profile map. Draft keys include account, instance and content version.
 - Listing reads content too, at most three documents, only on personal routes. A server-confirmed listener keeps active identities fresh; cached snapshots do not validate stale study. Saves use a 750 KiB UTF-8 JSON envelope budget as a conservative estimate, not exact Firestore sizing. The actual server can still reject a document; errors keep the preview for retry.
 - `firestore.indexes.fragment.json` is **only a fragment** suggesting that `customQuizzes.questions` be exempted from indexing. It is not a complete index configuration and is not referenced by a deploy command. The app does not query question content; index exemptions avoid unnecessary fanout/storage. Preserve all unrelated indexes/overrides.
-- `firestore.indexes.json` is the complete **candidate** configuration reconciled from the 6 November 2026 Console observation: no manual indexes or existing exemptions, plus the proposed questions exemption. It has not been deployed. Re-read production before use and retain all intervening changes; see [#79 reconciliation](../docs/m1-custom-quiz-rollout-79.md).
+- `firestore.indexes.json` is the earlier custom-quiz-only configuration. The combined `firestore.history.indexes.json`, referenced by `../firebase.history.json`, includes both `customQuizzes.questions` and `examAttemptSnapshots.payload` exemptions. Both were verified after owner publication on 10 November 2026. Re-read production before any later publication and preserve unrelated configuration; see [#79 reconciliation](../docs/m1-custom-quiz-rollout-79.md).
 
 ## Verify locally
 
@@ -18,7 +18,7 @@
 
 ## Before merge and production enablement
 
-1. Review the feature PR and acceptance matrix. Keep issue #42 open until rollout is verified.
+1. Review the feature PR and acceptance matrix. Track unfinished acceptance in the current release issue (#79 follows the historically closed #42); code integration alone is not rollout acceptance.
 2. With an already authorized owner/admin connection, read the **current published Rules and complete indexes/field overrides** for `quiz-app-f70d5`. Record source, revision/hash and timestamp in the release evidence. Compare with the supplied baseline and inspect broad allow rules. Never replace changed production policies blindly.
 3. Merge the proposed policy with any legitimate production changes and run the emulator suite against the reconciled policy. Merge the questions exemption into the complete existing index configuration; do not deploy the fragment by itself or an empty indexes file.
 4. After explicit rollout authorization, publish compatible Rules first, wait for propagation and verify the ownership/quota policy is effective. Verify the exemption is active where applicable. Never log credentials or put admin keys in Vite variables.
@@ -30,4 +30,6 @@ Revert/disable the cloud client first while preserving saved documents. Bank and
 
 ## Current rollout status
 
-The custom-quiz client implementation is already merged, but its production rollout is not verified. During the original development no CLI account was available and Console redirected to sign-in. A fresh read-only Console inspection on 6 November 2026 now has an existing admin session: the published starred Rules revision is labelled `Dec 14, 2025 • 10:39 PM` and grants only same-owner profile access. It has no custom-quiz descendant policy. Manual indexes and automatic exemptions are empty. The existing custom-quiz candidate and new complete index candidate therefore still require authorized publication and verification. See [provenance, limits and acceptance gaps](../docs/m1-custom-quiz-rollout-79.md); no raw management API export, Rules/index publication or production test-data mutation was performed. Original baseline provenance remains unchanged. #79 tracks the unfinished release despite closed #42.
+Custom-quiz runtime rollout was verified on 10 November 2026 after owner publication. The Console revision labelled `Today • 10:42 PM` was copied through the UI and found token-equivalent to the combined `firestore.rules`; no raw management API export/ruleset ID is claimed. Manual indexes were empty and both field exemptions above had Collection Ascending/Descending/Arrays disabled, with Collection group defaults remaining disabled. The original baseline and 6 November observation remain historical provenance.
+
+With explicit owner authorization, one disposable seven-question quiz passed production save, reload, a second signed-in tab read, question-2 checkpoint/resume, rename and replacement (version 1 → 2, one question, checkpoint reset). Deletion removed only that test quiz; final quota returned to 0/3 and an older study tab invalidated. This is second-tab evidence, not a second-device claim; adversarial ownership/quota/size boundaries remain emulator/CI checks. See [the detailed record](../docs/m1-custom-quiz-rollout-79.md). #131 reconciles the documentation for #79; merge/post-merge checks remain separate. History activation/archive acceptance (#80) and AI quality (#53) are still pending. No automatic Firebase deployment is added.
