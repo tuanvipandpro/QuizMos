@@ -404,12 +404,14 @@
   font-size: 9px;
 }
 .question-number.state-answered,
-.question-number.state-correct {
+.question-number.state-correct,
+.practice-feedback .question-number.state-correct[aria-current='step'] {
   background: var(--app-success-bg);
   border-color: var(--app-success-border);
   color: var(--app-success-text);
 }
-.question-number.state-incorrect {
+.question-number.state-incorrect,
+.practice-feedback .question-number.state-incorrect[aria-current='step'] {
   background: var(--app-danger-bg);
   border-color: var(--app-danger-border);
   color: var(--app-danger-text);
@@ -418,6 +420,12 @@
   background: var(--app-primary-bg);
   color: var(--app-on-primary);
   border-color: var(--app-primary);
+}
+.practice-feedback .question-number[aria-current='step'] {
+  box-shadow: inset 0 0 0 2px var(--app-primary);
+}
+.question-number.state-incomplete {
+  border-style: dashed;
 }
 .navigator-pages {
   display: flex;
