@@ -10,6 +10,20 @@ Production Rules and both field exemptions were verified after owner publication
 
 To stop new capture and hide History navigation, set the public variable to `false` (or remove it) and publish a reviewed frontend build. Preserve existing private archives and compatible Rules. Users with an older enabled bundle may remain active until reloading; the flag is not a server-side revocation control. Never delete user history or broaden access as rollback.
 
+## Production activation procedure — #141
+
+The [activation follow-up](https://github.com/tuanvipandpro/QuizMos/issues/141) is separate from the pending UI bug PRs. The executable flag guard is unchanged. Its reviewed configuration-source annotation requests a normal frontend build through the existing runtime-file release classifier; no manual force-release workflow or local publication is introduced. The activation itself is the public Actions variable, not the annotation.
+
+Pre-activation verification completed on 11 November through authenticated Chrome Console: published revision `Yesterday • 10:42 PM`, complete UI transcript SHA-256 `f8e21f695c185439a9f6f69148fc5a164c5972eea6316b4151359e63de4a046c`, token-equivalent to current combined Rules. Manual indexes were empty and both required exemptions disabled Collection Ascending/Descending/Arrays, retaining disabled Collection group defaults. This is fresh Console provenance, not a raw API export. Owner authorization covers one named synthetic quiz and one new archive with bounded review/cleanup; actual activation and production smoke are still pending.
+
+1. Read the current published combined Rules and complete field overrides again. Compare with `firebase/firestore.rules` and `firebase/firestore.history.indexes.json`; preserve unrelated configuration. The 10 November Console record is historical evidence, not a fresh read.
+2. Confirm the designated account and bounded live smoke/cleanup scope. The prepared sample is one seven-question, 3,503-byte synthetic private quiz named `M1-HISTORY-SMOKE-DISPOSABLE-20261111`, plus one new exam attempt. Read current occupancy/history first; never replace/delete incidental user data. A deleted archive retains only its documented private anti-replay receipt.
+3. After approval and verification, set `VITE_EXAM_HISTORY_ENABLED=true` and promote the reviewed release through protected release → develop → master PRs. Wait for current-head CI, the verified same-run frontend artifact and actual publication. Setting the variable alone does not update deployed assets. Keep the exact-true guard and default-disabled behavior when the variable is absent.
+4. Through the normal signed-in app, save the synthetic quiz, start one new exam, submit, reload and check that one stable archive exists. Open its read-only review and verify its stored answers/score. Confirm and remove only the created archive and quiz, then check unaffected existing content and capacity. Do not backfill older disabled drafts, create extra attempts, or use admin writes as client-policy proof.
+5. Record the exact source/build/policy observation and real results in #80/#141. Until those steps actually pass, History production acceptance remains pending. A source PR, local fixture pass or variable change alone does not satisfy it.
+
+If activation or smoke fails, keep the current result/draft and record the failure. Disable the variable and publish the reviewed frontend rollback first when needed; preserve user archives, compatible Rules and receipt/quota integrity.
+
 ## Limits and identity
 
 Named defaults live in `src/data/examHistoryLimits.js`: 50 retained attempts/account, 20 summaries per query/page, 100 questions/snapshot, a conservative 750 KiB serialized snapshot envelope and a payload UTF-8 budget with 4 KiB metadata headroom. At capacity the user explicitly deletes an older archive; no silent eviction occurs.
