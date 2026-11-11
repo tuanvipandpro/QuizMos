@@ -10,12 +10,19 @@ import {
   customQuizTitle,
   validateCustomQuestions,
 } from '../../src/utils/customQuizModel.js';
+import { reorderedMaps } from './reorderedMaps.js';
 
 const key = (uid) => `quiz-e2e-custom:${uid}`;
 const listeners = new Set();
 const read = (uid) => JSON.parse(localStorage.getItem(key(uid)) || '{}');
 const records = (uid) =>
-  Object.entries(read(uid)).map(([slot, data]) => readCustomQuiz(slot, data, uid));
+  Object.entries(read(uid)).map(([slot, data]) =>
+    readCustomQuiz(
+      slot,
+      sessionStorage.getItem('quiz-e2e-custom-reordered-maps') ? reorderedMaps(data) : data,
+      uid
+    )
+  );
 const check = (method, uid) => {
   const user = JSON.parse(localStorage.getItem('quiz-e2e-auth') || 'null');
   if (!uid || user?.uid !== uid) throw customQuizError('AUTH');
