@@ -1,22 +1,24 @@
 import { isStructuredQuestion } from './questionModel.js';
 import { contentHash } from './contentHash.js';
 
+const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+// Map key order is not content. Array order remains meaningful to callers.
+export const orderObjectKeys = (value) =>
+  Array.isArray(value)
+    ? value.map(orderObjectKeys)
+    : value && typeof value === 'object'
+      ? Object.fromEntries(
+          Object.keys(value)
+            .sort(compare)
+            .map((key) => [key, orderObjectKeys(value[key])])
+        )
+      : value;
+
 export async function fingerprintQuestions(questions) {
-  const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
-  const ordered = (value) =>
-    Array.isArray(value)
-      ? value.map(ordered)
-      : value && typeof value === 'object'
-        ? Object.fromEntries(
-            Object.keys(value)
-              .sort(compare)
-              .map((key) => [key, ordered(value[key])])
-          )
-        : value;
   const records = questions
     .map((question) =>
       isStructuredQuestion(question)
-        ? ordered({
+        ? orderObjectKeys({
             id: String(question.id),
             type: question.type,
             question: question.question,
