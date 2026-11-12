@@ -232,6 +232,7 @@ export default function PracticeMode({
           </div>
         </div>
         <QuestionNavigator
+          feedback
           questions={questions}
           answers={session.answers}
           index={session.index}
