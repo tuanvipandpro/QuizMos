@@ -477,6 +477,7 @@ export const vi = {
   '{count} of {total} answered': 'Đã trả lời {count}/{total} câu',
   Answered: 'Đã trả lời',
   Unanswered: 'Chưa trả lời',
+  Incomplete: 'Chưa hoàn tất',
   Flagged: 'Đã đánh dấu',
   Correct: 'Đúng',
   Incorrect: 'Sai',
