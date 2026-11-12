@@ -214,6 +214,8 @@ test('saved custom exam reload preserves shuffled questions, flags, answers, mod
       return JSON.parse(sessionStorage.getItem(key));
     });
   const before = await read();
+  // A server serialization can reorder map keys without editing quiz content.
+  await page.evaluate(() => sessionStorage.setItem('quiz-e2e-custom-reordered-maps', '1'));
   await page.reload();
   await expect(page.getByText('Correct answer!', { exact: true })).toBeVisible();
   expect(await read()).toEqual(before);

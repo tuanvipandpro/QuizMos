@@ -293,6 +293,7 @@
   margin-inline-start: 8px;
 }
 .question-feedback {
+  overflow-wrap: anywhere;
   margin-top: 18px;
   padding: 14px;
   border-radius: 9px;
