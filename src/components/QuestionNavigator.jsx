@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Button, InputNumber, Typography } from 'antd';
-import { CheckOutlined, CloseOutlined, FlagFilled } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, FlagFilled, MinusOutlined } from '@ant-design/icons';
 import { useLanguage } from '../contexts/LanguageContext';
-import { isAnswerComplete, isAnswerCorrect } from '../utils/questionModel';
+import { hasAnyAnswer, isAnswerComplete, isAnswerCorrect } from '../utils/questionModel';
 
 const PAGE_SIZE = 40;
 
@@ -13,6 +13,7 @@ export default function QuestionNavigator({
   onNavigate,
   flags = [],
   review = false,
+  feedback = false,
   indexes = questions.map((_, position) => position),
 }) {
   const { t } = useLanguage();
@@ -40,7 +41,7 @@ export default function QuestionNavigator({
   return (
     <aside className="study-sidebar">
       <details
-        className="study-navigator"
+        className={'study-navigator' + (feedback ? ' practice-feedback' : '')}
         open={open}
         onToggle={(event) => {
           if (event.currentTarget.open !== open) setOpen(event.currentTarget.open);
@@ -53,13 +54,19 @@ export default function QuestionNavigator({
         <div className="question-number-grid">
           {indexes.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((position) => {
             const answered = isAnswerComplete(questions[position], answers[position]);
-            const correct = review && isAnswerCorrect(questions[position], answers[position]);
-            const status = review
+            const showCorrectness = review || feedback;
+            const correct =
+              showCorrectness && isAnswerCorrect(questions[position], answers[position]);
+            const incomplete =
+              feedback && !answered && hasAnyAnswer(questions[position], answers[position]);
+            const status = showCorrectness
               ? correct
                 ? 'Correct'
                 : answered
                   ? 'Incorrect'
-                  : 'Unanswered'
+                  : incomplete
+                    ? 'Incomplete'
+                    : 'Unanswered'
               : answered
                 ? 'Answered'
                 : 'Unanswered';
@@ -79,10 +86,12 @@ export default function QuestionNavigator({
                 {position + 1}
                 {flags.includes(position) ? (
                   <FlagFilled aria-hidden="true" />
-                ) : correct || (answered && !review) ? (
+                ) : correct || (answered && !showCorrectness) ? (
                   <CheckOutlined aria-hidden="true" />
-                ) : review && answered ? (
+                ) : showCorrectness && answered ? (
                   <CloseOutlined aria-hidden="true" />
+                ) : incomplete ? (
+                  <MinusOutlined aria-hidden="true" />
                 ) : null}
               </Button>
             );
