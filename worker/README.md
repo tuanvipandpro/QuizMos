@@ -1,5 +1,11 @@
 # App AI — Cloudflare Free
 
+## Prompt v7 candidate failed semantic acceptance — #144
+
+Source on this branch uses prompt/cache version 7 after the #53 v6 pilot's Q02 distractor rationale repeated a false premise as actual behavior. The additive system instruction requires independent factual checks and explicit correction of false option claims; it changes no question/answer, model, quota or input/output/inference deadline. The eight approved sample questions remain byte-identical, SHA-256 `91956aa648e0a8124aab4e569185106fb56fbe7e2f8af6d4c04201c880a9360f`; the longest combined prompt is 12,234 bytes, below 12,288.
+
+The newly authorized local v7 pilot also failed Q02 and stopped after one attempt (quota 19 → 18). The appended instruction did not correct the false distractor rationale. This candidate is rejected for semantic acceptance; keep #144/#146 draft and unmerged. See the [failed acceptance record](../docs/m1-app-ai-acceptance-53.md#rejected-v7-pilot--2026-11-11). Production/staging deployed versions are unchanged and the owner permits local Worker deployment only. Keep this backend-releasing change out of the separate History-only production promotion. A v6 request ID cannot return a v7 result: a changed prompt-version fingerprint produces conflict, preserves the existing record/quota and requires an explicit new request. An already-open older frontend may retain its old in-memory explanation until reload; no silent regeneration is introduced. No new live inference is authorized by this source change; the previous sampler stopped at its first failure after one of eight attempts.
+
 The Worker serves `GET /v1/usage` and `POST /v1/explanations`. Every request requires a Firebase ID token for the correct project; guests continue using Gemini/Groq BYOK. Quizzes, profiles and progress remain in Firestore. D1 stores only the request ledger and private results; the daily cron removes records older than two days (data may remain until the next cron run). Tests neither deploy nor invoke live AI.
 
 ## Current production resources

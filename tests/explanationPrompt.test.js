@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { formatAnswerLines, formatQuestionText } from '../src/utils/questionModel.js';
 import { createHash } from 'node:crypto';
+import { appAiQualityCases } from './fixtures/appAiQualityCases.js';
+import { AI_POLICY } from '../worker/config.js';
 import {
   explanationPrompt,
   explanationSystemPrompt,
@@ -77,12 +79,12 @@ for (const format of ['single', 'multiple', 'yes-no', 'dropdown-rows', 'dropdown
   });
 }
 
-test('native drag guidance covers original slots/code while all prior-format prompt bytes stay unchanged', () => {
+test('native guidance and legacy user prompts are unchanged under the additive v7 factual guard', () => {
   const old = JSON.parse(
     readFileSync(new URL('./fixtures/dragDropPromptBaseline.json', import.meta.url))
   );
   const hash = (value) => createHash('sha256').update(value).digest('hex');
-  assert.equal(hash(explanationSystemPrompt()), old.system);
+  assert.equal(hash(explanationSystemPrompt().split('\n\n')[0]), old.system);
   for (const format of ['single', 'multiple', 'yes-no', 'dropdown-rows', 'dropdown-inline']) {
     const q = JSON.parse(
       readFileSync(new URL(`../public/examples/quiz-${format}.json`, import.meta.url))
@@ -101,4 +103,23 @@ test('native drag guidance covers original slots/code while all prior-format pro
       assert(prompt.includes(line));
     if (format.endsWith('inline')) assert(prompt.includes('${{ github.ref }}'));
   }
+});
+
+test('v7 explicitly corrects false option premises while preserving the approved review inputs', () => {
+  const guard = explanationSystemPrompt().split('\n\n')[1];
+  assert.match(guard, /every option.*factual claims independently/);
+  assert.match(guard, /correct false premises/);
+  assert.match(guard, /do not repeat.*actual behavior/);
+  assert.doesNotMatch(guard, /Step Functions|error handlers|option C/);
+  assert.equal(AI_POLICY.promptVersion, '7');
+  const pack =
+    JSON.stringify(
+      appAiQualityCases.map((item) => item.question),
+      null,
+      2
+    ) + '\n';
+  assert.equal(
+    createHash('sha256').update(pack).digest('hex'),
+    '91956aa648e0a8124aab4e569185106fb56fbe7e2f8af6d4c04201c880a9360f'
+  );
 });
