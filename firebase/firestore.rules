@@ -108,6 +108,90 @@ service cloud.firestore {
             || (request.resource.data.operation == 'delete' && historyDelete(request.resource.data.attemptId)));
       }
 
+      // Notebook is a private personal study aid, not a certified grading store.
+      function notebookOwner() {
+        return request.auth != null && request.auth.uid == userId
+          && request.auth.token.firebase.sign_in_provider != 'anonymous';
+      }
+      function notebookEntryPath(id) { return /databases/$(database)/documents/users/$(userId)/notebookEntries/$(id); }
+      function notebookQuotaPath() { return /databases/$(database)/documents/users/$(userId)/notebookState/quota; }
+      function notebookRef(r) {
+        return r is map
+          && r.keys().hasAll(['kind','quizId','slotId','instanceId','contentVersion','questionId','fingerprint'])
+          && r.keys().hasOnly(['kind','quizId','slotId','instanceId','contentVersion','questionId','fingerprint'])
+          && historyHash(r.fingerprint) && r.questionId is string
+          && r.questionId.size() > 0 && r.questionId.toUtf8().size() <= 1024
+          && ((r.kind == 'bank' && r.quizId is string && r.quizId.matches('[a-z0-9-]{1,120}')
+              && r.slotId == null && r.instanceId == null && r.contentVersion == null)
+            || (r.kind == 'custom' && r.slotId in ['slot-1','slot-2','slot-3']
+              && historyId(r.instanceId) && r.quizId == 'cloud:'+r.slotId+':'+r.instanceId
+              && r.contentVersion is int && r.contentVersion > 0));
+      }
+      function notebookSourceCurrent(r) {
+        return r.kind == 'bank'
+          || (get(/databases/$(database)/documents/users/$(userId)/customQuizzes/$(r.slotId)).data.instanceId == r.instanceId
+            && get(/databases/$(database)/documents/users/$(userId)/customQuizzes/$(r.slotId)).data.contentVersion == r.contentVersion);
+      }
+      function notebookEntry(d,id) {
+        return historyHash(id)
+          && d.keys().hasAll(['schemaVersion','entryKey','ref','sourceGroup','bookmarked','note','mistake','reviewed','lastWrongAt','lastReviewedAt','revision','lastOperationId','lastOperationFingerprint','createdAt','updatedAt'])
+          && d.keys().hasOnly(['schemaVersion','entryKey','ref','sourceGroup','bookmarked','note','mistake','reviewed','lastWrongAt','lastReviewedAt','revision','lastOperationId','lastOperationFingerprint','createdAt','updatedAt'])
+          && d.schemaVersion == 1 && d.entryKey == id && notebookRef(d.ref)
+          && d.sourceGroup == (d.ref.kind == 'bank' ? 'bank:'+d.ref.quizId : 'custom:'+d.ref.instanceId+':v'+string(d.ref.contentVersion))
+          && d.bookmarked is bool && d.mistake is bool && d.reviewed is bool
+          && d.note is string && d.note.matches('(?s).{0,1000}.{0,1000}') && d.note.toUtf8().size() <= 8000
+          && (d.bookmarked || d.mistake || d.note.size() > 0)
+          && (d.mistake ? (d.lastWrongAt is timestamp && d.lastWrongAt <= request.time) : (d.lastWrongAt == null && d.lastReviewedAt == null))
+          && (d.lastReviewedAt == null || (d.lastReviewedAt is timestamp && d.lastReviewedAt <= request.time))
+          && (!d.reviewed || (d.mistake && d.lastReviewedAt is timestamp))
+          && d.revision is int && d.revision > 0 && historyId(d.lastOperationId) && historyHash(d.lastOperationFingerprint)
+          && d.createdAt is timestamp && d.createdAt <= request.time && d.updatedAt == request.time;
+      }
+      function notebookQuotaTransition(id) {
+        let old = exists(notebookQuotaPath()) ? get(notebookQuotaPath()).data : {'count':0,'revision':0,'generation':0};
+        let next = getAfter(notebookQuotaPath()).data;
+        let before = exists(notebookEntryPath(id));
+        let after = existsAfter(notebookEntryPath(id));
+        return historyHash(id) && (before || after)
+          && next.keys().hasAll(['count','revision','generation','lastEntryKey','lastOperationId','lastOperationFingerprint','updatedAt'])
+          && next.keys().hasOnly(['count','revision','generation','lastEntryKey','lastOperationId','lastOperationFingerprint','updatedAt'])
+          && next.count is int && next.count >= 0 && next.count <= 500
+          && next.count == old.count + (after ? (before ? 0 : 1) : -1)
+          && next.revision is int && next.revision == old.revision+1
+          && next.generation is int && next.generation == old.generation+(after ? 0 : 1)
+          && next.lastEntryKey == id && historyId(next.lastOperationId) && historyHash(next.lastOperationFingerprint)
+          && next.updatedAt == request.time
+          && (!after || (getAfter(notebookEntryPath(id)).data.updatedAt == request.time
+            && getAfter(notebookEntryPath(id)).data.revision == (before ? get(notebookEntryPath(id)).data.revision+1 : 1)
+            && getAfter(notebookEntryPath(id)).data.lastOperationId == next.lastOperationId
+            && getAfter(notebookEntryPath(id)).data.lastOperationFingerprint == next.lastOperationFingerprint));
+      }
+      match /notebookEntries/{entryKey} {
+        allow get: if notebookOwner();
+        allow list: if notebookOwner() && request.query.limit > 0 && request.query.limit <= 20;
+        allow create: if notebookOwner() && notebookEntry(request.resource.data,entryKey)
+          && request.resource.data.revision == 1 && request.resource.data.createdAt == request.time
+          && (request.resource.data.lastWrongAt == null || request.resource.data.lastWrongAt == request.time)
+          && (request.resource.data.lastReviewedAt == null || request.resource.data.lastReviewedAt == request.time)
+          && notebookSourceCurrent(request.resource.data.ref) && notebookQuotaTransition(entryKey);
+        allow update: if notebookOwner() && notebookEntry(request.resource.data,entryKey)
+          && request.resource.data.ref == resource.data.ref
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.revision == resource.data.revision+1
+          && (request.resource.data.lastWrongAt == resource.data.lastWrongAt || request.resource.data.lastWrongAt == request.time)
+          && (request.resource.data.lastReviewedAt == resource.data.lastReviewedAt || request.resource.data.lastReviewedAt == request.time)
+          && ((request.resource.data.diff(resource.data).affectedKeys().hasOnly(['bookmarked','note','revision','lastOperationId','lastOperationFingerprint','updatedAt']))
+            || notebookSourceCurrent(request.resource.data.ref))
+          && notebookQuotaTransition(entryKey);
+        allow delete: if notebookOwner() && notebookQuotaTransition(entryKey);
+      }
+      match /notebookState/{stateId} {
+        allow get: if notebookOwner() && stateId == 'quota';
+        allow list, delete: if false;
+        allow create, update: if notebookOwner() && stateId == 'quota'
+          && notebookQuotaTransition(request.resource.data.lastEntryKey);
+      }
+
       match /customQuizzes/{slotId} {
         function owner() {
           return request.auth != null && request.auth.uid == userId;

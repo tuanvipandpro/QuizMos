@@ -1,4 +1,129 @@
 export const vi = {
+  'Notebook sync for this result has not been confirmed. Use Refresh and retry to capture it explicitly.':
+    'Chưa có xác nhận đồng bộ sổ ôn tập cho kết quả này. Chọn Làm mới và thử lại nếu bạn muốn đồng bộ kết quả.',
+  'This question reference is too large for notebook storage. You can continue studying it.':
+    'Thông tin định danh câu hỏi này vượt giới hạn lưu trữ sổ ôn tập. Bạn vẫn có thể tiếp tục học câu này.',
+  '{count} active filters': '{count} bộ lọc đang bật',
+  'Start a new practice session to synchronize future answers with your notebook.':
+    'Bắt đầu lượt luyện tập mới để đồng bộ các đáp án tiếp theo vào sổ ôn tập.',
+  'Read full note': 'Đọc toàn bộ ghi chú',
+  'Collapse note': 'Thu gọn ghi chú',
+  'Study notebook': 'Sổ ôn tập',
+  'Your mistakes, review progress, bookmarks and private notes.':
+    'Câu sai, tiến độ ôn lại, câu đã đánh dấu và ghi chú riêng của bạn.',
+  'Question notebook': 'Sổ ôn tập của câu hỏi',
+  'Bookmarks and notes are separate from Save position and Exam Flag.':
+    'Đánh dấu và ghi chú độc lập với Lưu vị trí và Cờ trong bài thi.',
+  'Loading notebook entry…': 'Đang tải mục ôn tập…',
+  'Mistake reviewed correctly': 'Câu sai đã ôn đúng',
+  'Mistake to review': 'Câu sai cần ôn lại',
+  'Bookmark this question': 'Đánh dấu câu hỏi này',
+  'Private note': 'Ghi chú riêng',
+  'Plain text, up to 2,000 characters and 8,000 UTF-8 bytes. Your note is not sent to AI.':
+    'Văn bản thuần, tối đa 2.000 ký tự và 8.000 byte UTF-8. Ghi chú không được gửi cho AI.',
+  'Tab recovery is unavailable. Keep this editor open to avoid losing unsaved text.':
+    'Không thể khôi phục trong tab. Hãy giữ cửa sổ này mở để tránh mất nội dung chưa lưu.',
+  'Latest saved note': 'Ghi chú đã lưu mới nhất',
+  'Saving notebook entry…': 'Đang lưu mục ôn tập…',
+  'Not synchronized yet': 'Chưa đồng bộ',
+  'Notebook entry loaded': 'Đã tải mục ôn tập',
+  'Save note': 'Lưu ghi chú',
+  'Retry original save': 'Thử lại lệnh lưu cũ',
+  'Refresh this notebook entry?': 'Làm mới mục ôn tập này?',
+  'Your text is kept. Read the latest saved state, then choose Save note to apply your edit.':
+    'Nội dung đang nhập được giữ lại. Xem trạng thái mới nhất rồi chọn Lưu ghi chú để áp dụng thay đổi.',
+  'Refresh entry': 'Làm mới mục',
+  'Remove this notebook entry?': 'Xóa mục ôn tập này?',
+  'This removes its mistake, bookmark and note. Your answers and saved position are kept.':
+    'Thao tác này xóa câu sai, đánh dấu và ghi chú của mục. Đáp án và vị trí đã lưu vẫn được giữ.',
+  'Remove entry': 'Xóa mục',
+  'Keep your note draft and close?': 'Giữ bản nháp ghi chú và đóng?',
+  'Unsaved text stays in this account and tab. It is not synchronized yet.':
+    'Nội dung chưa lưu được giữ cho tài khoản này trong tab này và chưa được đồng bộ.',
+  'Close editor': 'Đóng cửa sổ ghi chú',
+  'Keep editing': 'Tiếp tục chỉnh sửa',
+  'Sign in for bookmarks and notes': 'Đăng nhập để đánh dấu và ghi chú',
+  'Bookmark and note': 'Đánh dấu và ghi chú',
+  'Save this quiz to your account before adding notebook entries.':
+    'Lưu quiz vào tài khoản trước khi thêm vào sổ ôn tập.',
+  'Refresh notebook': 'Làm mới sổ ôn tập',
+  'Notebook filters': 'Bộ lọc sổ ôn tập',
+  'Quiz bank': 'Bộ câu hỏi',
+  'All quiz banks': 'Tất cả bộ câu hỏi',
+  'Mistakes only': 'Chỉ câu sai',
+  'Bookmarks only': 'Chỉ câu đã đánh dấu',
+  'Review status': 'Trạng thái ôn lại',
+  'All review states': 'Mọi trạng thái ôn lại',
+  'To review': 'Cần ôn lại',
+  'Reviewed correctly': 'Đã ôn đúng',
+  'Your notebook changed. Refresh the list before selecting more questions.':
+    'Sổ ôn tập đã thay đổi. Làm mới danh sách trước khi chọn thêm câu hỏi.',
+  '{count} of {limit} notebook entries': '{count} / {limit} mục ôn tập',
+  '{count} questions selected': 'Đã chọn {count} câu hỏi',
+  'Study selected questions': 'Ôn các câu đã chọn',
+  'Clear selection': 'Bỏ chọn tất cả',
+  'Loading notebook…': 'Đang tải sổ ôn tập…',
+  'No entries match these filters.': 'Không có mục khớp với các bộ lọc này.',
+  'Your notebook is empty. Add a bookmark, a note or complete a practice answer.':
+    'Sổ ôn tập chưa có mục nào. Hãy đánh dấu, ghi chú hoặc hoàn thành một câu luyện tập.',
+  'Unavailable quiz': 'Quiz không còn khả dụng',
+  'Private quiz': 'Quiz riêng',
+  'Select question {id} from {quiz}': 'Chọn câu {id} trong {quiz}',
+  'Question {id}': 'Câu {id}',
+  Bookmarked: 'Đã đánh dấu',
+  'Note only': 'Chỉ có ghi chú',
+  'Checking source…': 'Đang kiểm tra nguồn…',
+  'Edit notebook entry': 'Sửa mục ôn tập',
+  'Page {number}': 'Trang {number}',
+  'Checking selected sources…': 'Đang kiểm tra các nguồn đã chọn…',
+  'Back to notebook': 'Về sổ ôn tập',
+  '{count} selected questions are unavailable and excluded.':
+    'Đã loại {count} câu đã chọn do nguồn không còn khả dụng.',
+  'Notebook revision': 'Ôn tập từ sổ',
+  'No current questions are available in this selection. Your notes are kept.':
+    'Không có câu hỏi hiện hành trong nhóm đã chọn. Ghi chú của bạn vẫn được giữ.',
+  'Study notebook is not enabled yet.': 'Sổ ôn tập chưa được bật.',
+  'Sign in to use your private study notebook.': 'Đăng nhập để dùng sổ ôn tập riêng.',
+  'Notebook access was denied. Check your account and retry.':
+    'Không có quyền truy cập sổ ôn tập. Kiểm tra tài khoản rồi thử lại.',
+  'Could not reach your notebook. Check your connection and retry.':
+    'Không thể kết nối sổ ôn tập. Kiểm tra kết nối rồi thử lại.',
+  'This entry changed in another tab or device. Your text is kept. Refresh, compare and save again.':
+    'Mục này đã đổi ở tab hoặc thiết bị khác. Nội dung đang nhập được giữ lại. Hãy làm mới, đối chiếu rồi lưu lại.',
+  'Your notebook has reached 500 entries. Remove an entry before adding another.':
+    'Sổ ôn tập đã đạt 500 mục. Xóa một mục trước khi thêm mục mới.',
+  'Shorten the note to 2,000 characters and 8,000 UTF-8 bytes. The entry must fit its storage limit.':
+    'Rút gọn ghi chú còn tối đa 2.000 ký tự và 8.000 byte UTF-8. Mục phải nằm trong giới hạn lưu trữ.',
+  'Tab storage is unavailable. Your text stays here while this page is open.':
+    'Không thể lưu trong tab. Nội dung đang nhập vẫn được giữ khi trang này còn mở.',
+  'The source changed. Your existing notebook entry is kept.':
+    'Nguồn đã thay đổi. Mục ôn tập hiện có của bạn vẫn được giữ.',
+  'This revision selection is not available in this account and tab. Select questions again.':
+    'Nhóm ôn tập không có trong tài khoản và tab này. Hãy chọn lại câu hỏi.',
+  'Notebook data could not be validated. Refresh and retry.':
+    'Không thể xác thực dữ liệu sổ ôn tập. Hãy làm mới rồi thử lại.',
+  'Wait for the pending operation, or resolve its error before saving again.':
+    'Đợi thao tác đang chờ hoặc xử lý lỗi của thao tác đó trước khi lưu lại.',
+  'Ready to study': 'Sẵn sàng ôn tập',
+  'Source unavailable': 'Nguồn không còn khả dụng',
+  'Source changed': 'Nguồn đã thay đổi',
+  'Private quiz replaced': 'Quiz riêng đã được thay thế',
+  'Source could not be checked': 'Chưa kiểm tra được nguồn',
+  'Updating study notebook…': 'Đang cập nhật sổ ôn tập…',
+  'Study notebook synchronized': 'Sổ ôn tập đã đồng bộ',
+  'Some notebook updates are not synchronized. Your answers are kept.':
+    'Một số cập nhật sổ ôn tập chưa đồng bộ. Đáp án của bạn vẫn được giữ.',
+  'Newer notebook changes were preserved. Refresh before retrying.':
+    'Đã giữ các thay đổi mới hơn trong sổ ôn tập. Hãy làm mới trước khi thử lại.',
+  'Tab recovery storage is unavailable. Free space or enable storage, then retry.':
+    'Không thể lưu dữ liệu khôi phục trong tab. Hãy giải phóng dung lượng hoặc bật lưu trữ rồi thử lại.',
+  'Check your connection and access, then retry the original updates.':
+    'Kiểm tra kết nối và quyền truy cập rồi thử lại cập nhật cũ.',
+  'Retry notebook updates': 'Thử đồng bộ sổ ôn tập lại',
+  'Refresh failed notebook updates?': 'Làm mới các cập nhật sổ ôn tập bị lỗi?',
+  'This reads the latest state and may recreate entries you removed. Successful updates are kept.':
+    'Thao tác này đọc trạng thái mới nhất và có thể tạo lại mục bạn đã xóa. Các cập nhật thành công được giữ nguyên.',
+  'Refresh and retry': 'Làm mới và thử lại',
   'Added 75 Professional Agentic Architect (PAA) practice questions, including 7 multiple-answer questions.':
     'Bổ sung 75 câu luyện tập Professional Agentic Architect (PAA), gồm 7 câu nhiều đáp án.',
   'Refresh quizzes': 'Làm mới danh sách quiz',
@@ -752,6 +877,10 @@ export const vi = {
 
 export function translate(language, key, params = {}) {
   const singular = {
+    '{count} active filters': '{count} active filter',
+    '{count} questions selected': '{count} question selected',
+    '{count} selected questions are unavailable and excluded.':
+      '{count} selected question is unavailable and excluded.',
     '{count} quiz sets': '{count} quiz set',
     '{count} questions': '{count} question',
     '{count} minutes': '{count} minute',
