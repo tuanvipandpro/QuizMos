@@ -13,12 +13,12 @@
 ## 3. Account state and capture
 
 - [x] 3.1 Add store/hooks and account-scoped pending edits for CQ-NOTEBOOK-01/04/05; verify offline/denied/conflict/response-loss feedback, preserved note input, late responses after account changes and no automatic rebinding to a new owner/generation.
-- [ ] 3.2 Wire eligible future Practice edits and terminal Exam capture for CQ-NOTEBOOK-03/08 using stable session/event identities; test all formats, StrictMode/reload deduplication, no old-draft/archive backfill, partial multi-question failures, correct review and unchanged scoring/flags/mode/deadline/history behavior; document capture eligibility.
+- [x] 3.2 Wire eligible future Practice edits and terminal Exam capture for CQ-NOTEBOOK-03/08 using stable session/event identities; test all formats, StrictMode/reload deduplication, no old-draft/archive backfill, partial multi-question failures, correct review and unchanged scoring/flags/mode/deadline/history behavior; document capture eligibility.
 
 ## 4. Notebook and revision UI
 
-- [ ] 4.1 Build the guarded notebook entry and independent question bookmark/note controls for CQ-NOTEBOOK-04/08; use the UI/UX skill and verify the full 320px/landscape/desktop, VN/EN, light/dark, keyboard/focus and loading/empty/error/full/conflict matrix without exposing correctness during an active Exam.
-- [ ] 4.2 Build filtering and selected-question study for CQ-NOTEBOOK-02/06; verify mixed changed/missing/unauthorized sources, zero matches, preserved notes and isolated revision/full-bank drafts; document the #82 integration boundary and test existing navigation/checkpoint/Exam guards.
+- [x] 4.1 Build the guarded notebook entry and independent question bookmark/note controls for CQ-NOTEBOOK-04/08; use the UI/UX skill and verify the full 320px/landscape/desktop, VN/EN, light/dark, keyboard/focus and loading/empty/error/full/conflict matrix without exposing correctness during an active Exam.
+- [x] 4.2 Build filtering and selected-question study for CQ-NOTEBOOK-02/06; verify mixed changed/missing/unauthorized sources, zero matches, preserved notes and isolated revision/full-bank drafts; document the #82 integration boundary and test existing navigation/checkpoint/Exam guards.
 
 ## 5. Integration and rollout
 

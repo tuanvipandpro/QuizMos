@@ -18,6 +18,19 @@ export function useStudyNotebook(uid) {
     };
   }, [store, uid]);
   const own = state.uid === (uid || null);
+  useEffect(() => {
+    const unsaved =
+      STUDY_NOTEBOOK_ENABLED &&
+      state.uid === uid &&
+      Object.values(state.editors).some((editor) => editor.dirty || editor.command);
+    if (!unsaved) return;
+    const warn = (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [state.editors, state.uid, uid]);
   return {
     ...store,
     ...state,

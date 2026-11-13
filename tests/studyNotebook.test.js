@@ -162,6 +162,17 @@ test('private references protect owner, instance/content version and slot reuse'
   );
 });
 
+test('legacy ungradable bank questions support explicit references/notes without manufacturing a grade', async () => {
+  const question = { ...example('single'), answer: [] };
+  const ref = await createNotebookReference(bank(question), question, 'alice');
+  assert.equal(ref.questionId, String(question.id));
+  assert.equal(notebookAnswerChange(question, 'A'), null);
+  assert.equal(
+    transitionNotebookState(null, { kind: 'note', value: 'Check this source later' }).note,
+    'Check this source later'
+  );
+});
+
 test('correct review retains mistake, note and bookmark; later wrong reopens without erasing review history', () => {
   let state = transitionNotebookState(null, { kind: 'bookmark', value: true }, 1);
   state = transitionNotebookState(
@@ -234,6 +245,6 @@ test('normalized wire entries verify source/key integrity, exact envelopes and t
   const longQuestion = { ...q, id: 'q'.repeat(MAX_NOTEBOOK_ENTRY_BYTES) };
   await assert.rejects(
     createNotebookReference(bank(longQuestion), longQuestion, 'alice'),
-    error('SIZE')
+    error('REFERENCE_SIZE')
   );
 });

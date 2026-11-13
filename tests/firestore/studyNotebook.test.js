@@ -8,6 +8,7 @@ import {
 } from '@firebase/rules-unit-testing';
 import {
   collection,
+  collectionGroup,
   doc,
   getDoc,
   getDocs,
@@ -130,11 +131,16 @@ function rawCreate(db, cmd, options = {}) {
 
 test('owner notes synchronize across clients; Bob, guest and anonymous owner cannot read/write notebook children', async () => {
   const cmd = await command(await reference(), { kind: 'note', value: '🌱'.repeat(2000) });
+  const profile = {
+    quizProgress: { 'gcp-ace': { questionId: 'kept-checkpoint', questionIndex: 2, savedAt: 1000 } },
+  };
+  await setDoc(doc(client(), 'users/alice'), profile);
   await repo().mutate('alice', cmd);
   const loaded = await repo().get('alice', cmd.entryKey);
   assert.equal(loaded.entry.note, '🌱'.repeat(2000));
   assert.equal(loaded.state.count, 1);
   assert.equal(typeof loaded.entry.createdAt, 'number');
+  assert.deepEqual((await getDoc(doc(client(), 'users/alice'))).data(), profile);
   for (const db of [client('bob'), client(null), client('alice', true)]) {
     for (const target of Object.values(paths(db, cmd.entryKey))) {
       await assertFails(getDoc(target));
@@ -148,6 +154,7 @@ test('owner notes synchronize across clients; Bob, guest and anonymous owner can
   await assertFails(getDocs(collection(db, 'users/alice/notebookEntries')));
   await assertFails(getDocs(query(collection(db, 'users/alice/notebookEntries'), limit(21))));
   await assertFails(getDocs(query(collection(db, 'users/alice/notebookState'), limit(20))));
+  await assertFails(getDocs(query(collectionGroup(db, 'notebookEntries'), limit(20))));
   await assertFails(setDoc(doc(db, 'users/alice/unknownChild/x'), { note: 'no inherited access' }));
 });
 
@@ -254,6 +261,34 @@ test('correct-only outcomes create no row; review retains note/bookmark and wron
   assert.equal(row.reviewed, false);
   assert.equal(row.lastReviewedAt, reviewedAt);
   assert.equal((await service.state('alice')).count, 1);
+});
+
+test('clearing the last bookmark/note physically deletes the row and advances generation without erasing another entry', async () => {
+  const service = repo(),
+    ref = await reference();
+  const bookmark = await command(ref, { kind: 'bookmark', value: true });
+  await service.mutate('alice', bookmark);
+  const stale = await next(service, bookmark, {
+    kind: 'note',
+    value: 'Do not restore deleted bookmark',
+  });
+  await service.mutate('alice', await next(service, bookmark, { kind: 'bookmark', value: false }));
+  assert.equal((await service.get('alice', bookmark.entryKey)).entry, null);
+  assert.equal((await service.state('alice')).generation, 1);
+  await assert.rejects(service.mutate('alice', stale), { code: 'NOTEBOOK_CONFLICT' });
+  const note = await next(service, bookmark, { kind: 'note', value: 'Note only' });
+  await service.mutate('alice', note);
+  const other = await command(
+    await reference('kept'),
+    { kind: 'note', value: 'Keep me' },
+    { expectedGeneration: 1 }
+  );
+  await service.mutate('alice', other);
+  await service.mutate('alice', await next(service, bookmark, { kind: 'note', value: '' }));
+  assert.equal((await service.get('alice', bookmark.entryKey)).entry, null);
+  assert.equal((await service.state('alice')).generation, 2);
+  assert.equal((await service.state('alice')).count, 1);
+  assert.equal((await service.get('alice', other.entryKey)).entry.note, 'Keep me');
 });
 
 test('private creation/outcomes recheck current content; orphaned retained notes remain editable and removable', async () => {

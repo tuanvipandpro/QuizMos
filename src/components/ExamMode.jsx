@@ -24,6 +24,11 @@ import ExamArchiveStatus from './ExamArchiveStatus';
 import { isAnswerComplete, isAnswerCorrect } from '../utils/questionModel';
 import { scrollToTop } from '../utils/scroll';
 import { getExamFeedbackMode } from '../data/examModes';
+import { STUDY_NOTEBOOK_ENABLED } from '../config/studyNotebookConfig';
+import { notebookSession } from '../utils/studyNotebookCapture.js';
+import { useNotebookCapture } from '../hooks/useNotebookCapture';
+import NotebookCaptureStatus from './NotebookCaptureStatus';
+import NotebookQuestionTools from './NotebookQuestionTools';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -41,6 +46,8 @@ export default function ExamMode({
   historySource,
   onHistory,
   onSignIn,
+  sourceQuiz,
+  notebook,
 }) {
   const { user } = useAuth();
   const { t } = useLanguage();
@@ -49,13 +56,25 @@ export default function ExamMode({
     sessionKey(user?.uid, quizId, 'exam'),
     questions,
     'exam',
-    () =>
-      createExamSession(questions, examQuestionCount, examTimeMinutes, {
+    () => {
+      const created = createExamSession(questions, examQuestionCount, examTimeMinutes, {
         feedbackMode,
         historyOwner: user?.uid || null,
         captureHistory: EXAM_HISTORY_ENABLED && !!historySource,
         historySource,
-      }),
+      });
+      return {
+        ...created,
+        notebook: notebookSession(
+          user?.uid,
+          STUDY_NOTEBOOK_ENABLED &&
+            !user?.isAnonymous &&
+            !!sourceQuiz &&
+            sourceQuiz.kind !== 'tab-upload',
+          created.attemptId
+        ),
+      };
+    },
     {
       fresh,
       historyOwner: user?.uid || null,
@@ -64,6 +83,7 @@ export default function ExamMode({
     }
   );
   const archive = useExamArchive(session, user?.uid, questions);
+  const capture = useNotebookCapture(session, sourceQuiz, user?.uid, 'exam');
   const [submitOpen, setSubmitOpen] = useState(false);
   const [filter, setFilter] = useState('all');
   const stats = useMemo(() => examStats(session), [session]);
@@ -146,6 +166,7 @@ export default function ExamMode({
         <>
           {session.timeExpired && <Alert type="info" showIcon message={t('Time is up')} />}
           <ExamArchiveStatus state={archive} onHistory={onHistory} onSignIn={onSignIn} />
+          <NotebookCaptureStatus capture={capture} />
           <section className="exam-score">
             <div>
               <Text type="secondary">{t('Score')}</Text>
@@ -226,6 +247,17 @@ export default function ExamMode({
                   })}
                 </Text>
               </div>
+              {session.submitted && (
+                <div className="study-question-tools">
+                  <NotebookQuestionTools
+                    key={`${user?.uid || 'guest'}:${session.index}:${question.id}`}
+                    quiz={sourceQuiz}
+                    question={question}
+                    notebook={notebook}
+                    onSignIn={onSignIn}
+                  />
+                </div>
+              )}
               <Question
                 data={question}
                 question={question.question}

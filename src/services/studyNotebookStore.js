@@ -125,6 +125,9 @@ export function createStudyNotebookStore(service, { drafts = null } = {}) {
         });
         publish({
           quota: context.state,
+          entries: context.entry
+            ? state.entries.map((row) => (row.entryKey === key ? context.entry : row))
+            : state.entries.filter((row) => row.entryKey !== key),
           stale: state.pageRevision !== null && state.pageRevision !== context.state.revision,
         });
         return context;

@@ -26,6 +26,16 @@ export function parseRoute(hash = '') {
         return { page, params: new URLSearchParams(query) };
     const parts = path.split('/').filter(Boolean).map(decodeURIComponent);
     if (
+      parts[0] === 'notebook' &&
+      (parts.length === 1 ||
+        (parts.length === 3 && parts[1] === 'study' && /^[0-9a-f]{64}$/.test(parts[2])))
+    )
+      return {
+        page: 'notebook',
+        selectionId: parts[2] || null,
+        params: new URLSearchParams(query),
+      };
+    if (
       parts[0] === 'history' &&
       parts.length <= 2 &&
       (!parts[1] ||

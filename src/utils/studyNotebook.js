@@ -126,7 +126,9 @@ export async function notebookEntryKey(ref) {
 }
 
 export async function notebookQuestionFingerprint(question) {
-  validateQuizQuestions([question]);
+  // References/bookmarks are also useful on legacy ungradable bank questions.
+  // Automatic outcomes retain the strict validator in notebookAnswerChange.
+  validateQuizQuestions([question], { allowLegacyIncomplete: true });
   const projected = archivedQuestion(question);
   return contentHash(
     canonical({
@@ -146,6 +148,8 @@ export async function createNotebookReference(quiz, question, uid) {
   if (!quiz || !Array.isArray(quiz.questions)) throw notebookError('SOURCE_UNAVAILABLE');
   const current = quiz.questions.find((item) => String(item.id) === String(question?.id));
   if (!current) throw notebookError('SOURCE_UNAVAILABLE');
+  if (bytes(String(question.id)) > MAX_NOTEBOOK_QUESTION_ID_BYTES)
+    throw notebookError('REFERENCE_SIZE');
   const fingerprint = await notebookQuestionFingerprint(current);
   if ((await notebookQuestionFingerprint(question)) !== fingerprint)
     throw notebookError('SOURCE_CHANGED');
