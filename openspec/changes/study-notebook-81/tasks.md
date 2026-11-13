@@ -22,7 +22,7 @@
 
 ## 5. Integration and rollout
 
-- [ ] 5.1 Update the requirement-to-test matrix and run yarn verify, relevant real demo Rules/SDK and browser regressions; inspect disabled/enabled build isolation, scan/review the final issue PR and pass latest-head CI, recording actual failures/limitations rather than treating the plan as implementation.
+- [x] 5.1 Update the requirement-to-test matrix and run yarn verify, relevant real demo Rules/SDK and browser regressions; inspect disabled/enabled build isolation, scan/review the final issue PR and pass latest-head CI, recording actual failures/limitations rather than treating the plan as implementation.
 - [ ] 5.2 After separately authorized current-policy/index reconciliation and publication, enable the client through protected M2 promotion and perform a freshly bounded designated-account sync/review/note/conflict/delete smoke; verify production CI/publication and cleanup before accepted issue closure. Record rollback retaining private entries and the v2 reader.
 
 ## Workflow follow-up

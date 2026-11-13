@@ -4,7 +4,7 @@ Tracking: [#81](https://github.com/tuanvipandpro/QuizMos/issues/81), change `stu
 
 ## Current implementation boundary
 
-The domain, transactional repository/Rules, paginated queries, account state, eligible Practice/Exam capture and notebook/selected-revision UI are implemented. Local browser acceptance is in progress; final integration/CI and production rollout remain tracked tasks. App mounts the hook with the default-disabled `VITE_STUDY_NOTEBOOK_ENABLED` gate. No production Rules/index publication or activation has occurred.
+The domain, transactional repository/Rules, paginated queries, account state, eligible Practice/Exam capture and notebook/selected-revision UI are implemented and locally accepted. Feature head `9ed2645` passed required CI; production rollout remains a separate tracked task. App mounts the hook with the default-disabled `VITE_STUDY_NOTEBOOK_ENABLED` gate. No production Rules/index publication or activation has occurred.
 
 ## References and limits
 
@@ -98,6 +98,12 @@ The local `ui-ux-pro-max` skill was applied. Attempts to run `note editor valida
 | UI           | 320/390/412/768/1280px and 844px landscape, VN/EN and both themes, plain-text long notes, loading/empty/errors, keyboard focus and measured text contrast      |
 
 Browser checks use local isolated fixtures and Chromium desktop/phone emulation. They are not physical Samsung testing or a production account smoke. Disposable screenshots/traces stay ignored. Final `yarn verify`, Rules/SDK, relevant integration browsers, disabled/enabled production builds, redacted scans and latest-head CI must be recorded before review-ready delivery; local acceptance does not complete rollout.
+
+### Local acceptance — 14 November 2026
+
+Feature head `9ed2645` passed [required CI](https://github.com/tuanvipandpro/QuizMos/actions/runs/43506382472), including all four browser shards, Rules, frontend/backend verification and `test-and-build`. Local `yarn verify` passed 309 unit tests and every bundled check. The complete real demo Rules suite passed 38/38; the current notebook SDK rerun passed 9/9. Notebook/capture browser acceptance covered 42 distinct desktop/phone cases (combined initial 40, then final recovery/permission rechecks); 114/114 existing M1 browser regressions passed. Explicit-root production builds with the flag disabled and enabled-for-guest both passed real-bundle UI gating and fixture-isolation smoke with outbound requests blocked.
+
+Manual visual review inspected representative 320px VN dark, 320px VN light editor, 844px landscape editor and 1280px EN light renders; the final compact layout and focus/contrast matrix passed again. Initial browser checks found unnamed new dialogs and missing drawer focus return; both were fixed and rechecked. Test setup accounted for the intentional quiz cache and keyboard selection. Small filter lists use accessible non-virtualized options. Gitleaks 8.30.1 fully redacted staged/outgoing scans found no secrets across all three feature commits. Only a documentation/task receipt follows that verified feature head; its required CI must also pass before PR readiness. Issue #81 remains open for M2 promotion and the separately authorized rollout below.
 
 ## Production activation and rollback
 
