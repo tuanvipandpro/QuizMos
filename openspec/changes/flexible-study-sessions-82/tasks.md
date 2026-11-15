@@ -22,7 +22,7 @@
 
 ## 5. Integration and delivery
 
-- [ ] 5.1 Update the requirement-to-test matrix and run yarn verify plus relevant settings/History/Notebook/navigation/checkpoint/seven-format browser regressions and the full UI state matrix for CQ-SESSION-01–09; inspect production artifact isolation, review final issue scope, run redacted staged/all-outgoing secret scans and pass latest-head CI before review-ready delivery; use no real-account writes or live AI inference.
+- [x] 5.1 Update the requirement-to-test matrix and run yarn verify plus relevant settings/History/Notebook/navigation/checkpoint/seven-format browser regressions and the full UI state matrix for CQ-SESSION-01–09; inspect production artifact isolation, review final issue scope, run redacted staged/all-outgoing secret scans and pass latest-head CI before review-ready delivery; use no real-account writes or live AI inference.
 - [ ] 5.2 After owner-requested protected issue/M2 promotions, verify post-merge/current production CI and a read-only public setup/resume/profile smoke for CQ-SESSION-09, recording actual enabled behavior and rollback compatibility; preserve #81's separate publication/activation gate and keep #82 open until accepted delivery evidence is complete.
 
 ## Workflow follow-up
