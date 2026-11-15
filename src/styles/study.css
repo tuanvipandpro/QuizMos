@@ -729,3 +729,15 @@
     pointer-events: none;
   }
 }
+
+.quiz-pdf-export.ant-btn {
+  margin: 0 0 16px;
+  min-height: 44px;
+}
+
+.quiz-pdf-modal .ant-modal-close {
+  min-width: 44px;
+  min-height: 44px;
+  top: 6px;
+  inset-inline-end: 6px;
+}
