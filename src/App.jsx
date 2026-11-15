@@ -21,6 +21,7 @@ import { usePublicQuizRefresh } from './hooks/usePublicQuizRefresh';
 import { useReducedMotion } from './hooks/useReducedMotion';
 import { useHashRoute } from './hooks/useHashRoute';
 import { useQuizProgress } from './hooks/useQuizProgress';
+import { useStudyNotebook } from './hooks/useStudyNotebook';
 import { useCustomQuizzes, customQuizProgress } from './hooks/useCustomQuizzes';
 import {
   parseCloudQuizId,
@@ -62,6 +63,7 @@ const LandingPage = lazy(() => import('./components/LandingPage'));
 const DonatePage = lazy(() => import('./components/DonatePage'));
 const ProfilePage = lazy(() => import('./components/ProfilePage'));
 const QuizUpdatesPage = lazy(() => import('./components/QuizUpdatesPage'));
+const StudyNotebookWorkspace = lazy(() => import('./components/StudyNotebookWorkspace'));
 
 function initialDarkMode() {
   let storage;
@@ -83,6 +85,7 @@ export default function App() {
   const reducedMotion = useReducedMotion();
   const uid = user?.uid || null;
   const progressState = useQuizProgress(uid);
+  const notebook = useStudyNotebook(user?.isAnonymous ? null : uid);
   const [isDarkMode, setIsDarkMode] = useState(initialDarkMode);
   const [modal, modalHolder] = Modal.useModal();
   const [messageApi, messageHolder] = message.useMessage();
@@ -329,21 +332,23 @@ export default function App() {
   const guide = getQuickSummary(route.quizId);
   useEffect(() => {
     document.title =
-      (route.page === 'history'
-        ? t('Exam history')
-        : route.page === 'home'
-          ? t('Small quizzes. Big confidence.')
-          : route.page === 'donate'
-            ? t('Support QuizMos')
-            : route.page === 'library'
-              ? t('Quiz Bank')
-              : route.page === 'my-quizzes'
-                ? t('My quizzes')
-                : route.page === 'profile'
-                  ? t('Profile')
-                  : route.page === 'updates'
-                    ? t('Quiz updates')
-                    : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
+      (route.page === 'notebook'
+        ? t('Study notebook')
+        : route.page === 'history'
+          ? t('Exam history')
+          : route.page === 'home'
+            ? t('Small quizzes. Big confidence.')
+            : route.page === 'donate'
+              ? t('Support QuizMos')
+              : route.page === 'library'
+                ? t('Quiz Bank')
+                : route.page === 'my-quizzes'
+                  ? t('My quizzes')
+                  : route.page === 'profile'
+                    ? t('Profile')
+                    : route.page === 'updates'
+                      ? t('Quiz updates')
+                      : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
   }, [route.page, active?.name, t]);
   let examDraft = null;
   if (active && route.mode === 'overview') {
@@ -439,6 +444,18 @@ export default function App() {
 
   let screen;
   if (route.page === 'home') screen = <LandingPage onNavigate={go} />;
+  else if (route.page === 'notebook')
+    screen = (
+      <StudyNotebookWorkspace
+        key={uid || 'guest'}
+        notebook={notebook}
+        authLoading={authLoading}
+        selectionId={route.selectionId}
+        onNavigate={go}
+        onSignIn={openLogin}
+        progressState={progressState}
+      />
+    );
   else if (route.page === 'history')
     screen = (
       <ExamHistoryPage
@@ -570,6 +587,8 @@ export default function App() {
         key={`${studyId}:${uid || 'guest'}:${route.params.get('fresh') || ''}:${questionId || ''}:${route.params.get('entry') || ''}`}
         questions={active.questions}
         quizId={active.id === 'custom' ? null : active.id}
+        sourceQuiz={active}
+        notebook={notebook}
         sessionId={studyId}
         quizName={active.name}
         progressState={studyProgress}
@@ -592,6 +611,8 @@ export default function App() {
         key={`${studyId}:${uid || 'guest'}:${route.params.get('fresh') || ''}`}
         questions={active.questions}
         quizId={studyId}
+        sourceQuiz={active}
+        notebook={notebook}
         quizName={active.name}
         examTimeMinutes={Number(route.params.get('time')) === 120 ? 120 : 60}
         feedbackMode={route.params.get('feedback')}

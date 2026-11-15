@@ -24,6 +24,12 @@ import {
 import { questionFingerprint, sessionKey } from '../utils/studySession';
 import { resolveCheckpoint } from '../utils/quizProgress';
 import { scrollToTop } from '../utils/scroll';
+import { STUDY_NOTEBOOK_ENABLED } from '../config/studyNotebookConfig';
+import { notebookSession } from '../utils/studyNotebookCapture.js';
+import { secureId } from '../utils/secureId.js';
+import { useNotebookCapture } from '../hooks/useNotebookCapture';
+import NotebookCaptureStatus from './NotebookCaptureStatus';
+import NotebookQuestionTools from './NotebookQuestionTools';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -39,11 +45,27 @@ export default function PracticeMode({
   progressState,
   onExit,
   onBackToSummary,
+  sourceQuiz,
+  sourceQuizzes,
+  notebook,
+  onSignIn,
+  revision = false,
 }) {
   const { user, isAuthenticated } = useAuth();
   const { t } = useLanguage();
   const signature = useMemo(() => questionFingerprint(questions), [questions]);
-  const create = () => ({ signature, answers: questions.map(emptyAnswer), index: 0 });
+  const create = () => ({
+    signature,
+    answers: questions.map(emptyAnswer),
+    index: 0,
+    notebook: notebookSession(
+      user?.uid,
+      STUDY_NOTEBOOK_ENABLED &&
+        !user?.isAnonymous &&
+        !!(sourceQuiz || sourceQuizzes?.[0]) &&
+        (sourceQuiz || sourceQuizzes[0]).kind !== 'tab-upload'
+    ),
+  });
   const [session, setSession, draftSaved] = useStudySession(
     sessionKey(user?.uid, sessionId, 'practice'),
     questions,
@@ -60,6 +82,8 @@ export default function PracticeMode({
   account.current = user?.uid;
   const question = questions[session.index];
   const answer = session.answers[session.index];
+  const currentSource = sourceQuizzes?.[session.index] || sourceQuiz;
+  const capture = useNotebookCapture(session, currentSource, user?.uid, 'practice');
   const complete = isAnswerComplete(question, answer);
   const ai = useExplanation(question, user?.uid);
   const saved = resolveCheckpoint(questions, progressState.progress[quizId]);
@@ -103,10 +127,16 @@ export default function PracticeMode({
       <div className="study-heading">
         <div>
           <Button type="text" icon={<ArrowLeftOutlined aria-hidden="true" />} onClick={onExit}>
-            {t('Back to quiz overview')}
+            {t(revision ? 'Back to notebook' : 'Back to quiz overview')}
           </Button>
           <Title level={1}>{t('Practice')}</Title>
           <Text type="secondary">{quizName}</Text>
+          {revision && currentSource && (
+            <Paragraph className="notebook-revision-source" type="secondary">
+              {currentSource.name || currentSource.title} ·{' '}
+              {t('Question {id}', { id: question.id })}
+            </Paragraph>
+          )}
         </div>
         {onBackToSummary && <Button onClick={onBackToSummary}>{t('Back to summary')}</Button>}
       </div>
@@ -142,32 +172,41 @@ export default function PracticeMode({
             <Button icon={<CopyOutlined aria-hidden="true" />} onClick={copy} loading={copying}>
               {t('Copy')}
             </Button>
-            <Button
-              icon={
-                isSaved ? <BookFilled aria-hidden="true" /> : <BookOutlined aria-hidden="true" />
-              }
-              disabled={
-                !isAuthenticated ||
-                !quizId ||
-                isSaved ||
-                progressState.loading ||
-                !!progressState.error ||
-                !!progressState.pendingQuiz
-              }
-              onClick={() => {
-                setSaveError(null);
-                setSaveAction({ uid: user.uid, index: session.index, questionId: question.id });
-              }}
-            >
-              {t(isSaved ? 'Position saved' : 'Save position')}
-            </Button>
+            {!revision && (
+              <Button
+                icon={
+                  isSaved ? <BookFilled aria-hidden="true" /> : <BookOutlined aria-hidden="true" />
+                }
+                disabled={
+                  !isAuthenticated ||
+                  !quizId ||
+                  isSaved ||
+                  progressState.loading ||
+                  !!progressState.error ||
+                  !!progressState.pendingQuiz
+                }
+                onClick={() => {
+                  setSaveError(null);
+                  setSaveAction({ uid: user.uid, index: session.index, questionId: question.id });
+                }}
+              >
+                {t(isSaved ? 'Position saved' : 'Save position')}
+              </Button>
+            )}
+            <NotebookQuestionTools
+              key={`${user?.uid || 'guest'}:${session.index}:${question.id}`}
+              quiz={currentSource}
+              question={question}
+              notebook={notebook}
+              onSignIn={onSignIn}
+            />
           </div>
-          {!isAuthenticated && (
+          {!revision && !isAuthenticated && (
             <Paragraph type="secondary" className="study-hint">
               {t('Sign in to save a cloud checkpoint.')}
             </Paragraph>
           )}
-          {isAuthenticated && !quizId && (
+          {!revision && isAuthenticated && !quizId && (
             <Paragraph type="secondary" className="study-hint">
               {t('Cloud checkpoints are available for library quizzes.')}
             </Paragraph>
@@ -178,14 +217,19 @@ export default function PracticeMode({
             imageUrl={question.imageUrl}
             options={question.options}
             selectedAnswer={answer}
-            onSelectAnswer={(value) =>
+            onSelectAnswer={(value) => {
+              const eventId = capture.eligible ? secureId() : null;
               setSession((previous) => ({
                 ...previous,
+                ...(previous.notebook
+                  ? { notebook: { ...previous.notebook, revision: previous.notebook.revision + 1 } }
+                  : {}),
                 answers: previous.answers.map((item, index) =>
                   index === previous.index ? value : item
                 ),
-              }))
-            }
+              }));
+              capture.practice(question, value, eventId);
+            }}
             showFeedback={complete}
             isCorrect={isAnswerCorrect(question, answer)}
             correctOptions={question.answer}
@@ -230,6 +274,19 @@ export default function PracticeMode({
               {t('Start a new practice session')}
             </Button>
           </div>
+          {capture.enabled &&
+            !capture.eligible &&
+            user?.uid &&
+            !user.isAnonymous &&
+            currentSource &&
+            currentSource.kind !== 'tab-upload' && (
+              <Paragraph type="secondary">
+                {t(
+                  'Start a new practice session to synchronize future answers with your notebook.'
+                )}
+              </Paragraph>
+            )}
+          <NotebookCaptureStatus capture={capture} />
         </div>
         <QuestionNavigator
           feedback

@@ -22,6 +22,24 @@ export default defineConfig(({ command }) => {
     resolve: {
       alias: [
         {
+          find: /^(?:.*\/)?studyNotebookSourceService(?:\.js)?$/,
+          replacement: fileURLToPath(
+            new URL('./tests/fixtures/studyNotebookSourceService.js', import.meta.url)
+          ),
+        },
+        {
+          find: /^(?:.*\/)?studyNotebookService(?:\.js)?$/,
+          replacement: fileURLToPath(
+            new URL('./tests/fixtures/studyNotebookService.js', import.meta.url)
+          ),
+        },
+        {
+          find: /^(?:.*\/)?studyNotebookConfig(?:\.js)?$/,
+          replacement: fileURLToPath(
+            new URL('./tests/fixtures/studyNotebookConfig.js', import.meta.url)
+          ),
+        },
+        {
           find: /^(?:.*\/)?examHistoryService(?:\.js)?$/,
           replacement: fileURLToPath(
             new URL('./tests/fixtures/examHistoryService.js', import.meta.url)

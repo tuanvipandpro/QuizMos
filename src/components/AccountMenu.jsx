@@ -6,9 +6,11 @@ import {
   LogoutOutlined,
   SettingOutlined,
   UserOutlined,
+  ReadOutlined,
 } from '@ant-design/icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { EXAM_HISTORY_ENABLED } from '../config/examHistoryConfig';
+import { STUDY_NOTEBOOK_ENABLED } from '../config/studyNotebookConfig';
 
 export default function AccountMenu({ user, onSettings, onSignOut, onNavigate }) {
   const { t } = useLanguage();
@@ -58,6 +60,16 @@ export default function AccountMenu({ user, onSettings, onSignOut, onNavigate })
             onClick: (event) => activate(event, onSettings),
           },
           { type: 'divider' },
+          ...(STUDY_NOTEBOOK_ENABLED
+            ? [
+                {
+                  key: 'notebook',
+                  label: t('Study notebook'),
+                  icon: <ReadOutlined aria-hidden="true" />,
+                  onClick: (event) => activate(event, () => onNavigate('#/notebook')),
+                },
+              ]
+            : []),
           ...(EXAM_HISTORY_ENABLED
             ? [
                 {
