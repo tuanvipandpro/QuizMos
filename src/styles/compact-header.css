@@ -2,7 +2,7 @@
   padding: 8px 16px;
 }
 .is-compact .app-header-inner {
-  grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-columns: 44px minmax(0, 1fr);
   gap: 8px;
   min-height: 44px;
 }
@@ -22,25 +22,6 @@
   display: block;
   min-width: 0;
   width: 100%;
-}
-.is-compact .header-actions {
-  display: flex;
-  grid-column: 3;
-  grid-row: 1;
-  gap: 8px;
-}
-.is-compact .header-actions .ant-btn,
-.is-compact .header-auth-loading {
-  width: 44px;
-  min-width: 44px;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-}
-.is-compact .header-login > span:not(.ant-btn-icon) {
-  display: none;
 }
 .is-compact .compact-nav-trigger.ant-btn {
   display: flex;
@@ -136,4 +117,104 @@
 }
 .compact-header-drawer .compact-header-preferences {
   margin-top: auto;
+}
+
+.compact-header-utilities {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--app-border);
+}
+.compact-account,
+.compact-notifications {
+  min-width: 0;
+}
+.compact-header-utilities .header-auth-loading,
+.compact-header-utilities .header-login,
+.compact-header-utilities .profile-button,
+.compact-header-utilities .quiz-notification-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px;
+}
+.compact-account-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: start;
+  white-space: nowrap;
+}
+.compact-header-utilities .header-login.ant-btn {
+  grid-column: auto;
+  grid-row: auto;
+  width: 100%;
+  padding: 8px;
+}
+.compact-header-utilities .header-login > span:not(.ant-btn-icon) {
+  display: inline;
+}
+.compact-account .ant-avatar {
+  flex-shrink: 0;
+}
+.compact-account .account-menu {
+  width: 100%;
+  max-width: 100%;
+  border: 0;
+  box-shadow: none;
+  max-height: max(176px, calc(100dvh - 190px));
+  overflow-y: auto;
+  background: var(--app-surface);
+  color: var(--app-text);
+}
+.compact-account .account-menu .ant-menu-item {
+  height: auto;
+  min-height: 44px;
+  margin: 0;
+  width: 100%;
+  white-space: normal;
+  line-height: 1.6;
+  padding-block: 10px;
+}
+.compact-account .account-menu .ant-menu-title-content {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.compact-account .account-menu .ant-menu-item-disabled {
+  color: var(--app-muted);
+}
+.compact-account
+  .account-menu.ant-menu
+  .ant-menu-item.ant-menu-item-danger:not(.ant-menu-item-disabled) {
+  color: var(--app-danger-text);
+}
+.compact-account
+  .account-menu.ant-menu
+  .ant-menu-item.ant-menu-item-danger:not(.ant-menu-item-disabled):hover,
+.compact-account
+  .account-menu.ant-menu
+  .ant-menu-item.ant-menu-item-danger.ant-menu-item-active:not(.ant-menu-item-disabled) {
+  color: var(--app-danger-text);
+  background: var(--app-danger-bg);
+}
+.compact-notifications .quiz-notification-trigger,
+.compact-notifications .ant-badge {
+  width: 100%;
+}
+.compact-notifications .quiz-notification-panel {
+  width: 100%;
+  max-height: max(176px, calc(100dvh - 240px));
+  box-shadow: none;
+}
+.compact-notifications .quiz-notification-heading,
+.compact-notifications .quiz-notification-list li,
+.compact-notifications .quiz-notification-footer {
+  padding: 12px;
 }

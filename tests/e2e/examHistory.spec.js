@@ -1,4 +1,4 @@
-import { headerControl } from './headerControls.js';
+import { headerControl, headerReturnTarget } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -341,7 +341,7 @@ test('the production-default flag exposes no capture/menu/private IO and complet
   await submit(page);
   await expect(page.locator('.exam-archive-status')).toHaveCount(0);
   expect(await calls(page)).toHaveLength(0);
-  await page.getByRole('button', { name: 'History learner', exact: true }).click();
+  await (await headerControl(page, { name: 'History learner', exact: true })).click();
   await expect(page.getByRole('menuitem', { name: 'Exam history', exact: true })).toHaveCount(0);
   await page.keyboard.press('Escape');
   await page.evaluate(() => sessionStorage.setItem('quiz-e2e-history-enabled', '1'));
@@ -543,7 +543,7 @@ test('guest, Practice and signed-in unsaved uploads never write history; sign-in
     })
   ).toBeVisible();
   expect(await calls(page)).toHaveLength(0);
-  await page.getByRole('banner').getByRole('button', { name: 'Sign in', exact: true }).click();
+  await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   await clickAfterUiMotion(
     page
       .getByRole('dialog', { name: 'Sign in', exact: true })
@@ -577,6 +577,7 @@ test('History menu respects active exam Cancel/Leave/Resume without changing ide
   const before = await draft(page),
     trigger = page.getByRole('button', { name: 'History learner', exact: true });
   async function enter() {
+    await headerControl(page, { name: 'History learner', exact: true });
     await trigger.focus();
     await trigger.press('Enter');
     const item = page.getByRole('menuitem', { name: 'Exam history', exact: true });
@@ -586,7 +587,7 @@ test('History menu respects active exam Cancel/Leave/Resume without changing ide
   await enter();
   const guard = page.getByRole('dialog').filter({ hasText: 'Leave this exam?' });
   await clickAfterUiMotion(guard.getByRole('button', { name: 'Continue exam', exact: true }));
-  await expect(trigger).toBeFocused();
+  await expect(await headerReturnTarget(page, trigger)).toBeFocused();
   expect(await draft(page)).toEqual(before);
   await enter();
   await clickAfterUiMotion(guard.getByRole('button', { name: 'Leave exam', exact: true }));
@@ -664,7 +665,7 @@ test('delayed saves/reads and sign-out/account changes cannot leak archived cont
   await page.evaluate(() => sessionStorage.setItem('quiz-e2e-history-defer:save', '1'));
   await submit(page);
   await expect(page.getByText('Saving exam to history…', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'History learner', exact: true }).click();
+  await (await headerControl(page, { name: 'History learner', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('menuitem', { name: 'Sign out', exact: true }));
   await clickAfterUiMotion(
     page

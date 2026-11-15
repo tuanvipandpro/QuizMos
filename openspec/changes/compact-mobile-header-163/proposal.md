@@ -6,8 +6,8 @@ Refs #163. The current mobile header wraps navigation and utilities into multipl
 
 ## What Changes
 
-- Use one 60–72px row through the compact breakpoint, containing the brand, a labelled active-destination left-drawer launcher, quiz notifications and account/sign-in/loading control.
-- Put Quiz Bank, My quizzes, Donate, theme and VN/EN choices in the compact modal drawer; keep all desktop controls and alignment intact.
+- Use one 60–72px row through the compact breakpoint, containing only the brand and a labelled active-destination left-drawer launcher.
+- Put avatar/account/sign-in/loading, quiz-update notifications, Quiz Bank, My quizzes, Donate, theme and VN/EN choices in the compact modal drawer; keep all desktop controls and alignment intact.
 - Preserve guarded Exam navigation, notification refresh, account actions, header measurement and study docks. Add responsive/focus/auth-state acceptance coverage.
 
 ## Capabilities

@@ -1,4 +1,4 @@
-import { headerControl } from './headerControls.js';
+import { headerControl, expectHeaderAccount } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -25,9 +25,9 @@ test.beforeEach(async ({ page }) => {
 });
 async function login(page) {
   await page.goto('./');
-  await page.getByRole('banner').getByRole('button', { name: 'Sign in', exact: true }).click();
+  await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('button', { name: 'Continue with Google', exact: true }));
-  await expect(page.getByRole('button', { name: 'Test account', exact: true })).toBeVisible();
+  await expectHeaderAccount(page, 'Test account');
   await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
   await expect(page.getByText('0/3 saved quizzes', { exact: true })).toBeVisible();
 }
@@ -304,7 +304,7 @@ test('private loading errors are recoverable and do not block bank navigation', 
 }) => {
   await page.addInitScript(() => sessionStorage.setItem('quiz-e2e-custom-fail-list', 'PERMISSION'));
   await page.goto('./#/library');
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('button', { name: 'Continue with Google', exact: true }));
   await expect(page.getByRole('heading', { name: 'Quiz Bank', exact: true })).toBeVisible();
   await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
@@ -325,7 +325,7 @@ test('guest uploads remain local and login does not migrate a guest draft into s
   await page.getByRole('button', { name: 'Use this quiz', exact: true }).click();
   await page.getByRole('button', { name: 'Start practice', exact: true }).click();
   await page.getByRole('radio', { name: /Paris/ }).check();
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('button', { name: 'Continue with Google', exact: true }));
   await expect(page.getByRole('heading', { name: 'Quiz Bank', exact: true })).toBeVisible();
   await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
@@ -340,7 +340,7 @@ test('logout and another account cannot display a private quiz through its old d
   await save(page, 'Alice private');
   await card(page, 'Alice private').getByRole('button', { name: 'Practice', exact: true }).click();
   const url = page.url();
-  await page.getByRole('button', { name: 'Test account', exact: true }).click();
+  await (await headerControl(page, { name: 'Test account', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('menuitem', { name: 'Sign out', exact: true }));
   await confirm(page, 'Sign out?', 'Sign out');
   await page.goto(url);

@@ -71,7 +71,7 @@ test('logout while a result is in flight discards the private explanation', asyn
   });
   await explain(page);
   await ready;
-  await page.getByRole('button', { name: 'AI tester', exact: true }).click();
+  await (await headerControl(page, { name: 'AI tester', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('menuitem', { name: 'Sign out', exact: true }));
   const dialog = page.getByRole('dialog').filter({ hasText: 'Sign out?' });
   await clickAfterUiMotion(dialog.getByRole('button', { name: 'Sign out', exact: true }));

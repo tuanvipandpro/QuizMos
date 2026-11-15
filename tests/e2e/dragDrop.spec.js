@@ -1,4 +1,4 @@
-import { headerControl } from './headerControls.js';
+import { headerControl, expectHeaderAccount } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import { fileURLToPath } from 'node:url';
 import { clickAfterUiMotion } from './uiMotion.js';
@@ -127,7 +127,7 @@ test('account change during a native drag cannot populate the next owner draft',
       })
     )
   );
-  await expect(page.getByRole('button', { name: 'Native Bob', exact: true })).toBeVisible();
+  await expectHeaderAccount(page, 'Native Bob');
   await page.mouse.up();
   await expect(page.locator('.dd-ghost')).toHaveCount(0);
   await expect(page.locator('.dd-choice-text[aria-pressed=true]')).toHaveCount(0);

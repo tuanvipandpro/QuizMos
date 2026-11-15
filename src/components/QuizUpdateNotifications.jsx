@@ -6,13 +6,14 @@ import { useQuizUpdateNotifications } from '../hooks/useQuizUpdateNotifications.
 import { findQuiz } from '../data/quizzes.js';
 import { quizUrl } from '../utils/navigation.js';
 import './QuizUpdateNotifications.css';
-export default function QuizUpdateNotifications({ onNavigate }) {
+export default function QuizUpdateNotifications({ onNavigate, inline = false }) {
   const { t, language } = useLanguage();
   const { entries, unread, markSeen } = useQuizUpdateNotifications();
   const [open, setOpen] = useState(false);
   const trigger = useRef(null),
     close = useRef(null);
   const describedBy = useId();
+  const panelId = useId();
   const formatter = new Intl.DateTimeFormat(language === 'vi' ? 'vi-VN' : 'en-GB', {
     dateStyle: 'medium',
     timeZone: 'UTC',
@@ -31,12 +32,17 @@ export default function QuizUpdateNotifications({ onNavigate }) {
     trigger.current?.focus({ preventScroll: true });
     onNavigate(hash);
   };
+  const changeOpen = (next) => {
+    setOpen(next);
+    if (next) markSeen();
+  };
   const panel = (
     <section
       className="quiz-notification-panel"
-      role="dialog"
+      id={panelId}
+      role={inline ? 'region' : 'dialog'}
       aria-label={t('Quiz updates')}
-      aria-modal="false"
+      aria-modal={inline ? undefined : 'false'}
       onKeyDown={(e) => {
         if (e.key === 'Escape') {
           e.preventDefault();
@@ -91,6 +97,36 @@ export default function QuizUpdateNotifications({ onNavigate }) {
       </div>
     </section>
   );
+  const button = (
+    <span className="quiz-notification-trigger">
+      <Badge count={unread} size="small" offset={[-3, 4]}>
+        <Button
+          ref={trigger}
+          type="text"
+          className="quiz-notification-button"
+          icon={<BellOutlined aria-hidden="true" />}
+          aria-label={t('Quiz updates')}
+          aria-haspopup={inline ? undefined : 'dialog'}
+          aria-expanded={open}
+          aria-controls={open ? panelId : undefined}
+          aria-describedby={describedBy}
+          onClick={inline ? () => changeOpen(!open) : undefined}
+        >
+          {inline && t('Quiz updates')}
+        </Button>
+      </Badge>
+      <span id={describedBy} className="sr-only">
+        {t('{count} new quiz updates', { count: unread })}
+      </span>
+    </span>
+  );
+  if (inline)
+    return (
+      <div className="compact-notifications">
+        {button}
+        {open && panel}
+      </div>
+    );
   return (
     <Dropdown
       menu={{ items: [] }}
@@ -101,28 +137,9 @@ export default function QuizUpdateNotifications({ onNavigate }) {
       overlayClassName="quiz-updates-dropdown"
       open={open}
       destroyOnHidden
-      onOpenChange={(next) => {
-        setOpen(next);
-        if (next) markSeen();
-      }}
+      onOpenChange={changeOpen}
     >
-      <span className="quiz-notification-trigger">
-        <Badge count={unread} size="small" offset={[-3, 4]}>
-          <Button
-            ref={trigger}
-            type="text"
-            className="quiz-notification-button"
-            icon={<BellOutlined aria-hidden="true" />}
-            aria-label={t('Quiz updates')}
-            aria-haspopup="dialog"
-            aria-expanded={open}
-            aria-describedby={describedBy}
-          />
-        </Badge>
-        <span id={describedBy} className="sr-only">
-          {t('{count} new quiz updates', { count: unread })}
-        </span>
-      </span>
+      {button}
     </Dropdown>
   );
 }

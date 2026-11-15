@@ -1,4 +1,9 @@
-import { headerControl, waitForHeaderPanelClosed } from './headerControls.js';
+import {
+  headerControl,
+  closeHeaderPanel,
+  expectHeaderAccount,
+  waitForHeaderPanelClosed,
+} from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs/promises';
 import { accountCases } from './viewports.js';
@@ -85,7 +90,9 @@ test('public content stays usable during auth loading, sign-in failure and accou
   await page.addInitScript(() => sessionStorage.setItem('quiz-e2e-defer-auth', '1'));
   await page.goto('./');
   await expect(page.locator('.landing-hero h1')).toBeVisible();
+  await headerControl(page, { name: 'Quiz updates', exact: true });
   await expect(page.locator('.header-auth-loading')).toBeVisible();
+  await closeHeaderPanel(page);
   await page.getByRole('button', { name: 'Start practicing', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Quiz Bank', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'QuizMos', exact: true }).click();
@@ -93,7 +100,7 @@ test('public content stays usable during auth loading, sign-in failure and accou
     window.dispatchEvent(new Event('quiz-e2e-auth-ready'));
     sessionStorage.setItem('quiz-e2e-fail-signin', '1');
   });
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('button', { name: 'Continue with Google', exact: true }));
   await expect(page.getByRole('alert')).toContainText('Could not sign in. Please retry.');
   await page.keyboard.press('Escape');
@@ -108,7 +115,7 @@ test('public content stays usable during auth loading, sign-in failure and accou
         ),
       name
     );
-    await expect(page.getByRole('button', { name, exact: true })).toBeVisible();
+    await expectHeaderAccount(page, name);
     await expect(page.locator('.landing-hero h1')).toBeVisible();
     await expect(page.locator('.cloud-quiz-card, .question-title')).toHaveCount(0);
   }

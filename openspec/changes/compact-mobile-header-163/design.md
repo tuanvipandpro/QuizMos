@@ -10,11 +10,13 @@ One bounded compact row with every destination/preference reachable, measured st
 
 ## Decisions
 
-Use the existing 900px compact-layout media subscription. Keep brand (44px), labelled active-page drawer launcher (flexible), quiz-update bell and account/sign-in/loading controls in one 61px row. The visible current-page label preserves navigation context.
+Use the existing 900px compact-layout media subscription. Keep only brand (44px) and the labelled active-page drawer launcher (flexible) in one 61px row. The visible current-page label preserves navigation context.
 
 The owner subsequently selected a left-side drawer/sidebar. Use the existing Ant Design Drawer with a mask, close button, Escape handling, focus containment and scroll locking. Keep the labelled active-page launcher in the 61px row with a menu icon; desktop remains unchanged. The drawer is at most 320px wide and leaves 48px for mask access on narrow screens, with a scrollable body and 44px controls.
 
-Reuse existing native destination/preference controls. Queue guarded navigation until drawer dismissal completes, so its focus restoration cannot steal focus from the subsequent Exam-confirmation dialog. Preferences close the drawer after applying; Escape/mask/close return to the persistent trigger. Resize to desktop removes the drawer and restores the brand with scroll lock cleaned up. The portalled drawer never contributes to header measurement. Account and notification owners remain unchanged outside the closed drawer.
+Reuse existing native destination/preference controls. Queue guarded navigation and account dialogs until drawer dismissal completes, so its focus restoration cannot steal focus from the subsequent dialog. Preferences close the drawer after applying; Escape/mask/close return to the persistent trigger. Resize to desktop removes the drawer and restores the brand with scroll lock cleaned up. The portalled drawer never contributes to header measurement.
+
+The owner also selected all compact utilities inside the drawer. Reuse AccountMenu and QuizUpdateNotifications with inline rendering: a labelled avatar/name button expands the existing account menu in place; a labelled notification button expands its existing content in place. This keeps native account-menu keyboard behavior and notification read-state ownership without nested body portals. Inner Escape closes the expanded utility first and restores its trigger; a subsequent Escape closes the drawer. Auth loading and guest sign-in also live inside. Desktop retains its original dropdowns. No auth/notification IO or rollout policy changes.
 
 ## Risks / Trade-offs
 

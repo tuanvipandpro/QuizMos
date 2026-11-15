@@ -24,6 +24,50 @@ export default function AppHeader({
   const { language, t } = useLanguage();
   const compact = useCompactHeader(),
     brandRef = useRef(null);
+  const renderUtilities = (activate) => {
+    const inline = !!activate;
+    const run = (action) => (inline ? activate(action) : action());
+    const account = authLoading ? (
+      <span className="header-auth-loading" role="status" aria-label={t('Loading account…')}>
+        <Spin size="small" />
+        {inline && <span>{t('Loading account…')}</span>}
+      </span>
+    ) : user ? (
+      <AccountMenu
+        key={user.uid}
+        user={user}
+        inline={inline}
+        onSettings={() => run(onSettings)}
+        onSignOut={() => run(onSignOut)}
+        onNavigate={(url) => run(() => onNavigate(url))}
+      />
+    ) : (
+      <Button
+        type="text"
+        aria-label={t('Sign in')}
+        icon={<LoginOutlined aria-hidden="true" />}
+        className="header-login"
+        onClick={() => run(onSignIn)}
+      >
+        {t('Sign in')}
+      </Button>
+    );
+    const notifications = (
+      <QuizUpdateNotifications
+        key={page}
+        inline={inline}
+        onNavigate={(url) => run(() => onNavigate(url))}
+      />
+    );
+    return (
+      <div className={inline ? 'compact-header-utilities' : 'header-actions'}>
+        {inline && account}
+        {notifications}
+        {!inline && <HeaderPreferences {...{ isDarkMode, onToggleTheme }} />}
+        {!inline && account}
+      </div>
+    );
+  };
   return (
     <Header ref={headerRef} className={'app-header' + (compact ? ' is-compact' : '')}>
       <div className="app-header-inner">
@@ -49,7 +93,9 @@ export default function AppHeader({
           aria-label={language === 'vi' ? 'Điều hướng chính' : 'Main navigation'}
         >
           {compact ? (
-            <CompactHeaderMenu {...{ page, onNavigate, isDarkMode, onToggleTheme, brandRef }} />
+            <CompactHeaderMenu
+              {...{ page, onNavigate, isDarkMode, onToggleTheme, brandRef, renderUtilities }}
+            />
           ) : (
             <>
               <Button
@@ -78,33 +124,7 @@ export default function AppHeader({
             </>
           )}
         </nav>
-        <div className="header-actions">
-          <QuizUpdateNotifications key={page} onNavigate={onNavigate} />
-          {!compact && <HeaderPreferences {...{ isDarkMode, onToggleTheme }} />}
-          {authLoading ? (
-            <span className="header-auth-loading" role="status" aria-label={t('Loading account…')}>
-              <Spin size="small" />
-            </span>
-          ) : user ? (
-            <AccountMenu
-              key={user.uid}
-              user={user}
-              onSettings={onSettings}
-              onSignOut={onSignOut}
-              onNavigate={onNavigate}
-            />
-          ) : (
-            <Button
-              type="text"
-              aria-label={t('Sign in')}
-              icon={<LoginOutlined aria-hidden="true" />}
-              className="header-login"
-              onClick={onSignIn}
-            >
-              <span>{t('Sign in')}</span>
-            </Button>
-          )}
-        </div>
+        {!compact && renderUtilities()}
       </div>
     </Header>
   );

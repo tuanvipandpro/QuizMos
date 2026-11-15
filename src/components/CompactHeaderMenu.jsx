@@ -21,6 +21,7 @@ export default function CompactHeaderMenu({
   isDarkMode,
   onToggleTheme,
   brandRef,
+  renderUtilities,
 }) {
   const { t } = useLanguage(),
     [open, setOpen] = useState(false),
@@ -48,6 +49,10 @@ export default function CompactHeaderMenu({
     setOpen(false);
     trigger.current?.focus();
   };
+  const activate = (action) => {
+    pending.current = action;
+    close();
+  };
   const active =
     destinations.find(([, , pages]) => pages.includes(page))?.[0] || labels[page] || 'Menu';
   const popup = (
@@ -65,6 +70,7 @@ export default function CompactHeaderMenu({
         }
       }}
     >
+      {renderUtilities(activate)}
       <nav aria-label={t('Navigate')} className="compact-nav-list">
         {destinations.map(([label, url, pages]) => (
           <Button
@@ -72,10 +78,7 @@ export default function CompactHeaderMenu({
             type="text"
             aria-current={pages.includes(page) ? 'page' : undefined}
             icon={label === 'Donate' ? <HeartOutlined aria-hidden="true" /> : undefined}
-            onClick={() => {
-              pending.current = () => onNavigate(url);
-              close();
-            }}
+            onClick={() => activate(() => onNavigate(url))}
           >
             {t(label)}
           </Button>

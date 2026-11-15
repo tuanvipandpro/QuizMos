@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { waitForUiMotion } from './uiMotion.js';
 // Responsive controls are direct on desktop and explicitly opened on compact headers.
-export async function headerControl(page, options, root = page) {
+export async function headerControl(page, options, root = page.locator('.app-header')) {
   await expect
     .poll(() =>
       page
@@ -36,4 +36,22 @@ export async function waitForHeaderPanelClosed(page) {
   await expect
     .poll(() => page.evaluate(() => getComputedStyle(document.body).overflow))
     .not.toBe('hidden');
+}
+
+export async function closeHeaderPanel(page) {
+  const trigger = page.locator('.compact-nav-trigger');
+  if ((await trigger.count()) && (await trigger.getAttribute('aria-expanded')) === 'true') {
+    await page.locator('.compact-header-drawer .ant-drawer-close').click();
+    await waitForHeaderPanelClosed(page);
+  }
+}
+
+export async function expectHeaderAccount(page, name) {
+  await expect(await headerControl(page, { name, exact: true })).toBeVisible();
+  await closeHeaderPanel(page);
+}
+
+export async function headerReturnTarget(page, desktopTarget) {
+  const trigger = page.locator('.compact-nav-trigger');
+  return (await trigger.isVisible()) ? trigger : desktopTarget;
 }

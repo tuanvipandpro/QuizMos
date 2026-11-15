@@ -1,4 +1,9 @@
-import { headerControl } from './headerControls.js';
+import {
+  headerControl,
+  closeHeaderPanel,
+  expectHeaderAccount,
+  headerReturnTarget,
+} from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -18,14 +23,14 @@ test.beforeEach(async ({ page }) => {
 });
 
 async function signIn(page) {
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('button', { name: 'Continue with Google', exact: true }));
-  await expect(page.getByRole('button', { name: 'Test account', exact: true })).toBeVisible();
+  await expectHeaderAccount(page, 'Test account');
 }
 
 async function requestSignOut(page) {
   await expect(page.locator('.ant-modal-mask:visible')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Test account', exact: true }).click();
+  await (await headerControl(page, { name: 'Test account', exact: true })).click();
   const menu = page.getByRole('menu');
   await expect(menu).toBeVisible();
   await expect(menu.getByRole('separator')).toBeVisible();
@@ -59,7 +64,7 @@ for (const reducedMotion of ['no-preference', 'reduce']) {
     }, accountName);
     await page.goto('./');
     const profile = page.getByRole('button', { name: accountName, exact: true });
-    await expect(profile).toBeVisible();
+    await expectHeaderAccount(page, accountName);
 
     for (const { width, height, language, theme } of accountCases(testInfo.project.name)) {
       await page.setViewportSize({ width, height });
@@ -75,6 +80,7 @@ for (const reducedMotion of ['no-preference', 'reduce']) {
         ).click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
       await page.mouse.move(1, height - 1);
+      await headerControl(page, { name: accountName, exact: true });
       await profile.focus();
       await page.keyboard.press('Enter');
       const menu = page.getByRole('menu');
@@ -129,16 +135,19 @@ for (const reducedMotion of ['no-preference', 'reduce']) {
       await waitForUiMotion(settings);
       await page.keyboard.press('Escape');
       await expect(settings).toBeHidden();
-      await expect(profile).toBeFocused();
+      await expect(await headerReturnTarget(page, profile)).toBeFocused();
 
       if (testInfo.project.use.hasTouch) {
+        await headerControl(page, { name: accountName, exact: true });
         await profile.tap();
         await expect(menu).toBeVisible();
         await waitForUiMotion(menu);
-        await page.getByRole('button', { name: 'QuizMos', exact: true }).tap();
+        if (width <= 900) await closeHeaderPanel(page);
+        else await page.getByRole('button', { name: 'QuizMos', exact: true }).tap();
         await expect(menu).toBeHidden();
       }
 
+      await headerControl(page, { name: accountName, exact: true });
       if (testInfo.project.use.hasTouch) await profile.tap();
       else {
         await profile.focus();
@@ -174,7 +183,7 @@ for (const reducedMotion of ['no-preference', 'reduce']) {
       if (testInfo.project.use.hasTouch) await cancel.tap();
       else await page.keyboard.press('Enter');
       await expect(confirmation).toBeHidden();
-      await expect(profile).toBeFocused();
+      await expect(await headerReturnTarget(page, profile)).toBeFocused();
       expect(
         await page.evaluate(() => sessionStorage.getItem('quiz-e2e-signout-count'))
       ).toBeNull();
@@ -209,7 +218,7 @@ test('fixture sign-in preserves the guest state on failure and allows a single r
     sessionStorage.setItem('quiz-e2e-defer-signin', '1');
     sessionStorage.setItem('quiz-e2e-fail-signin', '1');
   });
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   const dialog = page.getByRole('dialog', { name: 'Sign in', exact: true });
   const google = dialog.getByRole('button', { name: /Continue with Google/ });
   await clickAfterUiMotion(google);
@@ -227,7 +236,7 @@ test('fixture sign-in preserves the guest state on failure and allows a single r
   });
   await clickAfterUiMotion(google);
   await expect(dialog).toBeHidden();
-  await expect(page.getByRole('button', { name: 'Test account', exact: true })).toBeVisible();
+  await expectHeaderAccount(page, 'Test account');
   expect(await page.evaluate(() => sessionStorage.getItem('quiz-e2e-signin-count'))).toBe('2');
 });
 
@@ -240,6 +249,7 @@ test('account menu names remain meaningful when profile metadata is missing', as
   });
   await page.goto('./');
   const profile = page.getByRole('button', { name: 'Account', exact: true });
+  await headerControl(page, { name: 'Account', exact: true });
   await expect(profile).toBeVisible();
   await profile.focus();
   await page.keyboard.press('Enter');
@@ -250,6 +260,7 @@ test('account menu names remain meaningful when profile metadata is missing', as
   await expect(menu).toBeHidden();
   await (await headerControl(page, { name: 'Tiếng Việt', exact: true })).click();
   const fallback = page.getByRole('button', { name: 'Tài khoản', exact: true });
+  await headerControl(page, { name: 'Tài khoản', exact: true });
   await expect(fallback).toBeVisible();
   await fallback.focus();
   await page.keyboard.press('Enter');
@@ -276,7 +287,9 @@ test('account menu names remain meaningful when profile metadata is missing', as
   await page.keyboard.press('Enter');
   const nextMenu = page.getByRole('menu');
   await expect(nextMenu).toBeVisible();
-  await expect(nextMenu.getByRole('menuitem', { name: 'Bob', exact: true })).toBeVisible();
+  if (await page.locator('.compact-nav-trigger').isVisible())
+    await expect(nextProfile).toHaveText('Bob');
+  else await expect(nextMenu.getByRole('menuitem', { name: 'Bob', exact: true })).toBeVisible();
   await expect(nextMenu.getByRole('menuitem', { name: 'Tài khoản', exact: true })).toHaveCount(0);
 });
 
@@ -306,9 +319,9 @@ test(
     }
     await page.setViewportSize(testInfo.project.use.viewport);
 
-    const signIn = page.getByRole('button', { name: 'Sign in', exact: true });
+    const signIn = await headerControl(page, { name: 'Sign in', exact: true });
     await signIn.click();
-    const dialog = page.getByRole('dialog');
+    const dialog = page.getByRole('dialog', { name: 'Sign in', exact: true });
     await expect(dialog.locator('.sign-in-brand strong')).toHaveText('QuizMos');
     await expect
       .poll(() => dialog.locator('.sign-in-brand-mark').evaluate((image) => image.naturalWidth))
@@ -317,7 +330,7 @@ test(
     await dialog.getByRole('button', { name: 'Continue with Google', exact: true }).focus();
     await page.keyboard.press('Escape');
     await expect(dialog).not.toBeVisible();
-    await expect(signIn).toBeFocused();
+    await expect(await headerReturnTarget(page, signIn)).toBeFocused();
 
     await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
     await expect(page).toHaveTitle('My quizzes · QuizMos');
@@ -465,11 +478,13 @@ test('account menu confirms sign-out and handles cancel, failure and success', a
   dialog = await requestSignOut(page);
   await dialog.getByRole('button', { name: 'Sign out', exact: true }).click();
   await expect(page.getByText('Could not sign out. Please retry.', { exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Test account', exact: true })).toBeVisible();
+  expect(
+    await page.evaluate(() => JSON.parse(localStorage.getItem('quiz-e2e-auth')).displayName)
+  ).toBe('Test account');
   await page.evaluate(() => sessionStorage.removeItem('quiz-e2e-fail-signout'));
   await dialog.getByRole('button', { name: 'Sign out', exact: true }).click();
   await expect(dialog).toBeHidden();
-  await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
+  await expectHeaderAccount(page, 'Sign in');
   await expect(page).toHaveURL(/#\/library$/);
 });
 
