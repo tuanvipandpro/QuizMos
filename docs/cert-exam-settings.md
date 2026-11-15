@@ -1,0 +1,53 @@
+# Certification-format settings
+
+Tracking: [#82](https://github.com/tuanvipandpro/QuizMos/issues/82), PR #164; OpenSpec change `flexible-study-sessions-82`.
+
+## Implemented boundary
+
+The dated registry, validators, eligible selection, isolated short Practice, certification/custom setup and additive local Exam snapshots are implemented and locally verified at their independent boundary. Notebook integration awaits the accepted #162 baseline; protected promotions and production acceptance remain separate tasks. Profiles cover all 22 canonical catalog identities; `aws-ace` still resolves to Google ACE. Bank files, IDs and aliases are unchanged.
+
+## Evidence and uncertainty
+
+The complete primary-source comparison is in the change's design.md. Profiles distinguish exact/ranged/unknown question counts, answering minutes, separate seat minutes, score basis, phase, version confidence, sources and review date. Unknown CCAR-P/CCDV-F counts, AB-100 timing and CT-AI bank version remain explicit. Microsoft family-wide typical counts are not promoted into exam-specific fixed counts. No live certification-site scraping occurs in the app.
+
+DVA-C02's announced last delivery date and AIP-C01's 75-question/180-minute standard format were rechecked on 15 November 2026. Other metadata retains its 14 November review date. After its published sunset date, DVA remains the same legacy-training bank, never an automatically renamed DVA-C03 bank. Passing a schema check establishes neither factual question accuracy nor domain coverage.
+
+Scaled thresholds are reference information, not raw percentages. Google does not provide the numeric result needed to reconstruct its pass criterion. Weighted ISTQB point totals do not manufacture point values for these unweighted bank records. The app must not convert its raw accuracy or legacy >80% History v1 benchmark into an official certification result.
+
+## Compatibility and delivery
+
+`studyInteger` accepts positive finite safe integers and decimal digit strings, not blanks/fractions/exponents/coercion from arrays. Custom training is 1–100 questions within the strictly eligible pool and 1–180 minutes. Verified certification parameters have their own exact/range constraints; their duration is not clamped to the training maximum. Range defaults use the published lower bound as an explicit app choice. Partial/legacy profiles use labelled training; a verified but insufficient paper stays invalid rather than silently switching to a smaller paper.
+
+Eligibility retains original questions/source indices and reports ungradable/format exclusions. Injected-random sampling is without replacement and never mutates the source. Duplicate original IDs need explicit unique source identities (the Notebook boundary); an ordinary bank cannot collapse duplicates. Explicit legacy count/time URLs are training; missing settings use the profile only for a new session. Saved-run precedence is an orchestration task, not permission to reinterpret its deadline.
+
+No History wire schema, grading arithmetic, Rules, index, Worker, model, quota or dependency is changed here. Runtime work uses fixtures/emulators. Notebook integration waits for #162's accepted release baseline and retains its default-disabled activation gate. Production/merge/acceptance remain separate from local code and tests.
+
+## Local draft compatibility
+
+Quick Practice uses an owner/canonical-source/preset slot under the existing study prefix. Its version-1 manifest records the full source signature, selected original indices and explicit identity keys, order, run UUID and fresh token. Each of 10/20 has one replaceable manifest and one answer draft; the full-bank key and cloud checkpoint are untouched. Private source IDs include instance/content version. Existing compatible subsets resume without sampling; explicit restart resamples. Older start links retain the newer run. Corrupt or changed sources require returning to setup and explicitly starting a new run. Denied/full storage keeps the current in-memory subset usable and displays an unavailable-storage status; it does not promise reload persistence.
+
+Exam resolution reads a compatible v2 draft before interpreting the URL. Saved questions, option order, flags, feedback mode, profile snapshot and absolute deadline win, including older start links and invalid newly supplied choices. New Exam selection uses the strict eligible pool but retains the original full-source signature for History validation. The profile/settings are additive local metadata; History v1 still receives exactly its existing fields and grading policy. Legacy v2 drafts and submitted results remain readable. Explicit legacy count/time links start custom training; missing settings use the verified profile default. Confirmed replacement is required through the setup flow.
+
+## Requirement-to-test matrix
+
+| Requirement                    | Evidence / remaining gate                                                                                                                                                                                                                                                                     |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CQ-SESSION-01 profiles         | certificationProfiles.test.js; studySettings.spec.js exact/range/unknown/retirement setup                                                                                                                                                                                                     |
+| CQ-SESSION-02 modes            | studySettings.test.js; setup locale/theme matrix; existing examFeedback.spec.js                                                                                                                                                                                                               |
+| CQ-SESSION-03 valid pools      | studySettings.test.js CTAL/GAL/zero/type/bounds; configuredExam.test.js authentic full-source selection; setup shortage browser checks                                                                                                                                                        |
+| CQ-SESSION-04 stable subsets   | quickPracticeStorage.test.js owner/source/version/alias/duplicate reference IDs; studySettings.spec.js seven formats and full-bank isolation; Notebook UI pending accepted #162                                                                                                               |
+| CQ-SESSION-05 saved precedence | configuredExam.test.js old v2/altered settings/flags/deadline; studySession.test.js; examFeedback.spec.js cancel/confirm/older links; studySettings.spec.js invalid URLs                                                                                                                      |
+| CQ-SESSION-06 truthful scoring | configuredExam.test.js byte-identical History attempt with/without local metadata; existing examHistoryModel/Source/Store tests; live/history browser labels                                                                                                                                  |
+| CQ-SESSION-07 Notebook         | Domain identity sampling is covered; source adapters, exclusions and disabled zero-IO browser acceptance pending #162 merge                                                                                                                                                                   |
+| CQ-SESSION-08 accessible UI    | studySettings.spec.js accountCases widths/locales/themes, retained errors, focus/contrast/no overflow; existing studyLayout/feedbackLayout/practiceNavigator regressions; visual checks at 320px VN/dark, 844px landscape and 1280px EN/light; browser emulation, not physical-device testing |
+| CQ-SESSION-09 delivery         | Final whole-project verification, current-head CI and production artifact isolation are tracked separately; owner-requested promotions/public read-only smoke not authorized by implementation                                                                                                |
+
+UI skill: no Python interpreter is installed for the bundled search. Local-reference fallback applies quick-reference rules form-labels, keyboard-nav, focus-states, error-feedback, color-contrast and safe-area-awareness using existing React/Ant Design/tokens; no search result ID or generated design system is claimed.
+
+## Local acceptance boundary
+
+On 15 November 2026 the source-frozen Exam/History/settings/navigator/layout run passed 133 cases (nine viewport/project mismatches skipped). The final focused UI run passed 11 cases, including all nine locale/theme/viewport combinations and two zero-eligible-pool checks. It verifies retained invalid values, actual saved counts/times, 44px inputs, at least 3:1 input boundaries, at least 4.5:1 profile-heading text, keyboard navigation and localized study-benchmark results. Local fixtures cover private source versions/checkpoints/sign-out; no real account, AI inference or Firebase publication was used.
+
+Seven of ten implementation tasks are complete. Notebook task 4.2 waits for the owner-requested acceptance of PR #162 into M2. Task 5.1 remains open until that adapter and its integration checks are delivered, even if independent local checks and CI are green. Task 5.2 requires protected promotions and actual post-merge/public acceptance. The change is not ready to merge or close as a complete #82 delivery.
+
+Final whole-project validation passed: 285 unit tests, lint, format, strict OpenSpec validation, catalog checks and a production-root build. Separate compiled root builds with History disabled and enabled both passed artifact isolation and public setup/short-Practice/legacy-training reload smoke with zero page errors. They retained 75/180 certification setup, stable 10-question Practice membership and the saved 10/15 custom-exam deadline. Before screenshots use clean develop 079c644; representative before/after and matrix images remain ignored under artifacts/session82-ui. This is local browser/compiled-artifact evidence, not production rollout or physical-device acceptance. Latest-head CI is recorded in PR #164.

@@ -729,3 +729,78 @@
     pointer-events: none;
   }
 }
+
+.exam-settings {
+  margin-top: 24px;
+}
+.cert-profile-info {
+  margin: 16px 0;
+  padding: 16px;
+  background: var(--app-info-bg);
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+}
+.cert-profile-info .ant-typography {
+  margin-bottom: 8px;
+}
+.cert-profile-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+.quiz-exam-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.quiz-exam-fields input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 12px;
+  color: var(--app-text);
+  background: var(--app-surface);
+  border: 1px solid var(--app-control-border);
+  border-radius: 8px;
+}
+.quiz-exam-fields input:focus-visible {
+  outline: 2px solid var(--app-primary);
+  outline-offset: 3px;
+}
+.quiz-exam-fields input[aria-invalid='true'] {
+  border-color: var(--app-danger-text);
+}
+.quiz-exam-fields input[readonly] {
+  border-color: var(--app-muted);
+  background: var(--app-info-bg);
+}
+.practice-size-picker {
+  margin: 24px 0;
+}
+.practice-size-picker > label {
+  display: block;
+  margin-bottom: 8px;
+}
+.practice-size-picker .ant-select {
+  min-width: 160px;
+  max-width: 100%;
+  margin-bottom: 8px;
+}
+@media (max-width: 480px) {
+  .quiz-exam-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.exam-settings .ant-radio-wrapper {
+  min-height: 44px;
+  align-items: center;
+}
+.cert-profile-sources a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.practice-size-picker .ant-select,
+.practice-size-picker .ant-select-selector {
+  min-height: 44px;
+}

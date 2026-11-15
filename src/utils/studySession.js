@@ -12,6 +12,8 @@ import { EXAM_GRADING_VERSION } from '../data/examHistoryLimits.js';
 import { secureId, UUID_PATTERN } from './secureId.js';
 import { orderObjectKeys } from './questionFingerprint.js';
 import { parseCloudQuizId } from './customQuizModel.js';
+import { sampleStudyPool } from './studySettings.js';
+import { sessionSettingsError } from './certificationProfile.js';
 
 export const SESSION_PREFIX = 'quiz-study-v1:';
 
@@ -79,14 +81,34 @@ export function createExamSession(
     historyOwner = null,
     captureHistory = false,
     historySource = null,
+    selectionQuestions = null,
+    sessionSettings = null,
   } = {}
 ) {
   if (!questions.length) throw new Error('An exam needs at least one question.');
-  const pool = [...questions];
-  for (let index = pool.length - 1; index > 0; index--) {
-    const other = Math.floor(random() * (index + 1));
-    [pool[index], pool[other]] = [pool[other], pool[index]];
+  if (selectionQuestions) {
+    const originals = new Map(questions.map((question) => [String(question.id), question]));
+    if (
+      selectionQuestions.some(
+        (question) =>
+          questionFingerprint([question]) !==
+          questionFingerprint([originals.get(String(question.id))])
+      )
+    )
+      throw sessionSettingsError('INVALID_POOL');
   }
+  const pool = selectionQuestions
+    ? sampleStudyPool(
+        selectionQuestions.map((question) => ({ key: String(question.id), question })),
+        count,
+        random
+      ).map((item) => item.question)
+    : [...questions];
+  if (!selectionQuestions)
+    for (let index = pool.length - 1; index > 0; index--) {
+      const other = Math.floor(random() * (index + 1));
+      [pool[index], pool[other]] = [pool[other], pool[index]];
+    }
   const size = Number.isInteger(count) && count > 0 ? count : 50;
   const selected = pool
     .slice(0, Math.min(size, questions.length))
@@ -107,6 +129,7 @@ export function createExamSession(
     submitted: false,
     timeExpired: false,
     feedbackMode: getExamFeedbackMode(feedbackMode).id,
+    ...(sessionSettings ? { sessionSettings: JSON.parse(JSON.stringify(sessionSettings)) } : {}),
   };
 }
 

@@ -1,4 +1,62 @@
 export const vi = {
+  'Raw accuracy': 'Tỷ lệ trả lời đúng',
+  'No eligible questions are available for this session.':
+    'Chưa có câu hỏi hợp lệ cho bài luyện này.',
+  'Practice size': 'Số câu luyện tập',
+  'Short Practice is random, untimed and saved separately from full-bank answers and checkpoints.':
+    'Luyện tập ngắn chọn câu ngẫu nhiên, không tính giờ và lưu riêng với đáp án, vị trí của toàn bộ bank.',
+  'Not enough eligible questions. Choose a smaller training session.':
+    'Không đủ câu hỏi hợp lệ. Hãy chọn bài luyện có ít câu hơn.',
+  'The saved subset is no longer compatible. Start a new session from the overview.':
+    'Bộ câu đã lưu không còn tương thích. Hãy bắt đầu bài mới từ trang tổng quan.',
+  'This certification format is unverified or retired. Choose custom training.':
+    'Format chứng chỉ chưa xác minh hoặc đã ngừng thi. Hãy chọn luyện tập tùy chỉnh.',
+  'Enter a valid whole-number question count and time limit.':
+    'Nhập số câu và thời gian là số nguyên dương hợp lệ.',
+  'Certification reference': 'Thông tin tham chiếu chứng chỉ',
+  'Published question count': 'Số câu được công bố',
+  Unverified: 'Chưa xác minh',
+  'Answering time': 'Thời gian làm bài',
+  'Seat time is {count} minutes; the answering timer excludes check-in.':
+    'Tổng thời gian tại điểm thi là {count} phút; đồng hồ làm bài không tính thủ tục vào thi.',
+  'Official scaled threshold: {threshold}/{maximum}. Raw accuracy cannot be converted to this score.':
+    'Ngưỡng điểm quy đổi chính thức: {threshold}/{maximum}. Không thể quy đổi tỷ lệ đúng sang điểm này.',
+  'Official points threshold: {threshold}/{maximum}. This bank does not implement official question weights.':
+    'Ngưỡng điểm chính thức: {threshold}/{maximum}. Bank này chưa áp dụng trọng số câu hỏi chính thức.',
+  'The provider does not disclose a numeric passing threshold.':
+    'Nhà cung cấp không công bố ngưỡng điểm đạt cụ thể.',
+  'The official scoring version is unverified for this bank.':
+    'Chưa xác minh phiên bản chấm điểm chính thức cho bank này.',
+  'Reviewed {date}. Initial standard exam only; renewal, beta and accommodations are separate.':
+    'Đối chiếu ngày {date}. Chỉ áp dụng bài thi tiêu chuẩn lần đầu; gia hạn, beta và hỗ trợ đặc biệt là các trường hợp riêng.',
+  'Official source {number}': 'Nguồn chính thức {number}',
+  'Session format': 'Dạng bài luyện',
+  'Certification format': 'Format chứng chỉ',
+  'Custom timed training': 'Luyện tập có giờ tùy chỉnh',
+  'Some certification facts are unverified. This session is custom training.':
+    'Một số thông tin chứng chỉ chưa xác minh. Bài này là luyện tập tùy chỉnh.',
+  'Format practice only. Random selection does not reproduce official domains, labs, case studies or unscored questions. Extra time is not inferred from your language.':
+    'Chỉ mô phỏng hình thức. Chọn câu ngẫu nhiên không tái hiện các lĩnh vực, lab, case study hay câu không tính điểm chính thức. Không tự thêm giờ dựa vào ngôn ngữ.',
+  'Choose {min}–{max} questions within the published range. Answering time is fixed.':
+    'Chọn {min}–{max} câu trong phạm vi công bố. Thời gian làm bài cố định.',
+  'Training limits: 1–{count} questions and 1–{minutes} minutes.':
+    'Giới hạn bài luyện: 1–{count} câu và 1–{minutes} phút.',
+  '{count} eligible; {excluded} excluded because answers or certification formats are incompatible.':
+    '{count} câu hợp lệ; loại {excluded} câu do đáp án hoặc dạng câu không tương thích.',
+  'Learning mode is custom training with feedback, even when it uses the certification count and time.':
+    'Chế độ Học là luyện tập tùy chỉnh có phản hồi, kể cả khi dùng số câu và thời gian của chứng chỉ.',
+  'QuizMos benchmark met': 'Đạt mốc luyện tập QuizMos',
+  'QuizMos benchmark not met': 'Chưa đạt mốc luyện tập QuizMos',
+  'QuizMos study benchmark: more than 80% raw accuracy. This is not an official certification result.':
+    'Mốc luyện tập QuizMos: tỷ lệ đúng trên 80%. Đây không phải kết quả chứng chỉ chính thức.',
+  'PAA certification also requires a separate hands-on lab stage.':
+    'Chứng chỉ PAA còn yêu cầu giai đoạn lab thực hành riêng.',
+  'Official case-study and domain coverage is not reproduced by random question selection.':
+    'Chọn câu ngẫu nhiên không tái hiện case study và phân bố lĩnh vực chính thức.',
+  'This bank remains DVA-C02. Its announced last delivery date is 30 November 2026.':
+    'Bank này vẫn là DVA-C02. Ngày thi cuối được công bố là 30/11/2026.',
+  'The bank syllabus version is unverified. CT-AI v1 and v2 have different point thresholds.':
+    'Chưa xác minh phiên bản syllabus của bank. CT-AI v1 và v2 có ngưỡng điểm khác nhau.',
   'Added 75 Professional Agentic Architect (PAA) practice questions, including 7 multiple-answer questions.':
     'Bổ sung 75 câu luyện tập Professional Agentic Architect (PAA), gồm 7 câu nhiều đáp án.',
   'Refresh quizzes': 'Làm mới danh sách quiz',

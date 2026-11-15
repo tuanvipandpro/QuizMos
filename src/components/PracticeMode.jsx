@@ -31,6 +31,10 @@ export default function PracticeMode({
   questions,
   quizId,
   sessionId,
+  draftKey,
+  shortPractice = false,
+  subsetPersisted = true,
+  onRestart,
   quizName,
   initialQuestionIndex = null,
   fresh,
@@ -45,7 +49,7 @@ export default function PracticeMode({
   const signature = useMemo(() => questionFingerprint(questions), [questions]);
   const create = () => ({ signature, answers: questions.map(emptyAnswer), index: 0 });
   const [session, setSession, draftSaved] = useStudySession(
-    sessionKey(user?.uid, sessionId, 'practice'),
+    draftKey || sessionKey(user?.uid, sessionId, 'practice'),
     questions,
     'practice',
     create,
@@ -142,32 +146,34 @@ export default function PracticeMode({
             <Button icon={<CopyOutlined aria-hidden="true" />} onClick={copy} loading={copying}>
               {t('Copy')}
             </Button>
-            <Button
-              icon={
-                isSaved ? <BookFilled aria-hidden="true" /> : <BookOutlined aria-hidden="true" />
-              }
-              disabled={
-                !isAuthenticated ||
-                !quizId ||
-                isSaved ||
-                progressState.loading ||
-                !!progressState.error ||
-                !!progressState.pendingQuiz
-              }
-              onClick={() => {
-                setSaveError(null);
-                setSaveAction({ uid: user.uid, index: session.index, questionId: question.id });
-              }}
-            >
-              {t(isSaved ? 'Position saved' : 'Save position')}
-            </Button>
+            {!shortPractice && (
+              <Button
+                icon={
+                  isSaved ? <BookFilled aria-hidden="true" /> : <BookOutlined aria-hidden="true" />
+                }
+                disabled={
+                  !isAuthenticated ||
+                  !quizId ||
+                  isSaved ||
+                  progressState.loading ||
+                  !!progressState.error ||
+                  !!progressState.pendingQuiz
+                }
+                onClick={() => {
+                  setSaveError(null);
+                  setSaveAction({ uid: user.uid, index: session.index, questionId: question.id });
+                }}
+              >
+                {t(isSaved ? 'Position saved' : 'Save position')}
+              </Button>
+            )}
           </div>
-          {!isAuthenticated && (
+          {!shortPractice && !isAuthenticated && (
             <Paragraph type="secondary" className="study-hint">
               {t('Sign in to save a cloud checkpoint.')}
             </Paragraph>
           )}
-          {isAuthenticated && !quizId && (
+          {!shortPractice && isAuthenticated && !quizId && (
             <Paragraph type="secondary" className="study-hint">
               {t('Cloud checkpoints are available for library quizzes.')}
             </Paragraph>
@@ -202,7 +208,7 @@ export default function PracticeMode({
           <div className="draft-status">
             <Text type="secondary" role="status">
               {t(
-                draftSaved
+                draftSaved && subsetPersisted
                   ? 'Draft saved in this tab'
                   : 'Draft storage is unavailable in this browser.'
               )}
@@ -217,6 +223,10 @@ export default function PracticeMode({
                   okText: t('Start practice'),
                   cancelText: t('Cancel'),
                   onOk: () => {
+                    if (shortPractice) {
+                      onRestart?.();
+                      return;
+                    }
                     setSession((previous) => ({
                       ...create(),
                       freshToken: previous.freshToken,

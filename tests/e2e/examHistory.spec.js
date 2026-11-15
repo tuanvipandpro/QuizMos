@@ -410,7 +410,7 @@ test('Learning expiry uses the absolute deadline and an actual StrictMode root c
   await expect(page.locator('html')).toHaveAttribute('data-e2e-history-strict', 'true');
   await expect(page.locator('.question-title')).toBeVisible();
   const before = await draft(page);
-  await page.clock.fastForward(60 * 60 * 1000 + 5000);
+  await page.clock.fastForward(before.deadline - before.startedAt + 5000);
   await saved(page);
   const data = await records(page),
     attempt = Object.values(data.attempts)[0];
@@ -644,7 +644,7 @@ test('archived answers/grade stay frozen when the source changes or its illustra
   await page.goto('./#/history/' + attempt.summary.attemptId);
   await expect(page.locator('.history-source-status')).toContainText('source quiz changed');
   await expect(page.locator('.history-score')).toContainText('quizmos-score-v2');
-  await expect(page.locator('.history-score .ant-tag')).toHaveText('Pass');
+  await expect(page.locator('.history-score .ant-tag')).toHaveText('QuizMos benchmark met');
   await expect(page.locator('.question-title')).toContainText(
     payload.questions[0].question.split('\n')[0]
   );
