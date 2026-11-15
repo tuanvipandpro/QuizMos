@@ -8,12 +8,17 @@ Let authorized learners download a complete quiz as a readable offline PDF witho
 
 ### Requirement: PDF-01 Whole source fidelity
 
-The system SHALL export the entire loaded quiz in original question order with stable IDs, text, choices, instructions, templates and supported images across all seven surfaces. It SHALL include a corresponding answer key and exclude explanations/private notes.
+The system SHALL export the entire loaded quiz in original question order with stable IDs, text, choices, instructions, templates and supported images across all seven surfaces. It SHALL include a corresponding answer key and exclude explanations/private notes. Correct supplied choices SHALL be bold directly in question options and answer-key values; unavailable keys SHALL not imply a correct choice.
 
 #### Scenario: Structured and legacy content
 
 - **WHEN** a quiz contains inline/row mappings and legacy unavailable answers
 - **THEN** the PDF preserves slot/question identities and marks unavailable keys explicitly without fabricating answers or dropping questions
+
+#### Scenario: Correct-answer emphasis
+
+- **WHEN** the supplied key identifies one/multiple correct choices or a per-slot/statement answer
+- **THEN** exactly those original choices are bold in the question section, even when labels repeat, and unavailable keys receive no guessed emphasis
 
 ### Requirement: PDF-02 Source authorization
 

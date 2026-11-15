@@ -54,7 +54,7 @@ export function projectQuizPdf(quiz, uid, access) {
           label: partLabel(part, i),
           choices: Object.entries(partOptions(q, part.id))
             .sort(([a], [b]) => a.localeCompare(b))
-            .map(([key, text]) => ({ key, text })),
+            .map(([key, text]) => ({ key, text, correct: available && q.answer[part.id] === key })),
         }))
       : [
           {
@@ -62,7 +62,7 @@ export function projectQuizPdf(quiz, uid, access) {
             label: null,
             choices: Object.entries(q.options)
               .sort(([a], [b]) => a.localeCompare(b))
-              .map(([key, text]) => ({ key, text })),
+              .map(([key, text]) => ({ key, text, correct: available && q.answer.includes(key) })),
           },
         ];
     const answers = available
@@ -123,7 +123,11 @@ export function quizPdfDocument(model, { t = (key) => key, images = {} } = {}) {
       if (part.id)
         content.push({ text: part.label + ' [' + part.id + ']', bold: true, margin: [0, 5, 0, 4] });
       for (const choice of part.choices)
-        content.push({ text: choice.key + '. ' + choice.text, margin: [10, 0, 0, 5] });
+        content.push({
+          text: choice.key + '. ' + choice.text,
+          bold: choice.correct,
+          margin: [10, 0, 0, 5],
+        });
     }
     content.push({ text: ' ', margin: [0, 0, 0, 6] });
   }
@@ -133,6 +137,7 @@ export function quizPdfDocument(model, { t = (key) => key, images = {} } = {}) {
       { text: i + 1 + '. ' + t('Question') + ' ' + q.id, bold: true, margin: [0, 8, 0, 4] },
       ...(q.answers || [t('Answer unavailable in the supplied quiz.')]).map((text) => ({
         text,
+        bold: !!q.answers,
         margin: [10, 0, 0, 4],
       }))
     );

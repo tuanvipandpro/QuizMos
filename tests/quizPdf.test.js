@@ -105,3 +105,59 @@ test('embedded raster images retain aspect ratio without upscaling and their sou
     { code: 'PDF_ACCESS' }
   );
 });
+
+test('correct choices are bold by original key across seven surfaces, including duplicate labels and unavailable legacy keys', () => {
+  const duplicate = {
+    ...questions[0],
+    id: 'duplicate-label',
+    options: { A: 'Identical text', B: 'Identical text' },
+    answer: ['B'],
+  };
+  const unavailable = { ...duplicate, id: 'unavailable', answer: ['B', 'missing'] };
+  const source = { ...quiz, questions: [...questions, duplicate, unavailable] },
+    before = structuredClone(source);
+  const model = projectQuizPdf(source, null, { read: true, offlineExport: true }),
+    doc = quizPdfDocument(model);
+  for (const [i, q] of model.questions.entries()) {
+    const original = source.questions[i],
+      known = q.answers !== null;
+    const flags = q.parts.flatMap((part) =>
+      part.choices.map(
+        (choice) =>
+          known &&
+          (part.id ? original.answer[part.id] === choice.key : original.answer.includes(choice.key))
+      )
+    );
+    const start = doc.content.findIndex((node) => node.text === i + 1 + '. Question ' + q.id);
+    const next = doc.content.findIndex(
+      (node, index) => index > start && (node.headlineLevel === 1 || node.pageBreak === 'before')
+    );
+    const rendered = doc.content
+      .slice(start, next)
+      .filter((node) => node.margin?.join(',') === '10,0,0,5');
+    assert.deepEqual(
+      rendered.map((node) => node.bold),
+      flags
+    );
+  }
+  assert.deepEqual(
+    model.questions[7].parts[0].choices.map((c) => c.correct),
+    [false, true]
+  );
+  assert.equal(
+    model.questions[8].parts[0].choices.some((c) => c.correct),
+    false
+  );
+  const key = doc.content.slice(doc.content.findIndex((node) => node.pageBreak === 'before') + 1);
+  assert.equal(
+    key
+      .filter(
+        (node) =>
+          node.margin?.join(',') === '10,0,0,4' &&
+          node.text !== 'Answer unavailable in the supplied quiz.'
+      )
+      .every((node) => node.bold === true),
+    true
+  );
+  assert.deepEqual(source, before);
+});

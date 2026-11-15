@@ -5,6 +5,8 @@
 - [x] 1.1 Implement the authorized immutable whole-quiz projection, limits, filenames and faithful seven-format answer layout for PDF-01/02/03; verify meaningful unit fixtures, Unicode/code/image layout and document current/future access boundaries.
 - [x] 1.2 Implement lazy local PDF/font generation, bounded image IO and safe download for PDF-02/03; browser-test actual files, errors/budgets and cancellation, render/extract PDFs and visually verify pagination, glyphs and answer alignment; document dependency/license and image limitations.
 
+- [x] 1.3 Bold supplied correct choices and answer-key values without changing source data; verify all seven surfaces, duplicate labels, unavailable legacy keys and rendered font emphasis.
+
 ## 2. Export interaction and acceptance
 
 - [x] 2.1 Add accessible overview export controls and orchestration for PDF-04; browser-test progress, duplicate suppression, retry, cancel and account/source changes with unchanged study data in the responsive locale/theme matrix; document behavior.
