@@ -28,3 +28,12 @@ export async function headerControl(page, options, root = page) {
   }
   return target;
 }
+
+// Background focus/scroll checks start after modal dismissal and focus restoration.
+export async function waitForHeaderPanelClosed(page) {
+  await expect(page.locator('.compact-header-popup')).toHaveCount(0);
+  await expect(page.locator('.compact-header-drawer')).toBeHidden();
+  await expect
+    .poll(() => page.evaluate(() => getComputedStyle(document.body).overflow))
+    .not.toBe('hidden');
+}

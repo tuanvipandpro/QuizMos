@@ -1,4 +1,4 @@
-import { headerControl } from './headerControls.js';
+import { headerControl, waitForHeaderPanelClosed } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import { accountCases } from './viewports.js';
 import { contrastRatio } from './uiContrast.js';
@@ -131,9 +131,13 @@ async function appearance(page, state) {
   ).click();
   if ((await page.locator('html').getAttribute('data-theme')) !== state.theme)
     await (await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })).click();
+  await waitForHeaderPanelClosed(page);
 }
 
 async function dockGeometry(page, width, height) {
+  // Measure default contrast; pointer position after drawer dismissal can hover a dock
+  // button. Explicit hover/focus contrast acceptance is tracked separately in #170.
+  await page.mouse.move(0, 0);
   const dock = page.locator('.study-navigation-bar');
   const bounds = await dock.boundingBox();
   expect(bounds.x).toBeGreaterThanOrEqual(0);

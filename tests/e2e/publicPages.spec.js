@@ -1,4 +1,4 @@
-import { headerControl } from './headerControls.js';
+import { headerControl, waitForHeaderPanelClosed } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs/promises';
 import { accountCases } from './viewports.js';
@@ -354,6 +354,7 @@ test('viewport sections snap with wheel, keyboard and navigation, and Donate is 
   );
   await expect(donate).toBeInViewport();
   if (await page.locator('.compact-header-popup').isVisible()) await page.keyboard.press('Escape');
+  await waitForHeaderPanelClosed(page);
   await expect(page.locator('.hero-donate')).toBeInViewport();
   const allowed = await page
     .locator('.hero-copy')

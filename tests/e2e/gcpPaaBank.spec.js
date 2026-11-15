@@ -1,4 +1,4 @@
-import { headerControl } from './headerControls.js';
+import { headerControl, waitForHeaderPanelClosed } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { createExamSession } from '../../src/utils/studySession.js';
@@ -47,6 +47,7 @@ test('PAA catalog/search aliases and actions fit the existing locale/theme/viewp
       await (
         await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
       ).click();
+    await waitForHeaderPanelClosed(page);
     const t = (k) => translate(view.language, k);
     const search = page.getByRole('textbox', { name: t('Find a certification'), exact: true });
     for (const query of ['GCP-PAA', 'GCP_PAA', 'Professional Agentic Architect']) {
