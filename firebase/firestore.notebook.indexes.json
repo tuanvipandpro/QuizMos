@@ -1,0 +1,271 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "notebookEntries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "bookmarked",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "notebookEntries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "mistake",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "notebookEntries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "mistake",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "reviewed",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "notebookEntries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "mistake",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "bookmarked",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "notebookEntries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "mistake",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "bookmarked",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "reviewed",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "notebookEntries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "sourceGroup",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "notebookEntries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "sourceGroup",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "bookmarked",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "notebookEntries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "sourceGroup",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "mistake",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "notebookEntries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "sourceGroup",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "mistake",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "reviewed",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "notebookEntries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "sourceGroup",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "mistake",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "bookmarked",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "notebookEntries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "sourceGroup",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "mistake",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "bookmarked",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "reviewed",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "customQuizzes",
+      "fieldPath": "questions",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "examAttemptSnapshots",
+      "fieldPath": "payload",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "notebookEntries",
+      "fieldPath": "note",
+      "indexes": []
+    }
+  ]
+}

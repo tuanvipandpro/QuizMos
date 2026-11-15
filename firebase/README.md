@@ -24,6 +24,10 @@
 4. After explicit rollout authorization, publish compatible Rules first, wait for propagation and verify the ownership/quota policy is effective. Verify the exemption is active where applicable. Never log credentials or put admin keys in Vite variables.
 5. Only then merge/enable the client and let the existing verified website pipeline deploy. Smoke test private save/reload/resume/management with an explicitly designated test account; record what was actually checked. Do not use incidental personal accounts for routine testing.
 
+## Study notebook candidate (M2)
+
+For the M2 study notebook (#81), `firestore.notebook.indexes.json` is a complete **tracked-policy candidate** combining the custom-question/history-payload exemptions, the notebook note exemption and 11 query indexes. Reconcile it against current published configuration before any owner-authorized publication; do not deploy a fragment or replace unrelated live indexes. Keep `VITE_STUDY_NOTEBOOK_ENABLED=false` until compatible Rules and ready indexes are verified. Notebook policy/client activation and a bounded account smoke remain a separate rollout gate; see [the notebook contract](../docs/study-notebook.md). No notebook publication has occurred.
+
 ## Rollback
 
 Revert/disable the cloud client first while preserving saved documents. Bank and local uploads remain independent. Evaluate old/new client compatibility before reverting Rules; do not make private content public or delete quizzes as rollback. Keep the original baseline/provenance for comparison. No Firebase deployment is performed automatically by this repository's CI.

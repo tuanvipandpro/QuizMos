@@ -1,0 +1,202 @@
+.notebook-capture-status {
+  display: block;
+  margin-block: 12px;
+  overflow-wrap: anywhere;
+}
+.notebook-revision-source {
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+}
+.notebook-capture-feedback.ant-alert {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-block: 16px;
+}
+.notebook-capture-feedback .ant-alert-content {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+.notebook-capture-feedback .ant-alert-action {
+  margin: 0;
+}
+.notebook-capture-feedback .ant-btn {
+  min-height: 44px;
+  height: auto;
+  white-space: normal;
+}
+.notebook-page {
+  display: grid;
+  gap: var(--app-space-5);
+  max-width: 1040px;
+  margin-inline: auto;
+  min-width: 0;
+}
+.notebook-heading,
+.notebook-selection-actions,
+.notebook-pagination,
+.notebook-entry-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.notebook-heading,
+.notebook-pagination {
+  justify-content: space-between;
+}
+.notebook-heading h1 {
+  margin: 0 0 8px;
+}
+.notebook-heading p {
+  margin: 0;
+}
+.notebook-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 12px 24px;
+  align-items: center;
+  padding: var(--app-space-4);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface);
+}
+.notebook-filter-panel summary {
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface);
+  cursor: pointer;
+  font-weight: 600;
+}
+.notebook-filter-panel[open] summary {
+  margin-bottom: 12px;
+}
+.notebook-page > .ant-typography {
+  margin-bottom: 0;
+}
+.notebook-filters > div,
+.notebook-note-field {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.notebook-filters label,
+.notebook-note-field label {
+  font-weight: 600;
+}
+.notebook-filters .ant-select {
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 44px;
+}
+.notebook-entries {
+  display: grid;
+  gap: var(--app-space-4);
+}
+.notebook-entry,
+.notebook-entry-heading > div,
+.notebook-entry .ant-card-body {
+  min-width: 0;
+}
+.notebook-entry-heading {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  overflow-wrap: anywhere;
+}
+.notebook-entry-heading > .ant-checkbox-wrapper {
+  flex: 0 0 44px;
+  min-height: 44px;
+  justify-content: center;
+  align-items: center;
+}
+.notebook-entry h2.ant-typography {
+  margin: 0 0 4px;
+  font-size: 18px;
+  line-height: 1.5;
+}
+.notebook-entry-status {
+  color: var(--app-muted);
+  margin-bottom: 12px;
+}
+.notebook-note-text,
+.notebook-latest-note p,
+.notebook-question-preview {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.notebook-note-preview {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+.notebook-page .ant-btn,
+.notebook-editor .ant-btn {
+  min-height: 44px;
+  height: auto;
+  white-space: normal;
+}
+.notebook-page .ant-checkbox-wrapper,
+.notebook-editor .ant-checkbox-wrapper {
+  min-height: 44px;
+  align-items: center;
+}
+.notebook-page .ant-select-selector {
+  min-height: 44px;
+  height: auto;
+}
+.notebook-editor .ant-drawer-body {
+  display: grid;
+  align-content: start;
+  gap: var(--app-space-4);
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+.notebook-editor textarea {
+  font-size: 16px;
+  scroll-margin-block: 16px;
+}
+.notebook-editor .ant-drawer-close {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.notebook-editor .ant-btn-dangerous:not(.ant-btn-primary) {
+  color: var(--app-danger-text);
+  border-color: var(--app-danger-text);
+}
+.notebook-editor-status,
+.notebook-hint {
+  color: var(--app-muted);
+}
+.notebook-exclusions {
+  margin-bottom: 16px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .notebook-filters {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .notebook-entry .ant-card-body {
+    padding: 16px;
+  }
+  .notebook-selection-actions {
+    align-items: stretch;
+  }
+  .notebook-selection-actions > span {
+    flex-basis: 100%;
+  }
+  .notebook-heading > div {
+    flex-basis: 100%;
+  }
+  .notebook-editor .ant-drawer-body {
+    padding-inline: 16px;
+  }
+}
