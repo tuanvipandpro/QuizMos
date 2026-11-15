@@ -8,7 +8,7 @@
 ## 2. Export interaction and acceptance
 
 - [x] 2.1 Add accessible overview export controls and orchestration for PDF-04; browser-test progress, duplicate suppression, retry, cancel and account/source changes with unchanged study data in the responsive locale/theme matrix; document behavior.
-- [ ] 2.2 Run yarn verify, relevant seven-format/access/session regressions, root build isolation and redacted staged/outgoing scans; pass latest-head CI and prepare the separate #158 PR into M2.
+- [x] 2.2 Run yarn verify, relevant seven-format/access/session regressions, root build isolation and redacted staged/outgoing scans; pass latest-head CI and prepare the separate #158 PR into M2.
 - [ ] 2.3 After owner-requested protected promotion, verify post-merge/public export acceptance before closing #158.
 
 ## Workflow follow-up
