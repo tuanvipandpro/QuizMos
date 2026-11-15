@@ -7,7 +7,7 @@
 
 ## 2. Integration and delivery
 
-- [ ] 2.1 Run the full width/locale/theme/auth matrix, relevant route/account/update/study regressions, yarn verify, root artifact checks and redacted staged/outgoing scans; pass current-head CI and prepare the separate issue PR against M2.
+- [x] 2.1 Run the full width/locale/theme/auth matrix, relevant route/account/update/study regressions, yarn verify, root artifact checks and redacted staged/outgoing scans; pass current-head CI and prepare the separate issue PR against M2.
 - [ ] 2.2 After owner-requested protected merge/promotion, verify post-merge/public responsive acceptance before closing #163.
 
 ## Workflow follow-up
