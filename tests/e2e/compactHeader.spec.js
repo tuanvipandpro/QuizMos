@@ -55,6 +55,11 @@ for (const view of cases) {
     await expect(popup).toHaveCount(0);
     await expect(trigger).toBeFocused();
     await trigger.click();
+    await expect(popup).toBeVisible();
+    await header.locator('.header-login').focus();
+    await expect(popup).toBeHidden();
+    await expect(header.locator('.header-login')).toBeFocused();
+    await trigger.click();
     await page
       .getByRole('dialog', { name: t('Navigation and preferences'), exact: true })
       .getByRole('button', { name: t('My quizzes'), exact: true })

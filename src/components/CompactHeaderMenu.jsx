@@ -37,8 +37,20 @@ export default function CompactHeaderMenu({
   );
   useEffect(() => {
     if (!open) return;
+    const outsideFocus = (event) => {
+      if (
+        panel.current &&
+        !panel.current.contains(event.target) &&
+        event.target !== trigger.current
+      )
+        setOpen(false);
+    };
+    document.addEventListener('focusin', outsideFocus);
     const frame = requestAnimationFrame(() => panel.current?.querySelector('button')?.focus());
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(frame);
+      document.removeEventListener('focusin', outsideFocus);
+    };
   }, [open]);
   const close = () => {
     setOpen(false);
