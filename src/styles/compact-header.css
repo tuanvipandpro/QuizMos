@@ -39,7 +39,7 @@
   justify-content: center;
   padding: 4px;
 }
-.is-compact .header-login span:not(.anticon) {
+.is-compact .header-login > span:not(.ant-btn-icon) {
   display: none;
 }
 .is-compact .compact-nav-trigger.ant-btn {

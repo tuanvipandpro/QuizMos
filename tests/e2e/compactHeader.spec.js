@@ -29,6 +29,7 @@ for (const view of cases) {
     if (view.width <= 900) expect(before.height).toBeLessThanOrEqual(72);
     await page.evaluate(() => window.dispatchEvent(new Event('quiz-e2e-auth-ready')));
     await expect(header.locator('.header-login')).toBeVisible();
+    await expect(header.locator('.header-login .anticon')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true
     );
