@@ -51,6 +51,8 @@ export default function CompactHeaderMenu({
       ref={panel}
       id={id}
       className="compact-header-popup"
+      hidden={!open}
+      aria-hidden={!open}
       role="dialog"
       aria-label={t('Navigation and preferences')}
       onKeyDown={(event) => {

@@ -332,11 +332,13 @@ test(
               exact: true,
             })
           ).toBeVisible();
-          expect(
-            await page.evaluate(
-              () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+          await expect
+            .poll(() =>
+              page.evaluate(
+                () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+              )
             )
-          ).toBe(true);
+            .toBe(true);
           for (const option of await page.locator('.exam-feedback-option').all()) {
             const box = await option.boundingBox();
             expect(box.width).toBeGreaterThanOrEqual(44);

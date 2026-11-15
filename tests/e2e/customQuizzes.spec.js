@@ -397,11 +397,13 @@ test('cloud management and rename dialog fit phones, desktop and landscape in bo
           .boundingBox();
         expect(reload.width).toBeGreaterThanOrEqual(44);
         expect(reload.height).toBeGreaterThanOrEqual(44);
-        expect(
-          await page.evaluate(
-            () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+        await expect
+          .poll(() =>
+            page.evaluate(
+              () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+            )
           )
-        ).toBe(true);
+          .toBe(true);
         for (const button of await card(page, longName).getByRole('button').all()) {
           const box = await button.boundingBox();
           expect(box.width).toBeGreaterThanOrEqual(44);
@@ -449,11 +451,13 @@ test('cloud management and rename dialog fit phones, desktop and landscape in bo
             path: testInfo.outputPath(`rename-${width}-${language}-${theme}.png`),
             animations: 'disabled',
           });
-        expect(
-          await page.evaluate(
-            () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+        await expect
+          .poll(() =>
+            page.evaluate(
+              () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+            )
           )
-        ).toBe(true);
+          .toBe(true);
         await dialog
           .getByRole('button', { name: language === 'en' ? 'Cancel' : 'Hủy', exact: true })
           .click();
