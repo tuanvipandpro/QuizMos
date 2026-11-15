@@ -17,7 +17,7 @@ The system SHALL show a single compact header row no taller than 72 CSS pixels a
 
 ### Requirement: HEADER-02 Equivalent navigation and preferences
 
-The system SHALL keep Quiz Bank, My quizzes, Donate, theme and VN/EN reachable through a labelled compact menu while preserving bank/provider navigation and all existing account/update actions.
+The system SHALL keep Quiz Bank, My quizzes, Donate, theme and VN/EN reachable through a labelled left-side modal drawer while preserving bank/provider navigation and all existing account/update actions.
 
 #### Scenario: Compact preferences
 
@@ -26,7 +26,12 @@ The system SHALL keep Quiz Bank, My quizzes, Donate, theme and VN/EN reachable t
 
 ### Requirement: HEADER-03 Keyboard and popup lifecycle
 
-The system SHALL provide labelled native controls with visible focus and 44px touch targets, viewport-bounded scrollable popups, Escape/outside dismissal and predictable focus return, including breakpoint changes.
+The system SHALL provide labelled native controls with visible focus and 44px touch targets, a viewport-bounded scrollable modal drawer, contained keyboard focus, close-button/mask/Escape dismissal and predictable focus return, including breakpoint changes.
+
+#### Scenario: Drawer containment
+
+- **WHEN** a user opens the compact drawer and tabs through its navigation/preferences
+- **THEN** focus stays within the visible drawer until it closes, background scrolling is locked, and mask/close/Escape provide an exit
 
 #### Scenario: Escape and resize
 

@@ -47,6 +47,15 @@ for (const view of cases) {
     const popup = page.getByRole('dialog', { name: t('Navigation and preferences'), exact: true });
     await expect(popup).toBeVisible();
     await expect(popup.getByRole('button', { name: t('Quiz Bank'), exact: true })).toBeFocused();
+    for (let i = 0; i < 8; i++) {
+      await page.keyboard.press('Tab');
+      expect(
+        await page
+          .locator('.compact-header-drawer')
+          .evaluate((el) => el.contains(document.activeElement))
+      ).toBe(true);
+    }
+    await popup.getByRole('button', { name: t('Quiz Bank'), exact: true }).focus();
     const box = await popup.boundingBox();
     expect(box.x).toBeGreaterThanOrEqual(0);
     expect(box.x + box.width).toBeLessThanOrEqual(view.width + 1);
@@ -56,9 +65,11 @@ for (const view of cases) {
     await expect(trigger).toBeFocused();
     await trigger.click();
     await expect(popup).toBeVisible();
-    await header.locator('.header-login').focus();
+    await page
+      .locator('.compact-header-drawer .ant-drawer-mask')
+      .click({ position: { x: view.width - 10, y: Math.min(200, view.height - 10) } });
     await expect(popup).toBeHidden();
-    await expect(header.locator('.header-login')).toBeFocused();
+    await expect(trigger).toBeFocused();
     await trigger.click();
     await page
       .getByRole('dialog', { name: t('Navigation and preferences'), exact: true })
@@ -95,6 +106,9 @@ for (const view of cases) {
     await page.setViewportSize({ width: 1280, height: 900 });
     await expect(popup).toHaveCount(0);
     await expect(header.locator('.app-brand')).toBeFocused();
+    await expect
+      .poll(() => page.evaluate(() => getComputedStyle(document.body).overflow))
+      .not.toBe('hidden');
   });
 }
 test('compact preferences and guarded Exam navigation retain the saved deadline on Cancel', async ({
@@ -117,5 +131,30 @@ test('compact preferences and guarded Exam navigation retain the saved deadline 
     .getByRole('button', { name: 'Continue exam', exact: true })
     .click();
   expect((await read()).deadline).toBe(before.deadline);
+  await expect(page.locator('.compact-nav-trigger')).toBeFocused();
+});
+
+test('landscape drawer scroll stays inside the sidebar and restores background scrolling after close', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 844, height: 260 });
+  await page.goto('./');
+  await expect(page.locator('.landing-hero h1')).toBeVisible();
+  const before = await page.evaluate(() => scrollY);
+  await page.locator('.compact-nav-trigger').click();
+  const body = page.locator('.compact-header-drawer .ant-drawer-body');
+  await expect(body).toBeVisible();
+  await body.hover();
+  await page.mouse.wheel(0, 200);
+  await expect.poll(() => body.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+  expect(await page.evaluate(() => scrollY)).toBe(before);
+  await page
+    .getByRole('dialog', { name: 'Navigation and preferences', exact: true })
+    .getByRole('button', { name: 'Close', exact: true })
+    .click();
+  await expect(body).toHaveCount(0);
+  await expect
+    .poll(() => page.evaluate(() => getComputedStyle(document.body).overflow))
+    .not.toBe('hidden');
   await expect(page.locator('.compact-nav-trigger')).toBeFocused();
 });

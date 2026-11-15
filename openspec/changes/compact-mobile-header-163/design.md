@@ -10,11 +10,11 @@ One bounded compact row with every destination/preference reachable, measured st
 
 ## Decisions
 
-Use the existing 900px compact-layout media subscription to avoid a competing breakpoint. Keep brand (44px), labelled active-page menu (flexible), quiz-update bell and account/sign-in/loading controls in one 61px row. A second navigation row still consumes too much vertical space; an icon-only hamburger loses useful current-page context. A labelled active-page dropdown provides both compactness and discoverability.
+Use the existing 900px compact-layout media subscription. Keep brand (44px), labelled active-page drawer launcher (flexible), quiz-update bell and account/sign-in/loading controls in one 61px row. The visible current-page label preserves navigation context.
 
-Render a bounded modeless navigation/preferences panel with native destination buttons (Quiz Bank, My quizzes, Donate), theme and VN/EN controls. Reuse existing Ant Design Dropdown and tokens; retain desktop navigation/utilities. Menu actions close and return focus to the persistent trigger before guarded navigation/dialogs. Escape closes with focus return; outside dismissal preserves the user's new focus. Resize unmounts the compact panel and returns focus to the persistent brand when necessary. Clean up scheduled focus/subscriptions.
+The owner subsequently selected a left-side drawer/sidebar. Use the existing Ant Design Drawer with a mask, close button, Escape handling, focus containment and scroll locking. Keep the labelled active-page launcher in the 61px row with a menu icon; desktop remains unchanged. The drawer is at most 320px wide and leaves 48px for mask access on narrow screens, with a scrollable body and 44px controls.
 
-Keep account and notification popups as existing owners; opening a peer dismisses the other through outside-trigger behavior. Bound all popups within the viewport, allow vertical scrolling in landscape, and retain 44px targets. Existing header measurement sees only the compact row, not the portalled panel. Scope overrides beneath the compact header class rather than changing study/nav geometry globally.
+Reuse existing native destination/preference controls. Queue guarded navigation until drawer dismissal completes, so its focus restoration cannot steal focus from the subsequent Exam-confirmation dialog. Preferences close the drawer after applying; Escape/mask/close return to the persistent trigger. Resize to desktop removes the drawer and restores the brand with scroll lock cleaned up. The portalled drawer never contributes to header measurement. Account and notification owners remain unchanged outside the closed drawer.
 
 ## Risks / Trade-offs
 

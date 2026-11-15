@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { Button, Dropdown } from 'antd';
-import { DownOutlined, HeartOutlined } from '@ant-design/icons';
+import { Button, Drawer } from 'antd';
+import { MenuOutlined, HeartOutlined } from '@ant-design/icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import HeaderPreferences from './HeaderPreferences';
 const destinations = [
@@ -27,31 +27,23 @@ export default function CompactHeaderMenu({
     trigger = useRef(null),
     panel = useRef(null),
     opened = useRef(false),
-    id = useId();
+    id = useId(),
+    pending = useRef(null),
+    mounted = useRef(true);
   opened.current = open;
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      pending.current = null;
+    };
+  }, []);
   useEffect(
     () => () => {
       if (opened.current) brandRef.current?.focus();
     },
     [brandRef]
   );
-  useEffect(() => {
-    if (!open) return;
-    const outsideFocus = (event) => {
-      if (
-        panel.current &&
-        !panel.current.contains(event.target) &&
-        event.target !== trigger.current
-      )
-        setOpen(false);
-    };
-    document.addEventListener('focusin', outsideFocus);
-    const frame = requestAnimationFrame(() => panel.current?.querySelector('button')?.focus());
-    return () => {
-      cancelAnimationFrame(frame);
-      document.removeEventListener('focusin', outsideFocus);
-    };
-  }, [open]);
   const close = () => {
     setOpen(false);
     trigger.current?.focus();
@@ -65,8 +57,6 @@ export default function CompactHeaderMenu({
       className="compact-header-popup"
       hidden={!open}
       aria-hidden={!open}
-      role="dialog"
-      aria-label={t('Navigation and preferences')}
       onKeyDown={(event) => {
         if (event.key === 'Escape') {
           event.preventDefault();
@@ -83,8 +73,8 @@ export default function CompactHeaderMenu({
             aria-current={pages.includes(page) ? 'page' : undefined}
             icon={label === 'Donate' ? <HeartOutlined aria-hidden="true" /> : undefined}
             onClick={() => {
+              pending.current = () => onNavigate(url);
               close();
-              onNavigate(url);
             }}
           >
             {t(label)}
@@ -101,16 +91,7 @@ export default function CompactHeaderMenu({
     </section>
   );
   return (
-    <Dropdown
-      trigger={['click']}
-      placement="bottomLeft"
-      open={open}
-      onOpenChange={setOpen}
-      menu={{ items: [] }}
-      popupRender={() => popup}
-      destroyOnHidden
-      align={{ overflow: { adjustX: true, adjustY: true, shiftX: true, shiftY: true } }}
-    >
+    <>
       <Button
         ref={trigger}
         type="text"
@@ -120,10 +101,37 @@ export default function CompactHeaderMenu({
         aria-expanded={open}
         aria-controls={open ? id : undefined}
         title={t(active)}
+        onClick={() => setOpen(true)}
       >
+        <MenuOutlined aria-hidden="true" />
         <span>{t(active)}</span>
-        <DownOutlined aria-hidden="true" />
       </Button>
-    </Dropdown>
+      <Drawer
+        rootClassName="compact-header-drawer"
+        title={t('Navigation and preferences')}
+        aria-label={t('Navigation and preferences')}
+        aria-hidden={!open}
+        placement="left"
+        width="min(320px, calc(100vw - 48px))"
+        open={open}
+        onClose={close}
+        keyboard
+        maskClosable
+        destroyOnHidden
+        afterOpenChange={(next) => {
+          if (next) panel.current?.querySelector('button')?.focus();
+          else {
+            const action = pending.current;
+            pending.current = null;
+            if (action)
+              queueMicrotask(() => {
+                if (mounted.current) action();
+              });
+          }
+        }}
+      >
+        {popup}
+      </Drawer>
+    </>
   );
 }
