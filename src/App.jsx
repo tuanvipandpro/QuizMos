@@ -463,6 +463,7 @@ export default function App() {
         notebook={notebook}
         authLoading={authLoading}
         selectionId={route.selectionId}
+        params={route.params}
         onNavigate={go}
         onSignIn={openLogin}
         progressState={progressState}

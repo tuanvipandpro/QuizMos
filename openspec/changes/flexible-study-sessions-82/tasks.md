@@ -18,7 +18,7 @@
 ## 4. Score presentation and Notebook integration
 
 - [x] 4.1 Present raw practice accuracy and vendor criteria honestly for CQ-SESSION-06; verify scaled/undisclosed/weighted examples cannot produce an official cert pass, History v1 payload hashes/answers/grades/receipts remain unchanged and benchmark labels are localized/accessible in live and archived results; document the distinction from attempt-time certification evidence.
-- [ ] 4.2 After #162 is accepted into the M2 release through the owner-requested merge flow, synchronize that accepted baseline and add short Notebook Practice for CQ-SESSION-04/07/08; verify source arrays/duplicate original IDs, changed/missing/unauthorized exclusions, zero/insufficient matches, isolated drafts, unchanged notes/capture semantics and disabled zero-IO gating; keep the task open while the dependency is absent and document the boundary without importing duplicate #81 work.
+- [x] 4.2 After #162 is accepted into the M2 release through the owner-requested merge flow, synchronize that accepted baseline and add short Notebook Practice for CQ-SESSION-04/07/08; verify source arrays/duplicate original IDs, changed/missing/unauthorized exclusions, zero/insufficient matches, isolated drafts, unchanged notes/capture semantics and disabled zero-IO gating; keep the task open while the dependency is absent and document the boundary without importing duplicate #81 work.
 
 ## 5. Integration and delivery
 

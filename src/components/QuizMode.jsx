@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Card, Radio, Select, Typography } from 'antd';
+import { Alert, Button, Card, Radio, Typography } from 'antd';
 import { PlayCircleOutlined, FormOutlined, ReadOutlined } from '@ant-design/icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { EXAM_FEEDBACK_MODES, getExamFeedbackMode } from '../data/examModes';
 
 import { useExamSetup } from '../hooks/useExamSetup';
+import PracticeSizeSelect from './PracticeSizeSelect';
 import ExamSettingsFields from './ExamSettingsFields';
 import { eligibleStudyPool } from '../utils/studySettings';
 
@@ -82,21 +83,7 @@ export default function QuizMode({
       </Radio.Group>
       {selectedMode === 'practice' && (
         <div className="practice-size-picker">
-          <label htmlFor="practice-size">{t('Practice size')}</label>
-          <Select
-            id="practice-size"
-            virtual={false}
-            aria-label={t('Practice size')}
-            value={size}
-            onChange={setSize}
-            options={[
-              { value: 'all', label: t('All questions') },
-              ...[10, 20].map((value) => ({
-                value,
-                label: t('{count} questions', { count: value }),
-              })),
-            ]}
-          />
+          <PracticeSizeSelect value={size} onChange={setSize} />
           <Paragraph type="secondary">
             {t(
               'Short Practice is random, untimed and saved separately from full-bank answers and checkpoints.'

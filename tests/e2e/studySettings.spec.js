@@ -265,10 +265,9 @@ test('small pools and incompatible saved subsets expose an explicit new-session 
   );
   await page.reload();
   await expect(
-    page.getByText(
-      'The saved subset is no longer compatible. Start a new session from the overview.',
-      { exact: true }
-    )
+    page.getByText('The saved subset is no longer compatible. Start a new practice session.', {
+      exact: true,
+    })
   ).toBeVisible();
   await page.getByRole('button', { name: 'Back to quiz overview', exact: true }).click();
   await page.locator('.practice-size-picker .ant-select-selector').click();

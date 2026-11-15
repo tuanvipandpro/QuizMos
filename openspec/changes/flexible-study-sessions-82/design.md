@@ -4,7 +4,7 @@
 
 See proposal.md for motivation and the owner's certification-specific direction. At release baseline `079c644`, `QuizMode.jsx` owns generic selectors; App repeats count/time whitelists. `studySession.js` shuffles a whole source, stores selected Exam questions/options and a source signature, and restores v2 drafts through `useStudySession`. Practice uses the full source and an owner/source key. History v1 accepts at most 100 questions from one bank/custom source and freezes the raw grading version and `passed` benchmark. Its Rules enforce that benchmark above 80%; it is not an official certificate result.
 
-PR #162 (`ad99106`) supplies a reference-set Practice boundary but is not merged into this release. It maps original questions to source quizzes, including duplicate question IDs across banks, and isolates notebook drafts. It must be integrated through the accepted release before #82 changes that boundary; do not copy #81 into this PR.
+PR #162 (`ad99106`) supplied the reference-set Practice boundary and was owner-authorized for squash integration into M2 as `712f873` on 15 November 2026; post-merge release CI 43684197425 passed. It maps original questions to source quizzes, including duplicate question IDs across banks, and isolates notebook drafts. It must be integrated through the accepted release before #82 changes that boundary; do not copy #81 into this PR.
 
 ## Goals / Non-Goals
 

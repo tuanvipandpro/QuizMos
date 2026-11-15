@@ -1,4 +1,8 @@
 export const vi = {
+  '{count} questions available for short Practice. Notes and full-bank sessions are kept.':
+    'Có {count} câu cho luyện tập ngắn. Ghi chú và các lượt luyện toàn bộ bank được giữ nguyên.',
+  'Notebook revision is untimed Practice. Each question keeps its original source.':
+    'Ôn tập từ sổ là luyện tập không tính giờ. Mỗi câu giữ nguyên nguồn gốc.',
   'Raw accuracy': 'Tỷ lệ trả lời đúng',
   'No eligible questions are available for this session.':
     'Chưa có câu hỏi hợp lệ cho bài luyện này.',
@@ -7,8 +11,8 @@ export const vi = {
     'Luyện tập ngắn chọn câu ngẫu nhiên, không tính giờ và lưu riêng với đáp án, vị trí của toàn bộ bank.',
   'Not enough eligible questions. Choose a smaller training session.':
     'Không đủ câu hỏi hợp lệ. Hãy chọn bài luyện có ít câu hơn.',
-  'The saved subset is no longer compatible. Start a new session from the overview.':
-    'Bộ câu đã lưu không còn tương thích. Hãy bắt đầu bài mới từ trang tổng quan.',
+  'The saved subset is no longer compatible. Start a new practice session.':
+    'Bộ câu đã lưu không còn tương thích. Hãy bắt đầu lượt luyện tập mới.',
   'This certification format is unverified or retired. Choose custom training.':
     'Format chứng chỉ chưa xác minh hoặc đã ngừng thi. Hãy chọn luyện tập tùy chỉnh.',
   'Enter a valid whole-number question count and time limit.':

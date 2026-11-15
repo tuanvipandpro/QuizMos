@@ -804,3 +804,17 @@
 .practice-size-picker .ant-select-selector {
   min-height: 44px;
 }
+
+.study-setup-error .ant-alert-message {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .study-setup-error.ant-alert {
+    flex-wrap: wrap;
+  }
+  .study-setup-error .ant-alert-action {
+    flex-basis: 100%;
+    margin-inline-start: 0;
+    padding-top: 12px;
+  }
+}

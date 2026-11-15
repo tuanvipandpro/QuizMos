@@ -301,7 +301,7 @@ test('disabled/guest access makes no notebook IO; active Exam guards the account
     (account) => window.dispatchEvent(new CustomEvent('quiz-e2e-auth-change', { detail: account })),
     account
   );
-  await page.goto('./#/quiz/aws-aip-c01/exam');
+  await page.goto('./#/quiz/aws-aip-c01/exam?count=1&time=60');
   await expect(page.locator('.question-title')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Bookmark and note', exact: true })).toHaveCount(0);
   const before = await page.evaluate(
@@ -315,7 +315,7 @@ test('disabled/guest access makes no notebook IO; active Exam guards the account
     .filter({ hasText: 'Leave this exam?' })
     .getByRole('button', { name: 'Continue exam', exact: true })
     .click();
-  await expect(page).toHaveURL(/\/exam$/);
+  await expect(page).toHaveURL(/\/exam\?count=1&time=60$/);
   const after = await page.evaluate(
     (uid) => JSON.parse(sessionStorage.getItem(`quiz-study-v1:${uid}:aws-aip-c01:exam`)),
     uid
@@ -678,4 +678,192 @@ test('a persisted mixed-current/changed selection labels exclusions and studies 
   await expect(page.getByText('Study notebook synchronized', { exact: true })).toBeVisible();
   expect((await records(page)).entries[stale.entryKey].note).toBe('Keep old version note');
   expect((await records(page)).entries[current.entryKey].mistake).toBe(true);
+});
+
+async function shortSelection(page, context, settings = {}) {
+  const banks = Object.fromEntries(
+    ['aws-aip-c01', 'gcp-ace'].map((id) => [
+      id,
+      Array.from({ length: 6 }, (_, index) => ({
+        ...question,
+        id: 'shared-' + index,
+        question: id + ' question ' + index,
+      })),
+    ])
+  );
+  const entries = [];
+  for (const [quizId, questions] of Object.entries(banks))
+    for (const q of questions)
+      entries.push(await entry({ quizId, q, note: quizId + ' private note ' + q.id }));
+  await init(page, context, { entries, ...settings });
+  for (const [id, questions] of Object.entries(banks))
+    await page.route('**/' + findQuiz(id).file, (route) => route.fulfill({ json: questions }));
+  const selection = await notebookSelection(entries);
+  await page.goto('./#/notebook');
+  await page.evaluate(
+    ({ uid, selection }) => {
+      sessionStorage.setItem(
+        'quiz-notebook-selection-v1:' + uid + ':' + selection.id,
+        JSON.stringify(selection.manifest)
+      );
+      sessionStorage.setItem(
+        'quiz-study-v1:' + uid + ':aws-aip-c01:practice',
+        'full-bank-sentinel'
+      );
+    },
+    { uid, selection }
+  );
+  return { entries, selection, banks };
+}
+async function chooseSize(page, size, language = 'en') {
+  await page.locator('.practice-size-picker .ant-select-selector').click();
+  await page
+    .getByRole('option', {
+      name: translate(language, size === 'all' ? 'All questions' : '{count} questions', {
+        count: size,
+      }),
+      exact: true,
+    })
+    .click();
+}
+for (const view of accountCases('desktop').concat(accountCases('phone'))) {
+  test(
+    'short Notebook preserves sources, capture and separate full draft ' + JSON.stringify(view),
+    async ({ page, context }, info) => {
+      test.skip(info.project.name !== view.project);
+      await page.setViewportSize({ width: view.width, height: view.height });
+      const { entries, selection } = await shortSelection(page, context, view);
+      const t = (key) => translate(view.language, key);
+      await page.goto('./#/notebook/study/' + selection.id);
+      await expect(page.locator('.question-title')).toBeVisible();
+      await page.getByRole('button', { name: t('Next question'), exact: true }).click();
+      const fullKey = 'quiz-study-v1:' + uid + ':' + selection.sessionId + ':practice';
+      await expect
+        .poll(() => page.evaluate((key) => JSON.parse(sessionStorage.getItem(key)).index, fullKey))
+        .toBe(1);
+      const full = await page.evaluate((key) => sessionStorage.getItem(key), fullKey);
+      await chooseSize(page, 10, view.language);
+      await expect(page.locator('.study-position')).toContainText(
+        translate(view.language, 'Question {number} of {total}', { number: 1, total: 10 })
+      );
+      const manifestKey =
+        'quiz-study-v1:' +
+        uid +
+        ':quick:' +
+        encodeURIComponent(selection.sessionId) +
+        ':10:manifest';
+      const manifest = await page.evaluate(
+        (key) => JSON.parse(sessionStorage.getItem(key)),
+        manifestKey
+      );
+      expect(new Set(manifest.keys).size).toBe(10);
+      const first = entries.find((e) => e.entryKey === manifest.keys[0]);
+      await expect(page.locator('.notebook-revision-source')).toContainText(
+        findQuiz(first.ref.quizId).name
+      );
+      await page.getByRole('radio', { name: /Wrong option/ }).check();
+      await expect(page.getByText(t('Study notebook synchronized'), { exact: true })).toBeVisible();
+      const saved = await records(page);
+      expect(saved.entries[first.entryKey].mistake).toBe(true);
+      for (const e of entries) expect(saved.entries[e.entryKey].note).toBe(e.note);
+      await page.reload();
+      await expect(page.getByRole('radio', { name: /Wrong option/ })).toBeChecked();
+      expect(
+        await page.evaluate((key) => JSON.parse(sessionStorage.getItem(key)), manifestKey)
+      ).toEqual(manifest);
+      expect((await records(page)).state.revision).toBe(saved.state.revision);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+        true
+      );
+      await page.screenshot({ path: info.outputPath('notebook-short.png'), fullPage: true });
+      await chooseSize(page, 20, view.language);
+      await expect(
+        page.getByText(t('Not enough eligible questions. Choose a smaller training session.'), {
+          exact: true,
+        })
+      ).toBeVisible();
+      await expect(page.locator('.question-title')).toHaveCount(0);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+        true
+      );
+      await chooseSize(page, 'all', view.language);
+      await expect(page.locator('.study-position')).toContainText(
+        translate(view.language, 'Question {number} of {total}', { number: 2, total: 12 })
+      );
+      expect(await page.evaluate((key) => sessionStorage.getItem(key), fullKey)).toBe(full);
+      expect(
+        await page.evaluate(
+          (uid) => sessionStorage.getItem('quiz-study-v1:' + uid + ':aws-aip-c01:practice'),
+          uid
+        )
+      ).toBe('full-bank-sentinel');
+      await expect(page.getByRole('timer')).toHaveCount(0);
+    }
+  );
+}
+test('short Notebook restart requires confirmation and changing available sources never silently remaps a saved subset', async ({
+  page,
+  context,
+}) => {
+  const { selection, banks } = await shortSelection(page, context);
+  const url = './#/notebook/study/' + selection.id + '?size=10';
+  await page.goto(url);
+  await expect(page.locator('.question-title')).toBeVisible();
+  const key =
+    'quiz-study-v1:' + uid + ':quick:' + encodeURIComponent(selection.sessionId) + ':10:manifest';
+  const before = await page.evaluate((key) => JSON.parse(sessionStorage.getItem(key)), key);
+  await page.getByRole('button', { name: 'Start a new practice session', exact: true }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancel', exact: true }).click();
+  expect(await page.evaluate((key) => JSON.parse(sessionStorage.getItem(key)), key)).toEqual(
+    before
+  );
+  await page.getByRole('button', { name: 'Start a new practice session', exact: true }).click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Start practice', exact: true })
+    .click();
+  await expect
+    .poll(() => page.evaluate((key) => JSON.parse(sessionStorage.getItem(key)).runId, key))
+    .not.toBe(before.runId);
+  const saved = await page.evaluate((key) => JSON.parse(sessionStorage.getItem(key)), key);
+  await page.route('**/' + findQuiz('aws-aip-c01').file, (route) =>
+    route.fulfill({ json: banks['aws-aip-c01'].slice(1) })
+  );
+  await page.reload();
+  await expect(
+    page.getByText('1 selected question is unavailable and excluded.', { exact: true })
+  ).toBeVisible();
+  await expect(
+    page.getByText('The saved subset is no longer compatible. Start a new practice session.', {
+      exact: true,
+    })
+  ).toBeVisible();
+  expect(await page.evaluate((key) => JSON.parse(sessionStorage.getItem(key)), key)).toEqual(saved);
+  await page.getByRole('button', { name: 'Start a new practice session', exact: true }).click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Start practice', exact: true })
+    .click();
+  await expect(page.locator('.question-title')).toBeVisible();
+  expect(
+    (await page.evaluate((key) => JSON.parse(sessionStorage.getItem(key)), key)).runId
+  ).not.toBe(saved.runId);
+  expect(Object.values((await records(page)).entries)).toHaveLength(12);
+});
+test('disabled short Notebook routes make zero source, capture or subset IO', async ({
+  page,
+  context,
+}) => {
+  const { selection } = await shortSelection(page, context, { enabled: false });
+  const sourceRequests = [];
+  page.on('request', (request) => {
+    if (request.url().includes('/quiz/')) sourceRequests.push(request.url());
+  });
+  await page.goto('./#/notebook/study/' + selection.id + '?size=10');
+  await expect(page.getByText('Study notebook is not enabled yet.', { exact: true })).toBeVisible();
+  expect(sourceRequests).toEqual([]);
+  expect(await page.evaluate(() => window.quizNotebookCalls || [])).toEqual([]);
+  expect(
+    await page.evaluate(() => Object.keys(sessionStorage).filter((key) => key.includes(':quick:')))
+  ).toEqual([]);
 });
