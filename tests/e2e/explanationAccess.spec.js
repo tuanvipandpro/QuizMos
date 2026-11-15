@@ -1,3 +1,4 @@
+import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import { accountCases } from './viewports.js';
 import { clickAfterUiMotion } from './uiMotion.js';
@@ -130,7 +131,7 @@ test('long supplied Markdown keeps its language, sanitization and readable geome
   await expect(content.getByRole('heading', { name: 'Original English reference' })).toBeVisible();
   await expect(content.locator('script, [onerror], a[href^="javascript:"]')).toHaveCount(0);
   expect(await page.evaluate(() => window.referenceUnsafe)).toBeUndefined();
-  await page.getByRole('button', { name: 'Tiếng Việt', exact: true }).click();
+  await (await headerControl(page, { name: 'Tiếng Việt', exact: true })).click();
   await expect(content).toContainText('A supplied explanation');
   expect(await content.getAttribute('lang')).toBeNull();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -211,14 +212,16 @@ test('included reference and the explicit action fit the study viewport matrix',
   await page.getByRole('button', { name: 'Explain', exact: true }).click();
   for (const state of accountCases(testInfo.project.name)) {
     await page.setViewportSize({ width: state.width, height: state.height });
-    await page
-      .getByRole('button', {
+    await (
+      await headerControl(page, {
         name: state.language === 'vi' ? 'Tiếng Việt' : 'English',
         exact: true,
       })
-      .click();
+    ).click();
     if ((await page.locator('html').getAttribute('data-theme')) !== state.theme)
-      await page.locator('.theme-toggle').click();
+      await (
+        await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+      ).click();
     await page
       .getByRole('button', {
         name: state.language === 'vi' ? 'Giải thích' : 'Explain',

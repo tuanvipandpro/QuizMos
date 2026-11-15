@@ -1,0 +1,13 @@
+# Compact header
+
+Refs #163. At widths up to 900px the header uses one measured 61px row: brand, labelled active-page menu, quiz-update bell and account/sign-in/loading slot. The modeless navigation/preferences panel retains Quiz Bank, My quizzes, Donate, theme and VN/EN. Wider layouts keep the original direct controls and left/right alignment.
+
+Use native buttons, pressed language state, current-page markers and existing Ant Design/tokens. Escape and menu actions return focus to the trigger; outside dismissal preserves the new target. Crossing to desktop closes the panel and returns focus to the brand. Focus scheduling and media subscriptions are cleaned up. Existing account/notification owners and guarded navigation remain unchanged. The portalled panel scrolls within the viewport and is excluded from measured header height.
+
+UI skill queries: compact navigation focus menu (ux) matched Keyboard Navigation, Compact Control Semantics and Sticky Navigation; responsive event cleanup (React) matched effect subscription cleanup. The bundled Python interpreter ran both queries. No additional UI framework or dependency was added.
+
+HEADER-01/02/03/04 are covered by compactHeader.spec.js and responsive headerControls.js interactions in existing route/account/notification/study tests. The new matrix includes 320/360/390/412px, tablet, desktop and landscape; EN/VN, light/dark, auth loading/guest/long account names, focus/resize and active Exam Cancel/deadline preservation. This is browser emulation, not physical Samsung testing. Local Chrome is used because the pinned Playwright browser executable is unavailable; CI retains the pinned Chromium container.
+
+One issue PR targets the M2 release. No merge/production change is authorized by local implementation; retain the branch per delayed cleanup and close only after accepted delivery. Existing study identities, checkpoint data and feature rollout controls are untouched.
+
+Measured before/after guest headers (CSS px): 320px 167→61; 360/390/412px 115→61; 844px landscape 91→61; desktop 1280px remains 77. Images and geometry are ignored under artifacts/header-ui; the before preview uses the same accepted header implementation as release 712f873. Final yarn verify passed 309 unit tests and root artifact isolation. The new matrix passed 13 cases; final focused responsive interaction/recheck coverage totals 31 distinct cases. Legacy browser interactions explicitly open the compact panel and wait for closing animation/portalled controls; assertions now verify one-row geometry rather than the removed second row. Full current-head CI remains required before review readiness.

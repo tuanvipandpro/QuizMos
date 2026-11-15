@@ -1,3 +1,4 @@
+import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import { clickAfterUiMotion, waitForUiMotion } from './uiMotion.js';
 import { viewportCases } from './viewports.js';
@@ -115,13 +116,13 @@ test('guest BYOK never calls App AI; key setup and sign-in option are visible', 
   await explain(page);
   const answer = page.locator('.explanation-panel .markdown-container[lang="vi"]');
   await expect(answer).toContainText(byokAnswer);
-  await page.getByRole('button', { name: 'Tiếng Việt', exact: true }).click();
+  await (await headerControl(page, { name: 'Tiếng Việt', exact: true })).click();
   await expect(answer).toContainText(byokAnswer);
   await page.getByRole('button', { name: 'Đóng', exact: true }).last().click();
   await page.getByRole('button', { name: 'Giải thích', exact: true }).click();
   await expect(page.getByText(/Lời giải đã lưu/)).toBeVisible();
   await expect(answer).toContainText(byokAnswer);
-  await page.getByRole('button', { name: 'English', exact: true }).click();
+  await (await headerControl(page, { name: 'English', exact: true })).click();
   await expect(page.getByText(/Saved explanation/)).toBeVisible();
   await expect(answer).toContainText(byokAnswer);
   expect(prompts).toHaveLength(1);
@@ -236,7 +237,7 @@ test('UI language changes preserve an in-flight Vietnamese attempt and its cache
   await explain(page);
   await ready;
   // Practice explanations are inline, so the regular language toggle is reachable.
-  await page.getByRole('button', { name: 'Tiếng Việt', exact: true }).click();
+  await (await headerControl(page, { name: 'Tiếng Việt', exact: true })).click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
   release();
   const result = page.locator('.explanation-panel .markdown-container[lang="vi"]');
@@ -252,7 +253,7 @@ test('UI language changes preserve an in-flight Vietnamese attempt and its cache
   await expect(result).toContainText('B. AWS Glue Data Catalog');
   await expect(result).toContainText('C. Google Cloud Pub/Sub');
   await expect(result).toContainText('D. IAM permission');
-  await page.getByRole('button', { name: 'English', exact: true }).click();
+  await (await headerControl(page, { name: 'English', exact: true })).click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(result).toBeVisible();
   await page.getByRole('button', { name: 'Close', exact: true }).last().click();
@@ -261,15 +262,17 @@ test('UI language changes preserve an in-flight Vietnamese attempt and its cache
   await expect(page.getByText('19/20 App AI attempts left today')).toBeVisible();
   expect(bodies).toHaveLength(1);
   expect(bodies[0].language).toBe('vi');
-  await page.getByRole('button', { name: 'Tiếng Việt', exact: true }).click();
+  await (await headerControl(page, { name: 'Tiếng Việt', exact: true })).click();
   await expect(page.getByText(/Lời giải đã lưu/)).toBeVisible();
   await expect(result).toContainText('IAM, API, CloudTrail, Pub/Sub');
-  await page.getByRole('button', { name: 'English', exact: true }).click();
+  await (await headerControl(page, { name: 'English', exact: true })).click();
   await expect(page.getByText(/Saved explanation/)).toBeVisible();
   expect(bodies).toHaveLength(1);
   for (const theme of ['light', 'dark']) {
     if ((await page.locator('html').getAttribute('data-theme')) !== theme)
-      await page.locator('.theme-toggle').click();
+      await (
+        await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+      ).click();
     for (const { width, height } of viewportCases(testInfo.project.name)) {
       await page.setViewportSize({ width, height });
       await expect

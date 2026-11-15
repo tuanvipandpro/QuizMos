@@ -1,3 +1,4 @@
+import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -27,7 +28,7 @@ async function login(page) {
   await page.getByRole('banner').getByRole('button', { name: 'Sign in', exact: true }).click();
   await clickAfterUiMotion(page.getByRole('button', { name: 'Continue with Google', exact: true }));
   await expect(page.getByRole('button', { name: 'Test account', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'My quizzes', exact: true }).click();
+  await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
   await expect(page.getByText('0/3 saved quizzes', { exact: true })).toBeVisible();
 }
 async function preview(page, name, type = 'single') {
@@ -129,7 +130,7 @@ test('rename preserves checkpoint and draft; replacement invalidates only that i
   await confirm(page, 'Save position?', 'Save');
   await expect(page.getByRole('button', { name: 'Position saved', exact: true })).toBeVisible();
   const originalUrl = page.url();
-  await page.getByRole('button', { name: 'My quizzes', exact: true }).click();
+  await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
   await card(page, 'Original').getByRole('button', { name: 'Rename', exact: true }).click();
   const rename = page.getByRole('dialog', { name: 'Rename quiz', exact: true });
   await waitForUiMotion(rename);
@@ -139,7 +140,7 @@ test('rename preserves checkpoint and draft; replacement invalidates only that i
   await card(page, 'Renamed').getByRole('button', { name: 'Resume', exact: true }).click();
   await expect(page.getByRole('radio', { name: /Paris/ })).toBeChecked();
   await expect(page.getByRole('button', { name: 'Position saved', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'My quizzes', exact: true }).click();
+  await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
   await card(page, 'Renamed').getByRole('button', { name: 'Replace JSON', exact: true }).click();
   await preview(page, 'Replaced', 'multiple');
   await page.getByRole('button', { name: 'Replace quiz', exact: true }).click();
@@ -306,13 +307,13 @@ test('private loading errors are recoverable and do not block bank navigation', 
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   await clickAfterUiMotion(page.getByRole('button', { name: 'Continue with Google', exact: true }));
   await expect(page.getByRole('heading', { name: 'Quiz Bank', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'My quizzes', exact: true }).click();
+  await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
   await expect(
     page.getByRole('alert').filter({ hasText: CUSTOM_QUIZ_MESSAGES.CUSTOM_PERMISSION })
   ).toBeVisible();
   await page.getByRole('button', { name: 'Retry', exact: true }).click();
   await expect(page.getByText('0/3 saved quizzes', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Quiz Bank', exact: true }).click();
+  await (await headerControl(page, { name: 'Quiz Bank', exact: true })).click();
   await expect(page.getByRole('heading', { name: 'Quiz Bank', exact: true })).toBeVisible();
 });
 
@@ -327,7 +328,7 @@ test('guest uploads remain local and login does not migrate a guest draft into s
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   await clickAfterUiMotion(page.getByRole('button', { name: 'Continue with Google', exact: true }));
   await expect(page.getByRole('heading', { name: 'Quiz Bank', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'My quizzes', exact: true }).click();
+  await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
   await expect(page.getByText('0/3 saved quizzes', { exact: true })).toBeVisible();
   await expect(page.getByText('Guest only', { exact: true })).toHaveCount(0);
 });
@@ -377,12 +378,14 @@ test('cloud management and rename dialog fit phones, desktop and landscape in bo
   const contrastEvidence = [];
   await save(page, longName);
   for (const language of ['en', 'vi']) {
-    await page
-      .getByRole('button', { name: language === 'en' ? 'English' : 'Tiếng Việt', exact: true })
-      .click();
+    await (
+      await headerControl(page, { name: language === 'en' ? 'English' : 'Tiếng Việt', exact: true })
+    ).click();
     for (const theme of ['light', 'dark']) {
       if ((await page.locator('html').getAttribute('data-theme')) !== theme)
-        await page.locator('.theme-toggle').click();
+        await (
+          await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+        ).click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
       for (const { width, height } of viewportCases(testInfo.project.name)) {
         await page.setViewportSize({ width, height });

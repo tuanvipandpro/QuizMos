@@ -1,3 +1,4 @@
+import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -291,7 +292,7 @@ test('all formats in both exam modes archive independently from deleted and reus
         expect(await records(page)).toEqual(original);
       }
       await expect(page.getByRole('button', { name: 'Explain', exact: true })).toHaveCount(0);
-      await page.getByRole('button', { name: 'My quizzes', exact: true }).click();
+      await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
       card = page
         .locator('.cloud-quiz-card')
         .filter({ has: page.getByRole('heading', { name: title, exact: true }) });
@@ -722,14 +723,16 @@ test('history list/review/delete fit both languages/themes and phone-to-landscap
       reducedMotion: [390, 1280].includes(state.width) ? 'no-preference' : 'reduce',
     });
     await page.setViewportSize({ width: state.width, height: state.height });
-    await page
-      .getByRole('button', {
+    await (
+      await headerControl(page, {
         name: state.language === 'vi' ? 'Tiếng Việt' : 'English',
         exact: true,
       })
-      .click();
+    ).click();
     if ((await page.locator('html').getAttribute('data-theme')) !== state.theme)
-      await page.locator('.theme-toggle').click();
+      await (
+        await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+      ).click();
     const row = page.locator('.history-attempt');
     await expect(row).toBeVisible();
     for (const button of await page.locator('.exam-history-page button:visible').all())

@@ -1,3 +1,4 @@
+import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import { clickAfterUiMotion } from './uiMotion.js';
 import { fileURLToPath } from 'node:url';
@@ -311,12 +312,17 @@ test(
     await expect(learning).toBeChecked();
     await expect(learning).toBeFocused();
     for (const language of ['en', 'vi']) {
-      await page
-        .getByRole('button', { name: language === 'en' ? 'English' : 'Tiếng Việt', exact: true })
-        .click();
+      await (
+        await headerControl(page, {
+          name: language === 'en' ? 'English' : 'Tiếng Việt',
+          exact: true,
+        })
+      ).click();
       for (const theme of ['light', 'dark']) {
         if ((await page.locator('html').getAttribute('data-theme')) !== theme) {
-          await page.locator('.theme-toggle').click();
+          await (
+            await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+          ).click();
         }
         for (const { width, height } of viewportCases(testInfo.project.name)) {
           await page.setViewportSize({ width, height });

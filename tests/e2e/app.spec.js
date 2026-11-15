@@ -1,3 +1,4 @@
+import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -62,11 +63,16 @@ for (const reducedMotion of ['no-preference', 'reduce']) {
 
     for (const { width, height, language, theme } of accountCases(testInfo.project.name)) {
       await page.setViewportSize({ width, height });
-      await page
-        .getByRole('button', { name: language === 'en' ? 'English' : 'Tiếng Việt', exact: true })
-        .click();
+      await (
+        await headerControl(page, {
+          name: language === 'en' ? 'English' : 'Tiếng Việt',
+          exact: true,
+        })
+      ).click();
       if ((await page.locator('html').getAttribute('data-theme')) !== theme)
-        await page.locator('.theme-toggle').click();
+        await (
+          await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+        ).click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
       await page.mouse.move(1, height - 1);
       await profile.focus();
@@ -242,7 +248,7 @@ test('account menu names remain meaningful when profile metadata is missing', as
   await waitForUiMotion(menu);
   await page.keyboard.press('Escape');
   await expect(menu).toBeHidden();
-  await page.getByRole('button', { name: 'Tiếng Việt', exact: true }).click();
+  await (await headerControl(page, { name: 'Tiếng Việt', exact: true })).click();
   const fallback = page.getByRole('button', { name: 'Tài khoản', exact: true });
   await expect(fallback).toBeVisible();
   await fallback.focus();
@@ -313,11 +319,11 @@ test(
     await expect(dialog).not.toBeVisible();
     await expect(signIn).toBeFocused();
 
-    await page.getByRole('button', { name: 'My quizzes', exact: true }).click();
+    await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
     await expect(page).toHaveTitle('My quizzes · QuizMos');
     await brand.click();
     await expect(page).toHaveTitle('Small quizzes. Big confidence. · QuizMos');
-    await page.getByRole('button', { name: 'Tiếng Việt', exact: true }).click();
+    await (await headerControl(page, { name: 'Tiếng Việt', exact: true })).click();
     await expect(page).toHaveTitle('Quiz nhỏ. Tự tin lớn. · QuizMos');
     await page.goto('./#/quiz/aws-aip-c01/practice');
     await expect(page.locator('.question-title')).toBeVisible();
@@ -351,20 +357,25 @@ test(
     await page.getByRole('textbox', { name: /Find a certification/ }).fill('CCA-F');
     await expect(page.locator('.exam-code')).toHaveText('CCAR-F');
     await page.getByRole('textbox', { name: /Find a certification/ }).fill('');
-    await page.getByRole('button', { name: 'Tiếng Việt', exact: true }).click();
+    await (await headerControl(page, { name: 'Tiếng Việt', exact: true })).click();
     await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
-    await page.locator('.theme-toggle').click();
+    await (await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })).click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     for (const { width, height } of viewportCases(testInfo.project.name)) {
       await page.setViewportSize({ width, height });
-      expect(
-        await page.evaluate(
-          () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+      await expect
+        .poll(() =>
+          page.evaluate(
+            () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+          )
         )
-      ).toBe(true);
+        .toBe(true);
       const brand = await page.locator('.app-brand').boundingBox();
       const nav = await page.locator('.app-nav').boundingBox();
-      if (width <= 700) expect(Math.abs(brand.x - nav.x)).toBeLessThan(2);
+      if (width <= 900) {
+        expect(nav.x).toBeGreaterThanOrEqual(brand.x + brand.width);
+        expect(Math.abs(brand.y + brand.height / 2 - (nav.y + nav.height / 2))).toBeLessThan(2);
+      }
     }
   }
 );
@@ -479,7 +490,7 @@ test('exam preserves deadline on refresh and requires confirmation before leavin
       () => JSON.parse(sessionStorage.getItem('quiz-study-v1:test-alice:aws-aip-c01:exam')).deadline
     )
   ).toBe(deadline);
-  await page.getByRole('button', { name: 'Quiz Bank', exact: true }).click();
+  await (await headerControl(page, { name: 'Quiz Bank', exact: true })).click();
   const leaveDialog = page.getByRole('dialog').filter({ hasText: 'Leave this exam?' });
   await expect(leaveDialog).toBeVisible();
   await clickAfterUiMotion(leaveDialog.getByRole('button', { name: 'Continue exam', exact: true }));

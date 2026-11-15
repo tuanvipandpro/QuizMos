@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Button, Layout, Spin } from 'antd';
-import { HeartOutlined, LoginOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons';
+import { HeartOutlined, LoginOutlined } from '@ant-design/icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { appBrand } from '../data/appBrand';
 import AccountMenu from './AccountMenu';
 import QuizUpdateNotifications from './QuizUpdateNotifications';
+import HeaderPreferences from './HeaderPreferences';
+import CompactHeaderMenu from './CompactHeaderMenu';
+import { useCompactStudyLayout as useCompactHeader } from '../hooks/useCompactStudyLayout';
 const { Header } = Layout;
 export default function AppHeader({
   headerRef,
@@ -18,11 +21,14 @@ export default function AppHeader({
   onSignOut,
   onSignIn,
 }) {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, t } = useLanguage();
+  const compact = useCompactHeader(),
+    brandRef = useRef(null);
   return (
-    <Header ref={headerRef} className="app-header">
+    <Header ref={headerRef} className={'app-header' + (compact ? ' is-compact' : '')}>
       <div className="app-header-inner">
         <button
+          ref={brandRef}
           className="app-brand"
           aria-label={appBrand.name}
           onClick={() => onNavigate('#/')}
@@ -42,59 +48,43 @@ export default function AppHeader({
           className="app-nav"
           aria-label={language === 'vi' ? 'Điều hướng chính' : 'Main navigation'}
         >
-          <Button
-            type="text"
-            aria-current={['library', 'quiz'].includes(page) ? 'page' : undefined}
-            onClick={() => onNavigate('#/library')}
-          >
-            {t('Quiz Bank')}
-          </Button>
-          <Button
-            type="text"
-            aria-current={page === 'my-quizzes' ? 'page' : undefined}
-            onClick={() => onNavigate('#/my-quizzes')}
-          >
-            {t('My quizzes')}
-          </Button>
-          <Button
-            type="text"
-            className="header-donate"
-            aria-current={page === 'donate' ? 'page' : undefined}
-            onClick={() => onNavigate('#/donate')}
-            icon={<HeartOutlined aria-hidden="true" />}
-          >
-            {t('Donate')}
-          </Button>
+          {compact ? (
+            <CompactHeaderMenu {...{ page, onNavigate, isDarkMode, onToggleTheme, brandRef }} />
+          ) : (
+            <>
+              <Button
+                type="text"
+                aria-current={['library', 'quiz'].includes(page) ? 'page' : undefined}
+                onClick={() => onNavigate('#/library')}
+              >
+                {t('Quiz Bank')}
+              </Button>
+              <Button
+                type="text"
+                aria-current={page === 'my-quizzes' ? 'page' : undefined}
+                onClick={() => onNavigate('#/my-quizzes')}
+              >
+                {t('My quizzes')}
+              </Button>
+              <Button
+                type="text"
+                className="header-donate"
+                aria-current={page === 'donate' ? 'page' : undefined}
+                onClick={() => onNavigate('#/donate')}
+                icon={<HeartOutlined aria-hidden="true" />}
+              >
+                {t('Donate')}
+              </Button>
+            </>
+          )}
         </nav>
         <div className="header-actions">
           <QuizUpdateNotifications key={page} onNavigate={onNavigate} />
-          <Button
-            type="text"
-            className="theme-toggle"
-            icon={
-              isDarkMode ? <SunOutlined aria-hidden="true" /> : <MoonOutlined aria-hidden="true" />
-            }
-            aria-label={t(isDarkMode ? 'Switch to light mode' : 'Switch to dark mode')}
-            onClick={onToggleTheme}
-          />
-          <div className="language-toggle" role="group" aria-label={t('Language')}>
-            <button
-              aria-label="Tiếng Việt"
-              aria-pressed={language === 'vi'}
-              onClick={() => setLanguage('vi')}
-            >
-              VN
-            </button>
-            <button
-              aria-label="English"
-              aria-pressed={language === 'en'}
-              onClick={() => setLanguage('en')}
-            >
-              EN
-            </button>
-          </div>
+          {!compact && <HeaderPreferences {...{ isDarkMode, onToggleTheme }} />}
           {authLoading ? (
-            <Spin size="small" />
+            <span className="header-auth-loading" role="status" aria-label={t('Loading account…')}>
+              <Spin size="small" />
+            </span>
           ) : user ? (
             <AccountMenu
               key={user.uid}

@@ -1,3 +1,4 @@
+import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs/promises';
 import { accountCases } from './viewports.js';
@@ -65,7 +66,7 @@ test('saved appearance wins and direct library entry keeps the system default', 
   await page.addInitScript(() => localStorage.setItem('quiz-app-theme', 'light'));
   await page.goto('./#/donate');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.locator('.theme-toggle').click();
+  await (await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.locator('.back-home').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -84,7 +85,7 @@ test('public content stays usable during auth loading, sign-in failure and accou
   await page.addInitScript(() => sessionStorage.setItem('quiz-e2e-defer-auth', '1'));
   await page.goto('./');
   await expect(page.locator('.landing-hero h1')).toBeVisible();
-  await expect(page.locator('.header-actions > .ant-spin')).toBeVisible();
+  await expect(page.locator('.header-auth-loading')).toBeVisible();
   await page.getByRole('button', { name: 'Start practicing', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Quiz Bank', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'QuizMos', exact: true }).click();
@@ -121,14 +122,16 @@ test('public layouts support language, themes, widths and keyboard focus', async
   await page.goto('./');
   for (const state of accountCases(testInfo.project.name)) {
     await page.setViewportSize({ width: state.width, height: state.height });
-    await page
-      .getByRole('button', {
+    await (
+      await headerControl(page, {
         name: state.language === 'vi' ? 'Tiếng Việt' : 'English',
         exact: true,
       })
-      .click();
+    ).click();
     if ((await page.locator('html').getAttribute('data-theme')) !== state.theme)
-      await page.locator('.theme-toggle').click();
+      await (
+        await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+      ).click();
     for (const route of ['home', 'donate']) {
       await page.evaluate(
         (hash) => {
@@ -344,10 +347,13 @@ test('viewport sections snap with wheel, keyboard and navigation, and Donate is 
     expect(item.width).toBe(item.screenWidth);
     expect(item.height).toBeGreaterThanOrEqual(item.viewport - item.header - 1);
   }
-  const donate = page
-    .getByRole('navigation', { name: 'Main navigation', exact: true })
-    .getByRole('button', { name: 'Donate', exact: true });
+  const donate = await headerControl(
+    page,
+    { name: 'Donate', exact: true },
+    page.getByRole('navigation', { name: 'Main navigation', exact: true })
+  );
   await expect(donate).toBeInViewport();
+  if (await page.locator('.compact-header-popup').isVisible()) await page.keyboard.press('Escape');
   await expect(page.locator('.hero-donate')).toBeInViewport();
   const allowed = await page
     .locator('.hero-copy')
@@ -402,7 +408,13 @@ test('viewport sections snap with wheel, keyboard and navigation, and Donate is 
   await aligned(0);
   await page.mouse.wheel(0, 120);
   await aligned(1);
-  await donate.click();
+  await (
+    await headerControl(
+      page,
+      { name: 'Donate', exact: true },
+      page.getByRole('navigation', { name: 'Main navigation', exact: true })
+    )
+  ).click();
   await expect(page.locator('.donate-heading h1')).toBeVisible();
   await expect(page.locator('html')).not.toHaveClass(/landing-scroll/);
   expect(await page.locator('html').evaluate((el) => getComputedStyle(el).scrollSnapType)).toBe(

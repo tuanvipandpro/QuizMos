@@ -1,3 +1,4 @@
+import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import { accountCases } from './viewports.js';
 import { contrastRatio } from './uiContrast.js';
@@ -109,7 +110,7 @@ test('empty notifications retain a usable history link and outside click closes 
   await page.goto('./#/library');
   await bell(page).click();
   await expect(panel(page)).toContainText('No reviewed quiz updates yet.');
-  await page.locator('.theme-toggle').click();
+  await (await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })).click();
   await expect(panel(page)).toHaveCount(0);
   await bell(page).click();
   await panel(page).getByRole('button', { name: 'View all updates', exact: true }).click();
@@ -138,11 +139,16 @@ test('long notification content and header fit all locales/themes/phone-landscap
     await page.emulateMedia({
       reducedMotion: [390, 1280].includes(v.width) ? 'no-preference' : 'reduce',
     });
-    await page
-      .getByRole('button', { name: v.language === 'vi' ? 'Tiếng Việt' : 'English', exact: true })
-      .click();
+    await (
+      await headerControl(page, {
+        name: v.language === 'vi' ? 'Tiếng Việt' : 'English',
+        exact: true,
+      })
+    ).click();
     if ((await page.locator('html').getAttribute('data-theme')) !== v.theme)
-      await page.locator('.theme-toggle').click();
+      await (
+        await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+      ).click();
     const t = (k) => translate(v.language, k);
     const trigger = page
       .locator('.app-header')
@@ -200,7 +206,9 @@ test('public refresh reloads current app/filter without resetting an existing ex
   const before = await page.evaluate(() =>
     JSON.parse(sessionStorage.getItem('quiz-study-v1:guest:aws-aip-c01:exam'))
   );
-  await page.locator('.app-nav').getByRole('button', { name: 'Quiz Bank', exact: true }).click();
+  await (
+    await headerControl(page, { name: 'Quiz Bank', exact: true }, page.locator('.app-nav'))
+  ).click();
   await clickAfterUiMotion(
     page
       .getByRole('dialog')
@@ -275,10 +283,9 @@ for (const change of ['route', 'owner'])
     await button.evaluate((el) => el.click());
     await expect.poll(() => count).toBe(1);
     if (change === 'route') {
-      await page
-        .locator('.app-nav')
-        .getByRole('button', { name: 'My quizzes', exact: true })
-        .click();
+      await (
+        await headerControl(page, { name: 'My quizzes', exact: true }, page.locator('.app-nav'))
+      ).click();
       await expect(page.getByRole('heading', { name: 'My quizzes', exact: true })).toBeVisible();
     } else {
       await page.evaluate(() =>

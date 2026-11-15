@@ -1,3 +1,4 @@
+import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import { accountCases } from './viewports.js';
 import { clickAfterUiMotion, waitForUiMotion } from './uiMotion.js';
@@ -154,7 +155,7 @@ for (const destination of ['Profile', 'Manage quizzes'])
     await enter();
     await clickAfterUiMotion(guard.getByRole('button', { name: 'Leave exam', exact: true }));
     await expect(page).toHaveURL(destination === 'Profile' ? /#\/profile$/ : /#\/my-quizzes$/);
-    await page.getByRole('button', { name: 'Quiz Bank', exact: true }).click();
+    await (await headerControl(page, { name: 'Quiz Bank', exact: true })).click();
     await page.goto('./#/quiz/aws-aip-c01?mode=exam');
     await page.getByRole('button', { name: 'Resume', exact: true }).click();
     expect(await readDraft()).toEqual(before);
@@ -242,14 +243,16 @@ test('Profile, dropdown and update pages fit languages, themes and phone-to-land
   await page.goto('./#/profile');
   for (const state of accountCases(info.project.name)) {
     await page.setViewportSize({ width: state.width, height: state.height });
-    await page
-      .getByRole('button', {
+    await (
+      await headerControl(page, {
         name: state.language === 'vi' ? 'Tiếng Việt' : 'English',
         exact: true,
       })
-      .click();
+    ).click();
     if ((await page.locator('html').getAttribute('data-theme')) !== state.theme)
-      await page.locator('.theme-toggle').click();
+      await (
+        await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+      ).click();
     for (const control of await profile(page).locator('button, .ant-radio-button-wrapper').all())
       expect((await control.boundingBox()).height).toBeGreaterThanOrEqual(44);
     expect(

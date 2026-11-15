@@ -1,3 +1,4 @@
+import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { createExamSession } from '../../src/utils/studySession.js';
@@ -27,11 +28,16 @@ test('GH-600 catalog/search retains provider grouping and reachable localized co
   await page.goto('./#/library');
   for (const view of accountCases(info.project.name)) {
     await page.setViewportSize({ width: view.width, height: view.height });
-    await page
-      .getByRole('button', { name: view.language === 'vi' ? 'Tiếng Việt' : 'English', exact: true })
-      .click();
+    await (
+      await headerControl(page, {
+        name: view.language === 'vi' ? 'Tiếng Việt' : 'English',
+        exact: true,
+      })
+    ).click();
     if ((await page.locator('html').getAttribute('data-theme')) !== view.theme)
-      await page.locator('.theme-toggle').click();
+      await (
+        await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+      ).click();
     const t = (key) => translate(view.language, key);
     await page
       .getByRole('textbox', { name: t('Find a certification'), exact: true })
