@@ -17,6 +17,10 @@ test.beforeEach(async ({ page }) => {
   const found = [];
   errors.set(page, found);
   page.on('pageerror', (e) => found.push(e.message));
+  page.on('console', (msg) => {
+    if (msg.type() === 'error' && msg.text().includes('two children with the same key'))
+      found.push('Duplicate React element keys');
+  });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.route('**/*', (r) =>
     ['127.0.0.1', 'localhost'].includes(new URL(r.request().url()).hostname)
@@ -37,6 +41,11 @@ async function upload(page, questions, name = 'PDF fixture') {
   await page.getByRole('button', { name: 'Export PDF', exact: true }).click();
 }
 async function saveDownload(page, info, name = 'quiz.pdf') {
+  let navigations = 0;
+  const track = (frame) => {
+    if (frame === page.mainFrame()) navigations++;
+  };
+  page.on('framenavigated', track);
   const pending = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download PDF', exact: true }).click();
   const download = await pending;
@@ -45,6 +54,8 @@ async function saveDownload(page, info, name = 'quiz.pdf') {
   expect(bytes.subarray(0, 5).toString()).toBe('%PDF-');
   expect(bytes.length).toBeGreaterThan(5000);
   await expect(page.getByText('PDF download started.', { exact: true })).toBeVisible();
+  page.off('framenavigated', track);
+  expect(navigations).toBe(0);
   return download;
 }
 async function png(page) {

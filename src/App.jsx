@@ -676,7 +676,7 @@ export default function App() {
             </Text>
           </div>
         </div>
-        <QuizPdfExport key={`${studyId}:${uid || 'guest'}`} quiz={active} />
+        <QuizPdfExport key={`pdf:${studyId}:${uid || 'guest'}`} quiz={active} />
         <QuizMode
           key={`${active.id}:${uid || 'guest'}`}
           onSelectMode={selectMode}
