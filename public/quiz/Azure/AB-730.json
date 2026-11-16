@@ -1062,7 +1062,7 @@
   },
   {
     "id": "52",
-    "question": "You use Microsoft 365 Copilot to improve your productivity in Microsoft Excel.\n\nWhich two tasks can you complete by using Copilot in Excel? Each correct answer presents a complete solution.\n\nNOTE: Each correct selection is worth one point.",
+    "question": "You use Microsoft 365 Copilot in Excel. You need to summarize key findings and aggregate measures by category, rather than change cell formatting or insert a chart.\n\nWhich two tasks meet these goals? Each correct answer presents a complete solution.\n\nNOTE: Each correct selection is worth one point.",
     "options": {
       "A": "Customize the conditional formatting rules for your data.",
       "B": "Insert a custom chart that has specific formatting.",
@@ -1073,7 +1073,7 @@
       "C",
       "D"
     ],
-    "explanation": "Copilot in Excel analyzes datasets to extract key patterns, trends, and correlations, generating natural-language summaries of important insights. Copilot also generates PivotTables from raw data, structuring it into a pivot layout without manual configuration. Conditional formatting customization and custom chart formatting require precise manual styling that Copilot cannot perform reliably."
+    "explanation": "Copilot can summarize key insights and create a PivotTable to aggregate data by category. It can also help with conditional formatting and charts, but those tasks do not meet the stated goals."
   },
   {
     "id": "53",
@@ -1091,16 +1091,17 @@
   },
   {
     "id": "54",
-    "question": "You are comparing Microsoft 365 Copilot with Microsoft 365 Copilot Chat.\n\nWhat is available in both versions?",
+    "question": "You are comparing Microsoft 365 Copilot with Microsoft 365 Copilot Chat for eligible users whose organization has enabled the features.\n\nWhich two features are available in both versions? Each correct answer presents a complete solution.",
     "options": {
       "A": "the Researcher agent",
       "B": "Copilot Pages",
       "C": "Copilot Notebooks"
     },
     "answer": [
-      "B"
+      "B",
+      "C"
     ],
-    "explanation": "Copilot Pages is available in both Microsoft 365 Copilot and the standalone Microsoft 365 Copilot Chat experience, allowing users to turn responses into a shared, editable canvas. Notebooks and the Researcher agent require a paid Microsoft 365 Copilot license and are not part of the Copilot Chat offering."
+    "explanation": "Copilot Pages and Copilot Notebooks are available to eligible Copilot Chat users as well as Microsoft 365 Copilot users, subject to licensing and tenant settings. Researcher requires a Microsoft 365 Copilot license."
   },
   {
     "id": "55",
@@ -1893,7 +1894,7 @@
     "question": "Choose the answer that correctly finishes the sentence.",
     "options": {
       "slot1": {
-        "A": "deleted immediately.",
+        "A": "unavailable to you and Copilot and absent from your chat history.",
         "B": "deleted after one hour.",
         "C": "moved to a private notebook.",
         "D": "moved to your Microsoft OneDrive."
@@ -1902,7 +1903,7 @@
     "answer": {
       "slot1": "A"
     },
-    "explanation": "A temporary chat does not appear in chat history and cannot be referenced or accessed later by the user or Copilot. Starting another chat therefore ends the temporary conversation instead of moving it to a notebook or OneDrive.",
+    "explanation": "A temporary chat does not appear in chat history and cannot be referenced or accessed later by you or Copilot. Your organization's data retention policy may still require the data to be retained and accessible to an IT administrator during the retention period.",
     "type": "dropdown",
     "layout": "rows",
     "slots": [
