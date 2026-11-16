@@ -1,3 +1,4 @@
+import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { accountCases } from './viewports.js';
@@ -62,14 +63,16 @@ test('reviewed long content and source links remain readable across the guide ma
   await expect(page.locator('.quick-summary-topic')).toHaveCount(8);
   for (const state of accountCases(info.project.name)) {
     await page.setViewportSize({ width: state.width, height: state.height });
-    await page
-      .getByRole('button', {
+    await (
+      await headerControl(page, {
         name: state.language === 'vi' ? 'Tiếng Việt' : 'English',
         exact: true,
       })
-      .click();
+    ).click();
     if ((await page.locator('html').getAttribute('data-theme')) !== state.theme)
-      await page.locator('.theme-toggle').click();
+      await (
+        await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+      ).click();
     await page.locator('#summary-governance').scrollIntoViewIfNeeded();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true

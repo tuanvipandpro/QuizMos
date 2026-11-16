@@ -1,3 +1,4 @@
+import { headerControl, headerReturnTarget } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -291,7 +292,7 @@ test('all formats in both exam modes archive independently from deleted and reus
         expect(await records(page)).toEqual(original);
       }
       await expect(page.getByRole('button', { name: 'Explain', exact: true })).toHaveCount(0);
-      await page.getByRole('button', { name: 'My quizzes', exact: true }).click();
+      await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
       card = page
         .locator('.cloud-quiz-card')
         .filter({ has: page.getByRole('heading', { name: title, exact: true }) });
@@ -340,7 +341,7 @@ test('the production-default flag exposes no capture/menu/private IO and complet
   await submit(page);
   await expect(page.locator('.exam-archive-status')).toHaveCount(0);
   expect(await calls(page)).toHaveLength(0);
-  await page.getByRole('button', { name: 'History learner', exact: true }).click();
+  await (await headerControl(page, { name: 'History learner', exact: true })).click();
   await expect(page.getByRole('menuitem', { name: 'Exam history', exact: true })).toHaveCount(0);
   await page.keyboard.press('Escape');
   await page.evaluate(() => sessionStorage.setItem('quiz-e2e-history-enabled', '1'));
@@ -410,7 +411,7 @@ test('Learning expiry uses the absolute deadline and an actual StrictMode root c
   await expect(page.locator('html')).toHaveAttribute('data-e2e-history-strict', 'true');
   await expect(page.locator('.question-title')).toBeVisible();
   const before = await draft(page);
-  await page.clock.fastForward(60 * 60 * 1000 + 5000);
+  await page.clock.fastForward(before.deadline - before.startedAt + 5000);
   await saved(page);
   const data = await records(page),
     attempt = Object.values(data.attempts)[0];
@@ -542,7 +543,7 @@ test('guest, Practice and signed-in unsaved uploads never write history; sign-in
     })
   ).toBeVisible();
   expect(await calls(page)).toHaveLength(0);
-  await page.getByRole('banner').getByRole('button', { name: 'Sign in', exact: true }).click();
+  await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   await clickAfterUiMotion(
     page
       .getByRole('dialog', { name: 'Sign in', exact: true })
@@ -576,6 +577,7 @@ test('History menu respects active exam Cancel/Leave/Resume without changing ide
   const before = await draft(page),
     trigger = page.getByRole('button', { name: 'History learner', exact: true });
   async function enter() {
+    await headerControl(page, { name: 'History learner', exact: true });
     await trigger.focus();
     await trigger.press('Enter');
     const item = page.getByRole('menuitem', { name: 'Exam history', exact: true });
@@ -585,7 +587,7 @@ test('History menu respects active exam Cancel/Leave/Resume without changing ide
   await enter();
   const guard = page.getByRole('dialog').filter({ hasText: 'Leave this exam?' });
   await clickAfterUiMotion(guard.getByRole('button', { name: 'Continue exam', exact: true }));
-  await expect(trigger).toBeFocused();
+  await expect(await headerReturnTarget(page, trigger)).toBeFocused();
   expect(await draft(page)).toEqual(before);
   await enter();
   await clickAfterUiMotion(guard.getByRole('button', { name: 'Leave exam', exact: true }));
@@ -644,7 +646,7 @@ test('archived answers/grade stay frozen when the source changes or its illustra
   await page.goto('./#/history/' + attempt.summary.attemptId);
   await expect(page.locator('.history-source-status')).toContainText('source quiz changed');
   await expect(page.locator('.history-score')).toContainText('quizmos-score-v2');
-  await expect(page.locator('.history-score .ant-tag')).toHaveText('Pass');
+  await expect(page.locator('.history-score .ant-tag')).toHaveText('QuizMos benchmark met');
   await expect(page.locator('.question-title')).toContainText(
     payload.questions[0].question.split('\n')[0]
   );
@@ -663,7 +665,7 @@ test('delayed saves/reads and sign-out/account changes cannot leak archived cont
   await page.evaluate(() => sessionStorage.setItem('quiz-e2e-history-defer:save', '1'));
   await submit(page);
   await expect(page.getByText('Saving exam to history…', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'History learner', exact: true }).click();
+  await (await headerControl(page, { name: 'History learner', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('menuitem', { name: 'Sign out', exact: true }));
   await clickAfterUiMotion(
     page
@@ -722,14 +724,16 @@ test('history list/review/delete fit both languages/themes and phone-to-landscap
       reducedMotion: [390, 1280].includes(state.width) ? 'no-preference' : 'reduce',
     });
     await page.setViewportSize({ width: state.width, height: state.height });
-    await page
-      .getByRole('button', {
+    await (
+      await headerControl(page, {
         name: state.language === 'vi' ? 'Tiếng Việt' : 'English',
         exact: true,
       })
-      .click();
+    ).click();
     if ((await page.locator('html').getAttribute('data-theme')) !== state.theme)
-      await page.locator('.theme-toggle').click();
+      await (
+        await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+      ).click();
     const row = page.locator('.history-attempt');
     await expect(row).toBeVisible();
     for (const button of await page.locator('.exam-history-page button:visible').all())

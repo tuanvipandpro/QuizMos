@@ -1,3 +1,4 @@
+import { headerControl, expectHeaderAccount } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import { fileURLToPath } from 'node:url';
 import { clickAfterUiMotion } from './uiMotion.js';
@@ -126,7 +127,7 @@ test('account change during a native drag cannot populate the next owner draft',
       })
     )
   );
-  await expect(page.getByRole('button', { name: 'Native Bob', exact: true })).toBeVisible();
+  await expectHeaderAccount(page, 'Native Bob');
   await page.mouse.up();
   await expect(page.locator('.dd-ghost')).toHaveCount(0);
   await expect(page.locator('.dd-choice-text[aria-pressed=true]')).toHaveCount(0);
@@ -425,14 +426,16 @@ test('both native layouts fit locales/themes, narrow-to-landscape viewports and 
       await page.emulateMedia({
         reducedMotion: [390, 1280].includes(view.width) ? 'no-preference' : 'reduce',
       });
-      await page
-        .getByRole('button', {
+      await (
+        await headerControl(page, {
           name: view.language === 'vi' ? 'Tiếng Việt' : 'English',
           exact: true,
         })
-        .click();
+      ).click();
       if ((await page.locator('html').getAttribute('data-theme')) !== view.theme)
-        await page.locator('.theme-toggle').click();
+        await (
+          await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+        ).click();
       await expect(page.locator('html')).toHaveAttribute('lang', view.language);
       await expect(page.locator('html')).toHaveAttribute('data-theme', view.theme);
       const q = exampleQuestion(format);
@@ -591,13 +594,13 @@ test('real Practice and both exam modes retain native mappings and lock submitte
     }
     await choice(page, 'A').locator('.dd-choice-text').click();
     if (mode === 'practice') {
-      await page.getByRole('button', { name: 'Tiếng Việt', exact: true }).click();
+      await (await headerControl(page, { name: 'Tiếng Việt', exact: true })).click();
       await expect(page.locator('.dd-status')).toContainText('Đã chọn A');
       await expect(choice(page, 'A').locator('.dd-choice-text')).toHaveAttribute(
         'aria-pressed',
         'true'
       );
-      await page.getByRole('button', { name: 'English', exact: true }).click();
+      await (await headerControl(page, { name: 'English', exact: true })).click();
     }
     await slot(page, 'first').click();
     await expect(page.getByText('Correct answer!', { exact: true })).toHaveCount(0);
