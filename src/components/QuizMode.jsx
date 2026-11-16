@@ -33,6 +33,7 @@ export default function QuizMode({
   const [size, setSize] = useState('all');
   const practicePool = eligibleStudyPool(questions);
   const eligibleCount = practicePool.items.length;
+  const noExamQuestions = questions.length > 0 && questions.every((item) => item.retired === true);
   const practiceInvalid = size !== 'all' && size > eligibleCount;
   const modes = [
     {
@@ -108,38 +109,47 @@ export default function QuizMode({
       )}
       {selectedMode === 'exam' && (
         <>
-          <ExamSettingsFields state={exam} />
-          <fieldset
-            className="exam-feedback-picker"
-            role="radiogroup"
-            aria-labelledby="exam-feedback-label"
-          >
-            <legend id="exam-feedback-label">{t('Exam mode')}</legend>
-            <div className="exam-feedback-options">
-              {EXAM_FEEDBACK_MODES.map((mode) => (
-                <label
-                  key={mode.id}
-                  className={
-                    'exam-feedback-option' + (feedbackMode === mode.id ? ' is-selected' : '')
-                  }
-                >
-                  <input
-                    type="radio"
-                    name="exam-feedback"
-                    value={mode.id}
-                    checked={feedbackMode === mode.id}
-                    onChange={() => exam.change('feedbackMode', mode.id)}
-                    aria-labelledby={`exam-feedback-${mode.id}-label`}
-                    aria-describedby={`exam-feedback-${mode.id}-hint`}
-                  />
-                  <span>
-                    <strong id={`exam-feedback-${mode.id}-label`}>{t(mode.label)}</strong>
-                    <small id={`exam-feedback-${mode.id}-hint`}>{t(mode.description)}</small>
-                  </span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
+          {noExamQuestions && (
+            <Alert
+              type="info"
+              showIcon
+              message={t('No questions are available for a new mock exam.')}
+            />
+          )}
+          {!noExamQuestions && <ExamSettingsFields state={exam} />}
+          {!noExamQuestions && (
+            <fieldset
+              className="exam-feedback-picker"
+              role="radiogroup"
+              aria-labelledby="exam-feedback-label"
+            >
+              <legend id="exam-feedback-label">{t('Exam mode')}</legend>
+              <div className="exam-feedback-options">
+                {EXAM_FEEDBACK_MODES.map((mode) => (
+                  <label
+                    key={mode.id}
+                    className={
+                      'exam-feedback-option' + (feedbackMode === mode.id ? ' is-selected' : '')
+                    }
+                  >
+                    <input
+                      type="radio"
+                      name="exam-feedback"
+                      value={mode.id}
+                      checked={feedbackMode === mode.id}
+                      onChange={() => exam.change('feedbackMode', mode.id)}
+                      aria-labelledby={`exam-feedback-${mode.id}-label`}
+                      aria-describedby={`exam-feedback-${mode.id}-hint`}
+                    />
+                    <span>
+                      <strong id={`exam-feedback-${mode.id}-label`}>{t(mode.label)}</strong>
+                      <small id={`exam-feedback-${mode.id}-hint`}>{t(mode.description)}</small>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          )}
           {hasExamDraft && (
             <Alert
               type="info"
@@ -156,13 +166,15 @@ export default function QuizMode({
         </>
       )}
       <div className="quiz-mode-start">
-        <Text type="secondary">
-          {selectedMode === 'exam'
-            ? t('{count} questions', { count }) + ' · ' + t('{count} minutes', { count: time })
-            : t('{count} questions', {
-                count: selectedMode === 'practice' && size !== 'all' ? size : totalQuestions,
-              })}
-        </Text>
+        {!(selectedMode === 'exam' && noExamQuestions) && (
+          <Text type="secondary">
+            {selectedMode === 'exam'
+              ? t('{count} questions', { count }) + ' · ' + t('{count} minutes', { count: time })
+              : t('{count} questions', {
+                  count: selectedMode === 'practice' && size !== 'all' ? size : totalQuestions,
+                })}
+          </Text>
+        )}
         <div className="quiz-action-group">
           {selectedMode === 'practice' && size !== 'all' && (
             <Button

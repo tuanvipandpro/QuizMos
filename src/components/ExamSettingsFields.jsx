@@ -91,10 +91,10 @@ export default function ExamSettingsFields({ state }) {
               count: Math.min(CUSTOM_EXAM_MAX_QUESTIONS, eligible.items.length),
               minutes: CUSTOM_EXAM_MAX_MINUTES,
             })}{' '}
-        {t(
-          '{count} eligible; {excluded} excluded because answers or certification formats are incompatible.',
-          { count: eligible.items.length, excluded: eligible.excluded.length }
-        )}
+        {t('{count} eligible; {excluded} excluded because questions are retired or incompatible.', {
+          count: eligible.items.length,
+          excluded: eligible.excluded.length,
+        })}
       </Typography.Paragraph>
       <div id="study-settings-error" aria-live="polite">
         {error && (
