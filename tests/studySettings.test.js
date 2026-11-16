@@ -26,6 +26,24 @@ const plan = (patch = {}) =>
     ...patch,
   });
 
+test('retired questions stay in practice but not certification or custom exam pools', () => {
+  const questions = pool(100).map((item, i) => (i < 30 ? { ...item, retired: true } : item));
+  assert.equal(eligibleStudyPool(questions).items.length, 100);
+  assert.equal(defaultExamSetup('custom', questions).count, 50);
+  const custom = plan({ quizId: 'custom', kind: 'custom', questions, count: 70, minutes: 60 });
+  assert.equal(custom.selectionQuestions.length, 70);
+  assert.ok(custom.selectionQuestions.every((item) => item.retired !== true));
+  assert.equal(custom.excluded.filter((item) => item.reason === 'retired').length, 30);
+  assert.throws(() => plan({ questions, count: 75 }), { code: 'SESSION_INSUFFICIENT' });
+  assert.equal(
+    defaultExamSetup(
+      'custom',
+      questions.map((item) => ({ ...item, retired: true }))
+    ).count,
+    null
+  );
+});
+
 test('exact and range defaults follow the profile; partial profiles remain explicit training', () => {
   assert.deepEqual(defaultExamSetup('aws-aip-c01', pool(100)), {
     kind: 'cert',
