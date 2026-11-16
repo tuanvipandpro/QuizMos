@@ -67,7 +67,7 @@ export const quizzes = [
     file: 'quiz/Google/GCP-PCA.json',
     category: 'Google Cloud',
     difficulty: 'Professional',
-    totalQuestions: 372,
+    totalQuestions: 366,
     code: 'PCA',
   },
   {

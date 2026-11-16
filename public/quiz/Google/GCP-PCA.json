@@ -3262,7 +3262,8 @@
       "E": "A separate storage layer outside the VMs, which is not suited for this task",
       "F": "Complicated internet connectivity between the on-premises infrastructure and GCP"
     },
-    "question": "The migration of JencoMart's application to Google Cloud Platform (GCP) is progressing too slowly. The infrastructure is shown in the diagram. You want to maximize throughput.\nWhat are three potential bottlenecks? (Choose three.)"
+    "question": "The migration of JencoMart's application to Google Cloud Platform (GCP) is progressing too slowly. The infrastructure is shown in the diagram. You want to maximize throughput.\nWhat are three potential bottlenecks? (Choose three.)",
+    "retired": true
   },
   {
     "answer": [
@@ -4105,24 +4106,6 @@
     "retired": false
   },
   {
-    "id": "325",
-    "question": "A developer on your team deployed an application to Google Kubernetes Engine (GKE) using the Dockerfile below. They report that application deployments take too long.\n\nYou need to optimize this Dockerfile for faster deployment times without adversely affecting the application's functionality. Which two actions should you take?",
-    "options": {
-      "A": "Remove Python after running pip",
-      "B": "Remove dependencies from requirements.txt",
-      "C": "Use a slimmed-down base image like Alpine Linux",
-      "D": "Use larger machine types for your Google Kubernetes Engine (GKE) node pools",
-      "E": "Copy the source after he package dependencies (Python and pip) are installed"
-    },
-    "answer": [
-      "C",
-      "E"
-    ],
-    "explanation": "Using a slim, compatible base image such as Alpine Linux can substantially reduce container image size and therefore reduce image-pull and deployment time. Installing the runtime packages before copying application source lets Docker cache those layers, so ordinary source-code changes do not require reinstalling Python and pip.",
-    "retired": false,
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1783767202268-wlcoshpn.png"
-  },
-  {
     "id": "326",
     "question": "Your organization is cloud-native and makes extensive use of Google Kubernetes Engine (GKE) to run containerized workloads. You want to adopt infrastructure as code (IaC) principles to simplify and automate the provisioning, configuration, and management of Google Cloud resources while minimizing operational cost. What should you do?",
     "options": {
@@ -4363,22 +4346,6 @@
     "retired": false
   },
   {
-    "id": "404",
-    "question": "You have a Compute Engine application that you want to autoscale when total memory utilization rises above 80%. You installed the Ops Agent and configured the autoscaling policy as follows:\n\nYou notice that the application does not scale during high load. You want to fix this. What should you do?",
-    "options": {
-      "A": "Change the Target type to DELTA_PER_MINUTE.",
-      "B": "Change the Metric identifier to agent.googleapis.com/memory/bytes_used.",
-      "C": "Change the filter to metric.label.state = ‘used’.",
-      "D": "Change the filter to metric.label.state = ‘free’ and the Target utilization to 20."
-    },
-    "answer": [
-      "C"
-    ],
-    "explanation": "agent.googleapis.com/memory/percent_used reports separate time series for memory states such as used, buffered, cached, and slab. A filter joined with AND requires one time series to have every listed state simultaneously, which is impossible; therefore, it selects no usable series for autoscaling. Filtering on metric.label.state = 'used' selects the memory-in-use percentage, and GAUGE correctly compares its recent values with the utilization target of 80.",
-    "retired": false,
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1783775678762-ip04grq4.png"
-  },
-  {
     "id": "408",
     "question": "You are moving a large on-premises application to Google Cloud. The application comprises several interconnected virtual machines. You want to develop a detailed migration plan that ensures a smooth migration with minimal effort. You need to understand the current environment, identify dependencies, and estimate the total cost of ownership (TCO) in the cloud. What should you do?",
     "options": {
@@ -4471,22 +4438,6 @@
     "retired": false
   },
   {
-    "id": "446",
-    "question": "Your company has a Google Cloud project with three Virtual Private Clouds (VPCs). A Compute Engine instance resides in each VPC. The network subnets do not overlap and must stay separated. The network configuration is shown below.\n\nInstance #1 is an exception and must communicate directly with both Instance #2 and Instance #3 using internal IPs. How should this be accomplished?",
-    "options": {
-      "A": "Create a cloud router to advertise subnet #2 and subnet #3 to subnet #1.",
-      "B": "Add two additional NICs to Instance #1 with the following configuration: ג€¢ NIC1 ג—‹ VPC: VPC #2 ג—‹ SUBNETWORK: subnet #2 ג€¢ NIC2 ג—‹ VPC: VPC #3 ג—‹ SUBNETWORK: subnet #3 Update firewall rules to enable traffic between instances.",
-      "C": "Create two VPN tunnels via CloudVPN: ג€¢ 1 between VPC #1 and VPC #2. ג€¢ 1 between VPC #2 and VPC #3. Update firewall rules to enable traffic between the instances.",
-      "D": "Peer all three VPCs: ג€¢ Peer VPC #1 with VPC #2. ג€¢ Peer VPC #2 with VPC #3. Update firewall rules to enable traffic between the instances."
-    },
-    "answer": [
-      "B"
-    ],
-    "explanation": "A Compute Engine VM can use multiple network interfaces attached to unique subnets in different VPC networks. Attaching additional interfaces for subnet #2 and subnet #3 to Instance #1 gives it direct internal-IP connectivity to both VPCs while the VPC networks remain separate; the applicable firewall rules must allow the required traffic. VPC Network Peering does not provide transitive routing, so the listed chained peering topology would not connect VPC #1 to VPC #3.",
-    "retired": false,
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1783767416222-4hppuyr6.jpg"
-  },
-  {
     "id": "451",
     "question": "You have an application that uses Vertex AI Feature Store to manage and serve product features for real-time recommendations. You want to monitor the application's performance and health. You need to understand the total duration of a request. What should you do?",
     "options": {
@@ -4515,22 +4466,6 @@
     ],
     "explanation": "Observability Analytics provides a SQL-based interface for analyzing Cloud Logging data. A linked BigQuery dataset enables BigQuery services to query the log data in place, and Google Cloud specifically identifies Data Studio as a service that can query that linked dataset. This avoids an unnecessary log export and supports SQL-driven dashboarding.",
     "retired": false
-  },
-  {
-    "id": "453",
-    "question": "A news-feed web service is running the following code on Google App Engine. At peak load, users report seeing news articles that they have already viewed. What is the most likely cause of this issue?",
-    "options": {
-      "A": "The session variable is local to just a single instance",
-      "B": "The session variable is being overwritten in Firestore in Datastore mode",
-      "C": "The URL of the API needs to be modified to prevent caching",
-      "D": "The HTTP Expires header needs to be set to -1 stop caching"
-    },
-    "answer": [
-      "A"
-    ],
-    "explanation": "The sessions dictionary is process memory local to one application instance, rather than shared persistent session storage. App Engine can scale to multiple instances and route consecutive requests from the same user to different instances; an instance that lacks the user’s prior in-memory state treats the viewed list as empty and returns previously viewed articles. Google Cloud: How requests are handled",
-    "retired": false,
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1783765498527-25iw9hqn.png"
   },
   {
     "id": "457",
@@ -4699,21 +4634,6 @@
     "retired": false
   },
   {
-    "id": "503",
-    "question": "You deploy a custom Java application to Google App Engine. The deployment fails and produces the following stack trace.\n\nWhat should you do?",
-    "options": {
-      "A": "Upload missing JAR files and redeploy your application.",
-      "B": "Digitally sign all of your JAR files and redeploy your application",
-      "C": "Recompile the CLoakedServlet class using and MD5 hash instead of SHA1"
-    },
-    "answer": [
-      "B"
-    ],
-    "explanation": "A SHA1 digest error from Java’s JAR verifier means a class file does not match the integrity digest stored in its signed JAR’s manifest. Re-signing the JAR files regenerates signature metadata that matches the deployed contents; missing JARs and changing the class compilation to MD5 do not correct that manifest-digest mismatch.",
-    "retired": false,
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1783765525454-rpylm1ve.png"
-  },
-  {
     "id": "505",
     "question": "TerramEarth's CTO wants to use raw data from connected vehicles to help determine approximately when a vehicle operating in the field will experience a catastrophic failure.\n\nYou want analysts to be able to query the vehicle data centrally. Which architecture should you recommend?",
     "options": {
@@ -4833,26 +4753,6 @@
     ],
     "explanation": "Microservices create loosely coupled components that can be developed, deployed, released, and scaled independently, improving change velocity and resilience compared with a tightly coupled monolith. Fully managed services reduce the operational burden of underlying infrastructure, and managed delivery tooling can provide CI/CD and traffic-splitting capabilities for controlled releases and A/B testing. Google Cloud documents independent deployment and scaling for modular services, managed infrastructure benefits, and deployment traffic splitting.",
     "retired": false
-  },
-  {
-    "id": "526",
-    "question": "JencoMart’s application migration to Google Cloud Platform (GCP) is moving too slowly. The infrastructure is shown in the diagram. You want to maximize throughput.\n\nWhat are three possible bottlenecks?",
-    "options": {
-      "A": "A single VPN tunnel, which limits throughput",
-      "B": "A tier of Google Cloud Storage that is not suited for this task",
-      "C": "A copy command that is not suited to operate over long distances",
-      "D": "Fewer virtual machines (VMs) in GCP than on-premises machines",
-      "E": "A separate storage layer outside the VMs, which is not suited for this task",
-      "F": "Complicated internet connectivity between the on-premises infrastructure and GCP"
-    },
-    "answer": [
-      "A",
-      "C",
-      "E"
-    ],
-    "explanation": "A single Cloud VPN tunnel has a finite bandwidth limit, so it can cap aggregate transfer throughput. A copy operation that does not use parallelism can perform poorly across a high-latency, long-distance connection; parallel composite uploads are available to improve throughput for large Cloud Storage uploads. Routing migration data through a separate storage layer outside the VMs adds an extra write/read transfer stage, which can become an end-to-end throughput constraint.",
-    "retired": true,
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1783765371112-f0jy29w4.png"
   },
   {
     "id": "527",
