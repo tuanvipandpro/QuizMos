@@ -2,7 +2,7 @@
   padding: 8px 16px;
 }
 .is-compact .app-header-inner {
-  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-columns: 44px minmax(0, 1fr) auto;
   gap: 8px;
   min-height: 44px;
 }
@@ -22,6 +22,18 @@
   display: block;
   min-width: 0;
   width: 100%;
+}
+.is-compact .header-actions {
+  display: flex;
+  grid-column: 3;
+  grid-row: 1;
+  gap: 0;
+}
+.is-compact .header-actions .ant-btn {
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 4px;
 }
 .is-compact .compact-nav-trigger.ant-btn {
   display: flex;
@@ -127,8 +139,7 @@
   margin-bottom: 12px;
   border-bottom: 1px solid var(--app-border);
 }
-.compact-account,
-.compact-notifications {
+.compact-account {
   min-width: 0;
 }
 .compact-header-utilities .header-auth-loading,
@@ -203,18 +214,4 @@
   .ant-menu-item.ant-menu-item-danger.ant-menu-item-active:not(.ant-menu-item-disabled) {
   color: var(--app-danger-text);
   background: var(--app-danger-bg);
-}
-.compact-notifications .quiz-notification-trigger,
-.compact-notifications .ant-badge {
-  width: 100%;
-}
-.compact-notifications .quiz-notification-panel {
-  width: 100%;
-  max-height: max(176px, calc(100dvh - 240px));
-  box-shadow: none;
-}
-.compact-notifications .quiz-notification-heading,
-.compact-notifications .quiz-notification-list li,
-.compact-notifications .quiz-notification-footer {
-  padding: 12px;
 }

@@ -14,19 +14,30 @@ export async function headerControl(page, options, root = page.locator('.app-hea
     .toBe(true);
   const trigger = page.locator('.compact-nav-trigger');
   const compact = await trigger.isVisible();
+  const direct = root.getByRole('button', options);
+  if (compact && (await direct.count())) {
+    await closeHeaderPanel(page);
+    return direct;
+  }
   const target = compact
     ? page.locator('.compact-header-popup').getByRole('button', options)
     : root.getByRole('button', options);
   if (compact) {
-    if ((await trigger.getAttribute('aria-expanded')) !== 'true') {
-      await expect(page.locator('.compact-header-popup')).toHaveCount(0);
-      await trigger.click();
-    }
-    await expect(page.locator('.compact-header-popup')).toBeVisible();
-    await waitForUiMotion(page.locator('.compact-header-popup'));
+    await openHeaderPanel(page);
     if (!(await target.count())) await page.keyboard.press('Escape');
   }
   return target;
+}
+
+export async function openHeaderPanel(page) {
+  const trigger = page.locator('.compact-nav-trigger');
+  if (!(await trigger.isVisible())) return;
+  if ((await trigger.getAttribute('aria-expanded')) !== 'true') {
+    await expect(page.locator('.compact-header-popup')).toHaveCount(0);
+    await trigger.click();
+  }
+  await expect(page.locator('.compact-header-popup')).toBeVisible();
+  await waitForUiMotion(page.locator('.compact-header-popup'));
 }
 
 // Background focus/scroll checks start after modal dismissal and focus restoration.

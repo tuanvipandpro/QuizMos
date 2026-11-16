@@ -100,14 +100,14 @@ for (const view of cases) {
     );
     await trigger.click();
     await expect(popup.locator('.profile-button')).toBeVisible();
-    await expect(
-      header.locator('.profile-button, .quiz-notification-button, .header-login')
-    ).toHaveCount(0);
+    await expect(header.locator('.profile-button, .header-login')).toHaveCount(0);
+    await expect(popup.locator('.quiz-notification-button')).toHaveCount(0);
+    await expect(header.locator('.quiz-notification-button')).toBeVisible();
     expect((await header.boundingBox()).height).toBe(before.height);
     for (const control of [
       header.locator('.app-brand'),
       trigger,
-      popup.locator('.quiz-notification-button'),
+      header.locator('.quiz-notification-button'),
       popup.locator('.profile-button'),
     ]) {
       const rect = await control.boundingBox();

@@ -8,7 +8,7 @@ Provide a compact, accessible responsive application header while preserving rou
 
 ### Requirement: HEADER-01 Compact bounded navigation
 
-The system SHALL show a single compact header row no taller than 72 CSS pixels at compact widths, with only brand and a labelled launcher exposing visible active-page context. Notifications and account state SHALL be reachable inside its drawer. Desktop alignment SHALL remain brand/navigation left and utilities right.
+The system SHALL show a single compact header row no taller than 72 CSS pixels at compact widths, with brand, a labelled launcher exposing visible active-page context and a directly visible notification bell. Account state SHALL be reachable inside its drawer. Desktop alignment SHALL remain brand/navigation left and utilities right.
 
 #### Scenario: Narrow viewport
 
@@ -22,8 +22,8 @@ The system SHALL keep Quiz Bank, My quizzes, Donate, theme and VN/EN reachable t
 #### Scenario: Compact account and notifications
 
 - **WHEN** a user opens the drawer while signed out, loading or signed in
-- **THEN** the corresponding account controls and labelled notification entry are visible inside, existing account/notification content expands inline, and opening the drawer alone does not mark updates as read
-- **AND** account dialogs and guarded navigation run after drawer closure with usable focus return, while refresh/read-state and desktop dropdown behavior remain unchanged
+- **THEN** the corresponding account controls are visible inside and existing account actions expand inline, while notifications remain directly reachable on the header independently of auth loading
+- **AND** opening the drawer alone does not mark updates as read; account dialogs and guarded navigation run after drawer closure with usable focus return, while notification dropdown/refresh/read-state and desktop behavior remain unchanged
 
 #### Scenario: Compact preferences
 

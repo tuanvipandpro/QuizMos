@@ -1,4 +1,9 @@
-import { headerControl, expectHeaderAccount } from './headerControls.js';
+import {
+  headerControl,
+  expectHeaderAccount,
+  openHeaderPanel,
+  closeHeaderPanel,
+} from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import { accountCases } from './viewports.js';
 import { contrastRatio } from './uiContrast.js';
@@ -83,8 +88,9 @@ test('public notification access survives auth loading, owner changes and blocke
     };
   });
   await page.goto('./#/library');
-  await bell(page);
+  await openHeaderPanel(page);
   await expect(page.locator('.header-auth-loading')).toBeVisible();
+  await closeHeaderPanel(page);
   await (await bell(page)).click();
   await expect(panel(page)).toBeVisible();
   await page.keyboard.press('Escape');
@@ -95,7 +101,7 @@ test('public notification access survives auth loading, owner changes and blocke
     );
     window.dispatchEvent(new Event('quiz-e2e-auth-ready'));
   });
-  await expect(page.getByRole('button', { name: 'Notice Alice', exact: true })).toBeVisible();
+  await expectHeaderAccount(page, 'Notice Alice');
   await expect(page.locator('.quiz-notification-trigger .ant-badge-count')).toHaveCount(0);
   await (await bell(page)).click();
   await expect(panel(page)).toBeVisible();

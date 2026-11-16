@@ -2,6 +2,7 @@ import {
   headerControl,
   closeHeaderPanel,
   expectHeaderAccount,
+  openHeaderPanel,
   waitForHeaderPanelClosed,
 } from './headerControls.js';
 import { test, expect } from '@playwright/test';
@@ -90,7 +91,7 @@ test('public content stays usable during auth loading, sign-in failure and accou
   await page.addInitScript(() => sessionStorage.setItem('quiz-e2e-defer-auth', '1'));
   await page.goto('./');
   await expect(page.locator('.landing-hero h1')).toBeVisible();
-  await headerControl(page, { name: 'Quiz updates', exact: true });
+  await openHeaderPanel(page);
   await expect(page.locator('.header-auth-loading')).toBeVisible();
   await closeHeaderPanel(page);
   await page.getByRole('button', { name: 'Start practicing', exact: true }).click();

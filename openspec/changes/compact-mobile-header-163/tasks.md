@@ -6,7 +6,7 @@
 - [x] 1.2 Implement bounded popup/focus/resize lifecycle for HEADER-03/04 and preserve existing account/notifications/Exam callbacks; browser-test Escape/outside/action/resize focus, long names/badges, guarded navigation and measured header/dock geometry.
 
 - [x] 1.3 Replace the dropdown with the owner-requested left modal drawer; verify mask/close/Escape exits, contained Tab focus, background scroll lock/cleanup, queued guarded navigation, full viewport/locale/theme/auth matrix and rendered before/after evidence.
-- [x] 1.4 Move all compact account/auth and notification controls into the drawer with shared inline owners; verify nested Escape, focus containment, deferred dialogs/guards, unread/refresh behavior and responsive/auth-state parity.
+- [x] 1.4 Move compact account/auth controls into the drawer with shared inline ownership, keeping the notification bell directly on the header per the owner's final placement; verify account Escape/focus containment, deferred dialogs/guards, notification unread/refresh behavior and responsive/auth-state parity.
 
 ## 2. Integration and delivery
 

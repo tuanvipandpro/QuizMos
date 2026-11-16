@@ -53,16 +53,12 @@ export default function AppHeader({
       </Button>
     );
     const notifications = (
-      <QuizUpdateNotifications
-        key={page}
-        inline={inline}
-        onNavigate={(url) => run(() => onNavigate(url))}
-      />
+      <QuizUpdateNotifications key={page} onNavigate={(url) => run(() => onNavigate(url))} />
     );
     return (
       <div className={inline ? 'compact-header-utilities' : 'header-actions'}>
         {inline && account}
-        {notifications}
+        {!inline && notifications}
         {!inline && <HeaderPreferences {...{ isDarkMode, onToggleTheme }} />}
         {!inline && account}
       </div>
@@ -124,7 +120,13 @@ export default function AppHeader({
             </>
           )}
         </nav>
-        {!compact && renderUtilities()}
+        {compact ? (
+          <div className="header-actions">
+            <QuizUpdateNotifications key={page} onNavigate={onNavigate} />
+          </div>
+        ) : (
+          renderUtilities()
+        )}
       </div>
     </Header>
   );
