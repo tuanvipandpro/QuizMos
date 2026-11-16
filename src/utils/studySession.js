@@ -12,6 +12,8 @@ import { EXAM_GRADING_VERSION } from '../data/examHistoryLimits.js';
 import { secureId, UUID_PATTERN } from './secureId.js';
 import { orderObjectKeys } from './questionFingerprint.js';
 import { parseCloudQuizId } from './customQuizModel.js';
+import { sampleStudyPool } from './studySettings.js';
+import { sessionSettingsError } from './certificationProfile.js';
 
 export const SESSION_PREFIX = 'quiz-study-v1:';
 
@@ -25,6 +27,59 @@ function rawQuestionFingerprint(questions) {
 
 export function questionFingerprint(questions) {
   return 'v2:' + rawQuestionFingerprint(orderObjectKeys(questions));
+}
+
+// Known public-bank revisions, before the PCA and GAL imports. Only append-only
+// changes and newly added retired flags on the existing prefix are compatible.
+const PUBLIC_BANK_DRAFTS = {
+  'gcp-pca': { count: 279, signature: 'v2:1qaq81n:279', legacy: '1qaq81n:279' },
+  'gcp-gal': { count: 56, signature: 'v2:1twiedv:56', legacy: 'xn69jh:56' },
+};
+
+function migratePublicBankDraft(key, saved, questions, mode) {
+  const match = /^quiz-study-v1:([^:]+):(gcp-pca|gcp-gal):(exam|practice)$/.exec(key);
+  if (!match || match[3] !== mode) return null;
+  const revision = PUBLIC_BANK_DRAFTS[match[2]];
+  if (
+    questions.length <= revision.count ||
+    ![revision.signature, revision.legacy].includes(saved.signature)
+  )
+    return null;
+  if (
+    questions
+      .slice(0, revision.count)
+      .some((question) => question.retired !== undefined && typeof question.retired !== 'boolean')
+  )
+    return null;
+  const previous = questions
+    .slice(0, revision.count)
+    .map(({ retired: _retired, ...question }) => question);
+  if (questionFingerprint(previous) !== revision.signature) return null;
+  if (new Set(questions.map((question) => String(question.id))).size !== questions.length)
+    return null;
+  if (mode === 'practice') {
+    if (
+      !Array.isArray(saved.answers) ||
+      saved.answers.length !== revision.count ||
+      saved.index >= revision.count
+    )
+      return null;
+    return {
+      ...saved,
+      signature: questionFingerprint(questions),
+      answers: [...saved.answers, ...questions.slice(revision.count).map(emptyAnswer)],
+    };
+  }
+  if (!Array.isArray(saved.questions)) return null;
+  const originals = new Map(previous.map((question) => [String(question.id), question]));
+  if (
+    !saved.questions.every((question) => {
+      const original = originals.get(String(question.id));
+      return original && questionFingerprint([question]) === questionFingerprint([original]);
+    })
+  )
+    return null;
+  return { ...saved, signature: questionFingerprint(questions) };
 }
 
 function compatibleLegacyCloudDraft(key, saved, questions, mode) {
@@ -67,6 +122,8 @@ export function sessionKey(uid, quizId, mode) {
   return `${SESSION_PREFIX}${uid || 'guest'}:${canonicalQuizId(quizId)}:${mode}`;
 }
 
+export const examEligibleQuestions = (questions) => questions.filter((q) => q.retired !== true);
+
 export function createExamSession(
   questions,
   count,
@@ -79,17 +136,39 @@ export function createExamSession(
     historyOwner = null,
     captureHistory = false,
     historySource = null,
+    selectionQuestions = null,
+    sessionSettings = null,
   } = {}
 ) {
-  if (!questions.length) throw new Error('An exam needs at least one question.');
-  const pool = [...questions];
-  for (let index = pool.length - 1; index > 0; index--) {
-    const other = Math.floor(random() * (index + 1));
-    [pool[index], pool[other]] = [pool[other], pool[index]];
+  if (!examEligibleQuestions(questions).length)
+    throw new Error('An exam needs at least one eligible question.');
+  if (selectionQuestions) {
+    const originals = new Map(questions.map((question) => [String(question.id), question]));
+    if (
+      selectionQuestions.some(
+        (question) =>
+          question.retired === true ||
+          questionFingerprint([question]) !==
+            questionFingerprint([originals.get(String(question.id))])
+      )
+    )
+      throw sessionSettingsError('INVALID_POOL');
   }
+  const pool = selectionQuestions
+    ? sampleStudyPool(
+        selectionQuestions.map((question) => ({ key: String(question.id), question })),
+        count,
+        random
+      ).map((item) => item.question)
+    : examEligibleQuestions(questions);
+  if (!selectionQuestions)
+    for (let index = pool.length - 1; index > 0; index--) {
+      const other = Math.floor(random() * (index + 1));
+      [pool[index], pool[other]] = [pool[other], pool[index]];
+    }
   const size = Number.isInteger(count) && count > 0 ? count : 50;
   const selected = pool
-    .slice(0, Math.min(size, questions.length))
+    .slice(0, Math.min(size, pool.length))
     .map((question) => shuffleQuestionOptions(question, random));
   return {
     attemptId: idFactory(),
@@ -107,6 +186,7 @@ export function createExamSession(
     submitted: false,
     timeExpired: false,
     feedbackMode: getExamFeedbackMode(feedbackMode).id,
+    ...(sessionSettings ? { sessionSettings: JSON.parse(JSON.stringify(sessionSettings)) } : {}),
   };
 }
 
@@ -207,7 +287,10 @@ function readStoredStudySession(storage, key, questions, mode) {
     if (!saved || !Number.isInteger(saved.index) || saved.index < 0) return null;
     const signature = questionFingerprint(questions);
     if (saved.signature !== signature) {
+      const migrated = migratePublicBankDraft(key, saved, questions, mode);
+      if (migrated) saved = migrated;
       if (
+        !migrated &&
         saved.signature !== rawQuestionFingerprint(questions) &&
         !compatibleLegacyCloudDraft(key, saved, questions, mode)
       )

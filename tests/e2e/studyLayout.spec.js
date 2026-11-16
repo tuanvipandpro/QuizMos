@@ -1,3 +1,4 @@
+import { headerControl, waitForHeaderPanelClosed } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import { accountCases } from './viewports.js';
 import { contrastRatio } from './uiContrast.js';
@@ -122,14 +123,21 @@ test('native dock measurements stay correct through resize and study-to-summary 
 
 async function appearance(page, state) {
   await page.setViewportSize({ width: state.width, height: state.height });
-  await page
-    .getByRole('button', { name: state.language === 'vi' ? 'Tiếng Việt' : 'English', exact: true })
-    .click();
+  await (
+    await headerControl(page, {
+      name: state.language === 'vi' ? 'Tiếng Việt' : 'English',
+      exact: true,
+    })
+  ).click();
   if ((await page.locator('html').getAttribute('data-theme')) !== state.theme)
-    await page.locator('.theme-toggle').click();
+    await (await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })).click();
+  await waitForHeaderPanelClosed(page);
 }
 
 async function dockGeometry(page, width, height) {
+  // Measure default contrast; pointer position after drawer dismissal can hover a dock
+  // button. Explicit hover/focus contrast acceptance is tracked separately in #170.
+  await page.mouse.move(0, 0);
   const dock = page.locator('.study-navigation-bar');
   const bounds = await dock.boundingBox();
   expect(bounds.x).toBeGreaterThanOrEqual(0);
@@ -205,7 +213,7 @@ test('practice dock prioritizes navigation and explanation with Copy and Save ab
       state.language === 'vi' ? 'Câu 1' : 'Question 1'
     );
   }
-  await page.getByRole('button', { name: 'English', exact: true }).click();
+  await (await headerControl(page, { name: 'English', exact: true })).click();
   await page.getByRole('button', { name: 'Save position', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Save position?', exact: true });
   await clickAfterUiMotion(dialog.getByRole('button', { name: 'Cancel', exact: true }));
@@ -260,7 +268,7 @@ test('exam timer shares a non-overlapping sidebar or dock through scroll, resize
     await jump.blur();
     await expect(page.locator('.study-navigation-bar')).toBeVisible();
   }
-  await page.getByRole('button', { name: 'English', exact: true }).click();
+  await (await headerControl(page, { name: 'English', exact: true })).click();
   await page.getByRole('button', { name: 'Submit exam', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Review before submitting', exact: true });
   await clickAfterUiMotion(dialog.getByRole('button', { name: 'Continue exam', exact: true }));

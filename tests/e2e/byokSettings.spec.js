@@ -1,3 +1,4 @@
+import { headerControl, expectHeaderAccount } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs/promises';
 import { clickAfterUiMotion, waitForUiMotion } from './uiMotion.js';
@@ -29,7 +30,7 @@ async function openSettings(page, { language = 'en', theme = 'light', signedIn =
   await page.goto('./#/quiz/aws-aip-c01/practice');
   await expect(page.locator('.question-title')).toBeVisible();
   if (signedIn) {
-    await page.getByRole('button', { name: 'BYOK tester', exact: true }).click();
+    await (await headerControl(page, { name: 'BYOK tester', exact: true })).click();
     await clickAfterUiMotion(
       page.getByRole('menuitem', {
         name: language === 'vi' ? 'Cài đặt AI' : 'AI Settings',
@@ -132,7 +133,7 @@ for (const language of ['en', 'vi'])
       // Changing study owner closes guest dialogs. Reopen account settings through
       // the persistent header to verify the new owner's source and credentials.
       await expect(settings).toBeHidden();
-      await page.getByRole('button', { name: 'Test account', exact: true }).click();
+      await (await headerControl(page, { name: 'Test account', exact: true })).click();
       await clickAfterUiMotion(
         page.getByRole('menuitem', {
           name: language === 'vi' ? 'Cài đặt AI' : 'AI Settings',
@@ -396,8 +397,9 @@ test('settings sign-in uses the shared provider dialog; cancel and failure prese
   await clickAfterUiMotion(
     login.getByRole('button', { name: 'Continue with Google', exact: true })
   );
-  await expect(page.getByRole('button', { name: 'Test account', exact: true })).toBeVisible();
   await expect(login).toBeHidden();
+  await expect(settings).toBeHidden();
+  await expectHeaderAccount(page, 'Test account');
   expect(await page.evaluate(() => Number(sessionStorage.getItem('quiz-e2e-signin-count')))).toBe(
     2
   );

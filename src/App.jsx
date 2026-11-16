@@ -21,6 +21,7 @@ import { usePublicQuizRefresh } from './hooks/usePublicQuizRefresh';
 import { useReducedMotion } from './hooks/useReducedMotion';
 import { useHashRoute } from './hooks/useHashRoute';
 import { useQuizProgress } from './hooks/useQuizProgress';
+import { useStudyNotebook } from './hooks/useStudyNotebook';
 import { useCustomQuizzes, customQuizProgress } from './hooks/useCustomQuizzes';
 import {
   parseCloudQuizId,
@@ -41,7 +42,12 @@ import { getExamFeedbackMode } from './data/examModes';
 import { appBrand } from './data/appBrand';
 import { resolveCheckpoint } from './utils/quizProgress';
 import { validateQuizQuestions } from './utils/questionModel';
-import { clearStudySessions, readStudySession, sessionKey } from './utils/studySession';
+import {
+  clearStudySessions,
+  examEligibleQuestions,
+  readStudySession,
+  sessionKey,
+} from './utils/studySession';
 import { canonicalQuizHash, DEFAULT_HASH, quizUrl, resolveLoadedQuiz } from './utils/navigation';
 import { readDarkMode, THEME_KEY } from './utils/appearance';
 import { examHistorySource } from './utils/examHistory.js';
@@ -53,8 +59,10 @@ import './markdown.css';
 const { Content } = Layout;
 const { Title, Text } = Typography;
 const UPLOAD_KEY = 'quiz-tab-upload-v1';
+const QuizPdfExport = lazy(() => import('./components/QuizPdfExport'));
 const PracticeMode = lazy(() => import('./components/PracticeMode'));
-const ExamMode = lazy(() => import('./components/ExamMode'));
+const ExamMode = lazy(() => import('./components/ConfiguredExam'));
+const QuickPracticeMode = lazy(() => import('./components/QuickPracticeMode'));
 const QuickSummaryMode = lazy(() => import('./components/QuickSummaryMode'));
 const SettingsModal = lazy(() => import('./components/SettingsModal'));
 const ExamHistoryPage = lazy(() => import('./components/ExamHistoryPage'));
@@ -62,6 +70,7 @@ const LandingPage = lazy(() => import('./components/LandingPage'));
 const DonatePage = lazy(() => import('./components/DonatePage'));
 const ProfilePage = lazy(() => import('./components/ProfilePage'));
 const QuizUpdatesPage = lazy(() => import('./components/QuizUpdatesPage'));
+const StudyNotebookWorkspace = lazy(() => import('./components/StudyNotebookWorkspace'));
 
 function initialDarkMode() {
   let storage;
@@ -83,6 +92,7 @@ export default function App() {
   const reducedMotion = useReducedMotion();
   const uid = user?.uid || null;
   const progressState = useQuizProgress(uid);
+  const notebook = useStudyNotebook(user?.isAnonymous ? null : uid);
   const [isDarkMode, setIsDarkMode] = useState(initialDarkMode);
   const [modal, modalHolder] = Modal.useModal();
   const [messageApi, messageHolder] = message.useMessage();
@@ -329,24 +339,26 @@ export default function App() {
   const guide = getQuickSummary(route.quizId);
   useEffect(() => {
     document.title =
-      (route.page === 'history'
-        ? t('Exam history')
-        : route.page === 'home'
-          ? t('Small quizzes. Big confidence.')
-          : route.page === 'donate'
-            ? t('Support QuizMos')
-            : route.page === 'library'
-              ? t('Quiz Bank')
-              : route.page === 'my-quizzes'
-                ? t('My quizzes')
-                : route.page === 'profile'
-                  ? t('Profile')
-                  : route.page === 'updates'
-                    ? t('Quiz updates')
-                    : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
+      (route.page === 'notebook'
+        ? t('Study notebook')
+        : route.page === 'history'
+          ? t('Exam history')
+          : route.page === 'home'
+            ? t('Small quizzes. Big confidence.')
+            : route.page === 'donate'
+              ? t('Support QuizMos')
+              : route.page === 'library'
+                ? t('Quiz Bank')
+                : route.page === 'my-quizzes'
+                  ? t('My quizzes')
+                  : route.page === 'profile'
+                    ? t('Profile')
+                    : route.page === 'updates'
+                      ? t('Quiz updates')
+                      : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
   }, [route.page, active?.name, t]);
   let examDraft = null;
-  if (active && route.mode === 'overview') {
+  if (active && ['overview', 'exam'].includes(route.mode)) {
     try {
       examDraft = readStudySession(
         sessionStorage,
@@ -359,13 +371,14 @@ export default function App() {
     }
   }
   const hasExamDraft = !!examDraft && !examDraft.submitted;
-  const selectMode = (mode, { time, count, feedbackMode, fresh = false }) => {
+  const selectMode = (mode, { time, count, kind, size = 'all', feedbackMode, fresh = false }) => {
     const start = () =>
       go(
         activeQuizUrl(
           mode,
           mode === 'exam'
             ? {
+                format: kind,
                 time: String(time),
                 count: String(count),
                 feedback: getExamFeedbackMode(
@@ -373,7 +386,9 @@ export default function App() {
                 ).id,
                 ...(fresh || !hasExamDraft ? { fresh: String(Date.now()) } : {}),
               }
-            : {}
+            : mode === 'practice' && size !== 'all'
+              ? { size: String(size), ...(fresh ? { fresh: String(Date.now()) } : {}) }
+              : {}
         )
       );
     if (mode === 'exam' && fresh && hasExamDraft)
@@ -381,6 +396,14 @@ export default function App() {
         title: t('Start a new exam?'),
         content: t('This replaces the draft in this tab.'),
         okText: t('Start mock exam'),
+        cancelText: t('Cancel'),
+        onOk: start,
+      });
+    else if (mode === 'practice' && fresh && size !== 'all')
+      modal.confirm({
+        title: t('Reset this practice session?'),
+        content: t('Your cloud checkpoint is kept.'),
+        okText: t('Start practice'),
         cancelText: t('Cancel'),
         onOk: start,
       });
@@ -439,6 +462,19 @@ export default function App() {
 
   let screen;
   if (route.page === 'home') screen = <LandingPage onNavigate={go} />;
+  else if (route.page === 'notebook')
+    screen = (
+      <StudyNotebookWorkspace
+        key={uid || 'guest'}
+        notebook={notebook}
+        authLoading={authLoading}
+        selectionId={route.selectionId}
+        params={route.params}
+        onNavigate={go}
+        onSignIn={openLogin}
+        progressState={progressState}
+      />
+    );
   else if (route.page === 'history')
     screen = (
       <ExamHistoryPage
@@ -565,11 +601,23 @@ export default function App() {
       route.params.get('resume') === '1'
         ? resolveCheckpoint(active.questions, studyProgress.progress[active.id])
         : null;
+    const Practice =
+      route.params.has('size') && route.params.get('size') !== 'all'
+        ? QuickPracticeMode
+        : PracticeMode;
     screen = (
-      <PracticeMode
-        key={`${studyId}:${uid || 'guest'}:${route.params.get('fresh') || ''}:${questionId || ''}:${route.params.get('entry') || ''}`}
+      <Practice
+        size={route.params.get('size')}
+        onRestart={() =>
+          go(
+            activeQuizUrl('practice', { size: route.params.get('size'), fresh: String(Date.now()) })
+          )
+        }
+        key={`${studyId}:${uid || 'guest'}:${route.params.get('size') || 'all'}:${route.params.get('fresh') || ''}:${questionId || ''}:${route.params.get('entry') || ''}`}
         questions={active.questions}
         quizId={active.id === 'custom' ? null : active.id}
+        sourceQuiz={active}
+        notebook={notebook}
         sessionId={studyId}
         quizName={active.name}
         progressState={studyProgress}
@@ -586,20 +634,39 @@ export default function App() {
         }
       />
     );
-  } else if (route.mode === 'exam')
+  } else if (
+    route.mode === 'exam' &&
+    !examEligibleQuestions(active.questions).length &&
+    (!examDraft ||
+      (route.params.get('fresh') &&
+        route.params.get('fresh') !== examDraft.freshToken &&
+        !(
+          examDraft.freshToken && Number(route.params.get('fresh')) < Number(examDraft.freshToken)
+        )))
+  )
+    screen = (
+      <div className="load-state">
+        <Alert
+          type="info"
+          showIcon
+          message={t('No questions are available for a new mock exam.')}
+        />
+        <Button onClick={() => go(activeQuizUrl('practice'))}>{t('Start practice')}</Button>
+        <Button onClick={() => go(activeQuizUrl())}>{t('Back to quiz overview')}</Button>
+      </div>
+    );
+  else if (route.mode === 'exam')
     screen = (
       <ExamMode
         key={`${studyId}:${uid || 'guest'}:${route.params.get('fresh') || ''}`}
         questions={active.questions}
         quizId={studyId}
+        sourceQuiz={active}
+        notebook={notebook}
         quizName={active.name}
-        examTimeMinutes={Number(route.params.get('time')) === 120 ? 120 : 60}
+        params={route.params}
+        profileId={active.id}
         feedbackMode={route.params.get('feedback')}
-        examQuestionCount={
-          [50, 60, 70, 80].includes(Number(route.params.get('count')))
-            ? Number(route.params.get('count'))
-            : Math.min(50, active.questions.length)
-        }
         fresh={route.params.get('fresh')}
         onRunningChange={setExamActive}
         historySource={examHistorySource(active, uid)}
@@ -654,11 +721,14 @@ export default function App() {
             </Text>
           </div>
         </div>
+        <QuizPdfExport key={`pdf:${studyId}:${uid || 'guest'}`} quiz={active} />
         <QuizMode
           key={`${active.id}:${uid || 'guest'}`}
           onSelectMode={selectMode}
           onModeChange={(mode) => replace(activeQuizUrl('overview', { mode }))}
           totalQuestions={active.questions.length}
+          questions={active.questions}
+          quizId={active.id}
           quickSummary={guide}
           initialMode={
             ['exam', 'summary'].includes(route.params.get('mode'))

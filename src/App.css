@@ -1,11 +1,13 @@
 @import './styles/tokens.css';
 @import './styles/shell.css';
+@import './styles/compact-header.css';
 @import './styles/library.css';
 @import './styles/study.css';
 @import './styles/upload.css';
 @import './styles/public-pages.css';
 @import './styles/history.css';
 @import './styles/account.css';
+@import './styles/study-notebook.css';
 
 * {
   box-sizing: border-box;
