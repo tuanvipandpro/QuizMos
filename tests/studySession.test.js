@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   createExamSession,
+  examEligibleQuestions,
   examStats,
   finishExam,
   initialStudySession,
@@ -49,6 +51,93 @@ const storage = () => {
   });
   return values;
 };
+
+test('known additive PCA and GAL updates preserve compatible account-scoped drafts', () => {
+  for (const [id, file, oldCount] of [
+    ['gcp-pca', 'PCA', 279],
+    ['gcp-gal', 'GAL', 56],
+  ]) {
+    const bank = JSON.parse(
+      readFileSync(new URL(`../public/quiz/Google/GCP-${file}.json`, import.meta.url))
+    )
+      .slice(0, oldCount)
+      .map(({ retired: _retired, ...question }) => question);
+    const updated = [{ ...bank[0], retired: true }, ...bank.slice(1), questions[0]];
+    const store = storage();
+    const key = sessionKey('alice', id, 'practice');
+    const draft = {
+      signature: questionFingerprint(bank),
+      index: 0,
+      answers: bank.map(emptyAnswer),
+    };
+    draft.answers[0] = ['A'];
+    store.setItem(key, JSON.stringify(draft));
+    const migrated = readStudySession(store, key, updated, 'practice');
+    assert.deepEqual(migrated.answers[0], ['A']);
+    assert.deepEqual(migrated.answers.at(-1), emptyAnswer(questions[0]));
+    assert.equal(migrated.index, 0);
+    assert.equal(
+      readStudySession(store, sessionKey('bob', id, 'practice'), updated, 'practice'),
+      null
+    );
+    store.setItem(key, JSON.stringify(migrated));
+    assert.deepEqual(readStudySession(store, key, updated, 'practice'), migrated);
+
+    const examKey = sessionKey('alice', id, 'exam');
+    const exam = createExamSession(bank, 1, 60, { idFactory: () => 'attempt', random: () => 0.99 });
+    store.setItem(examKey, JSON.stringify(exam));
+    const restored = readStudySession(store, examKey, updated, 'exam');
+    assert.deepEqual(restored.questions, exam.questions);
+    assert.deepEqual(restored.answers, exam.answers);
+    assert.equal(restored.deadline, exam.deadline);
+    assert.equal(restored.signature, questionFingerprint(updated));
+    const changed = [{ ...updated[0], question: 'Changed content' }, ...updated.slice(1)];
+    assert.equal(readStudySession(store, examKey, changed, 'exam'), null);
+    store.setItem(
+      examKey,
+      JSON.stringify({ ...exam, questions: [{ ...exam.questions[0], answer: ['invalid'] }] })
+    );
+    assert.equal(readStudySession(store, examKey, updated, 'exam'), null);
+    store.setItem(key, JSON.stringify({ ...draft, answers: [] }));
+    assert.equal(readStudySession(store, key, updated, 'practice'), null);
+    store.setItem(key, JSON.stringify({ ...draft, index: bank.length }));
+    assert.equal(readStudySession(store, key, updated, 'practice'), null);
+    let hash = 2166136261;
+    const raw = JSON.stringify(bank);
+    for (let i = 0; i < raw.length; i++) hash = Math.imul(hash ^ raw.charCodeAt(i), 16777619);
+    store.setItem(
+      key,
+      JSON.stringify({ ...draft, signature: `${(hash >>> 0).toString(36)}:${bank.length}` })
+    );
+    assert.equal(readStudySession(store, key, updated, 'practice').answers.length, bank.length + 1);
+  }
+});
+
+test('new exams exclude retired questions without changing practice or compatible drafts', () => {
+  const bank = [questions[0], { ...questions[1], retired: true }, questions[2]];
+  assert.deepEqual(
+    examEligibleQuestions(bank).map((q) => q.id),
+    ['one', 'three']
+  );
+  for (const random of [() => 0, () => 0.99]) {
+    const exam = createExamSession(bank, 50, 60, { random, idFactory: () => 'attempt' });
+    assert.equal(exam.questions.length, 2);
+    assert.ok(exam.questions.every((q) => q.retired !== true));
+    assert.equal(exam.signature, questionFingerprint(bank));
+  }
+  assert.equal(bank.length, 3);
+  assert.throws(() => createExamSession([{ ...questions[0], retired: true }], 1, 60), /eligible/);
+  assert.throws(() => createExamSession(bank, 1, 60, { selectionQuestions: [bank[1]] }), {
+    code: 'SESSION_INVALID_POOL',
+  });
+  const store = storage();
+  const key = sessionKey('alice', 'bank', 'exam');
+  const draft = createExamSession(bank, 2, 60, { idFactory: () => 'attempt' });
+  draft.questions = [bank[1]];
+  draft.answers = [['A', 'C']];
+  store.setItem(key, JSON.stringify(draft));
+  assert.deepEqual(readStudySession(store, key, bank, 'exam'), draft);
+});
 
 test('Google ACE restores a legacy practice draft within the same account and preserves existing canonical answers', () => {
   const store = storage();

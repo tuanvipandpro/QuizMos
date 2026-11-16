@@ -16,7 +16,10 @@ export function studyInteger(value, field) {
 }
 
 /** Retains originals/source indices; never repairs questions or invents tags. */
-export function eligibleStudyPool(questions, { formats = null, identities = null } = {}) {
+export function eligibleStudyPool(
+  questions,
+  { formats = null, identities = null, excludeRetired = false } = {}
+) {
   if (
     !Array.isArray(questions) ||
     (identities && (!Array.isArray(identities) || identities.length !== questions.length))
@@ -26,6 +29,10 @@ export function eligibleStudyPool(questions, { formats = null, identities = null
     excluded = [],
     keys = new Set();
   for (const [index, question] of questions.entries()) {
+    if (excludeRetired && question?.retired === true) {
+      excluded.push({ index, reason: 'retired' });
+      continue;
+    }
     try {
       validateQuizQuestions([question]);
     } catch {
@@ -78,7 +85,7 @@ export function defaultExamSetup(quizId, questions, day) {
       minutes: profile.minutes,
       feedbackMode: 'standard',
     };
-  const pool = eligibleStudyPool(questions);
+  const pool = eligibleStudyPool(questions, { excludeRetired: true });
   return {
     kind: 'custom',
     count: Math.min(50, pool.items.length) || null,
@@ -115,7 +122,10 @@ export function resolveExamSettings({
     if (selectedMinutes !== profile.minutes) throw sessionSettingsError('INVALID', 'minutes');
   } else if (selectedMinutes > CUSTOM_EXAM_MAX_MINUTES)
     throw sessionSettingsError('INVALID', 'minutes');
-  const pool = eligibleStudyPool(questions, { formats: kind === 'cert' ? profile.formats : null });
+  const pool = eligibleStudyPool(questions, {
+    formats: kind === 'cert' ? profile.formats : null,
+    excludeRetired: true,
+  });
   if (selectedCount > pool.items.length) throw sessionSettingsError('INSUFFICIENT', 'count');
   const snapshot = profile ? JSON.parse(JSON.stringify(profile)) : null;
   return {

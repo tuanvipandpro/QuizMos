@@ -15,7 +15,7 @@ export function useExamSetup(quizId, questions) {
       count:
         kind === 'cert'
           ? profile.count.min
-          : Math.min(50, eligibleStudyPool(questions).items.length) || '',
+          : Math.min(50, eligibleStudyPool(questions, { excludeRetired: true }).items.length) || '',
       minutes: kind === 'cert' ? profile.minutes : profile?.minutes || 60,
     }));
   let plan, error;
@@ -26,6 +26,7 @@ export function useExamSetup(quizId, questions) {
   }
   const eligible = eligibleStudyPool(questions, {
     formats: setup.kind === 'cert' ? profile?.formats : null,
+    excludeRetired: true,
   });
   return { setup, change, changeKind, profile, status, plan, error, eligible };
 }
