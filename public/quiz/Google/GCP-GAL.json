@@ -1040,7 +1040,7 @@
   },
   {
     "id": "122",
-    "question": "A learning and development team needs to quickly produce a new-hire training video featuring a custom avatar and a voiceover aligned with its company branding and key messages. They have no budget for production. What should they do?",
+    "question": "A learning and development team needs to quickly produce a new-hire training video featuring a custom avatar and a voiceover aligned with its company branding and key messages. The company already has an eligible Google Vids subscription, but the team has no additional budget for production. What should they do?",
     "options": {
       "A": "Generate the video frames with Imagen.",
       "B": "Create a video with Google Vids.",
