@@ -67,7 +67,7 @@ export const quizzes = [
     file: 'quiz/Google/GCP-PCA.json',
     category: 'Google Cloud',
     difficulty: 'Professional',
-    totalQuestions: 279,
+    totalQuestions: 366,
     code: 'PCA',
   },
   {
@@ -95,7 +95,7 @@ export const quizzes = [
     file: 'quiz/Google/GCP-GAL.json',
     category: 'Google Cloud',
     difficulty: 'Foundations',
-    totalQuestions: 56,
+    totalQuestions: 98,
     code: 'GAL',
   },
   {
@@ -133,6 +133,24 @@ export const quizzes = [
     difficulty: 'Expert',
     totalQuestions: 111,
     code: 'AB-100',
+  },
+  {
+    id: 'ab-730',
+    name: 'Microsoft AI Business Professional (AB-730)',
+    file: 'quiz/Azure/AB-730.json',
+    category: 'Microsoft',
+    difficulty: 'Beginner',
+    totalQuestions: 92,
+    code: 'AB-730',
+  },
+  {
+    id: 'ab-731',
+    name: 'Microsoft AI Transformation Leader (AB-731)',
+    file: 'quiz/Azure/AB-731.json',
+    category: 'Microsoft',
+    difficulty: 'Beginner',
+    totalQuestions: 100,
+    code: 'AB-731',
   },
   {
     id: 'ai-103',

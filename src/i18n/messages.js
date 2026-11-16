@@ -1,4 +1,223 @@
 export const vi = {
+  '{count} questions available for short Practice. Notes and full-bank sessions are kept.':
+    'Có {count} câu cho luyện tập ngắn. Ghi chú và các lượt luyện toàn bộ bank được giữ nguyên.',
+  'Notebook revision is untimed Practice. Each question keeps its original source.':
+    'Ôn tập từ sổ là luyện tập không tính giờ. Mỗi câu giữ nguyên nguồn gốc.',
+  'Raw accuracy': 'Tỷ lệ trả lời đúng',
+  'No eligible questions are available for this session.':
+    'Chưa có câu hỏi hợp lệ cho bài luyện này.',
+  'Practice size': 'Số câu luyện tập',
+  'Short Practice is random, untimed and saved separately from full-bank answers and checkpoints.':
+    'Luyện tập ngắn chọn câu ngẫu nhiên, không tính giờ và lưu riêng với đáp án, vị trí của toàn bộ bank.',
+  'Not enough eligible questions. Choose a smaller training session.':
+    'Không đủ câu hỏi hợp lệ. Hãy chọn bài luyện có ít câu hơn.',
+  'The saved subset is no longer compatible. Start a new practice session.':
+    'Bộ câu đã lưu không còn tương thích. Hãy bắt đầu lượt luyện tập mới.',
+  'This certification format is unverified or retired. Choose custom training.':
+    'Format chứng chỉ chưa xác minh hoặc đã ngừng thi. Hãy chọn luyện tập tùy chỉnh.',
+  'Enter a valid whole-number question count and time limit.':
+    'Nhập số câu và thời gian là số nguyên dương hợp lệ.',
+  'Certification reference': 'Thông tin tham chiếu chứng chỉ',
+  'Published question count': 'Số câu được công bố',
+  Unverified: 'Chưa xác minh',
+  'Answering time': 'Thời gian làm bài',
+  'Seat time is {count} minutes; the answering timer excludes check-in.':
+    'Tổng thời gian tại điểm thi là {count} phút; đồng hồ làm bài không tính thủ tục vào thi.',
+  'Official scaled threshold: {threshold}/{maximum}. Raw accuracy cannot be converted to this score.':
+    'Ngưỡng điểm quy đổi chính thức: {threshold}/{maximum}. Không thể quy đổi tỷ lệ đúng sang điểm này.',
+  'Official points threshold: {threshold}/{maximum}. This bank does not implement official question weights.':
+    'Ngưỡng điểm chính thức: {threshold}/{maximum}. Bank này chưa áp dụng trọng số câu hỏi chính thức.',
+  'The provider does not disclose a numeric passing threshold.':
+    'Nhà cung cấp không công bố ngưỡng điểm đạt cụ thể.',
+  'The official scoring version is unverified for this bank.':
+    'Chưa xác minh phiên bản chấm điểm chính thức cho bank này.',
+  'Reviewed {date}. Initial standard exam only; renewal, beta and accommodations are separate.':
+    'Đối chiếu ngày {date}. Chỉ áp dụng bài thi tiêu chuẩn lần đầu; gia hạn, beta và hỗ trợ đặc biệt là các trường hợp riêng.',
+  'Official source {number}': 'Nguồn chính thức {number}',
+  'Session format': 'Dạng bài luyện',
+  'Certification format': 'Format chứng chỉ',
+  'Custom timed training': 'Luyện tập có giờ tùy chỉnh',
+  'Some certification facts are unverified. This session is custom training.':
+    'Một số thông tin chứng chỉ chưa xác minh. Bài này là luyện tập tùy chỉnh.',
+  'Format practice only. Random selection does not reproduce official domains, labs, case studies or unscored questions. Extra time is not inferred from your language.':
+    'Chỉ mô phỏng hình thức. Chọn câu ngẫu nhiên không tái hiện các lĩnh vực, lab, case study hay câu không tính điểm chính thức. Không tự thêm giờ dựa vào ngôn ngữ.',
+  'Choose {min}–{max} questions within the published range. Answering time is fixed.':
+    'Chọn {min}–{max} câu trong phạm vi công bố. Thời gian làm bài cố định.',
+  'Training limits: 1–{count} questions and 1–{minutes} minutes.':
+    'Giới hạn bài luyện: 1–{count} câu và 1–{minutes} phút.',
+  '{count} eligible; {excluded} excluded because answers or certification formats are incompatible.':
+    '{count} câu hợp lệ; loại {excluded} câu do đáp án hoặc dạng câu không tương thích.',
+  '{count} eligible; {excluded} excluded because questions are retired or incompatible.':
+    '{count} câu hợp lệ; loại {excluded} câu đã ngừng sử dụng hoặc không tương thích.',
+  'Learning mode is custom training with feedback, even when it uses the certification count and time.':
+    'Chế độ Học là luyện tập tùy chỉnh có phản hồi, kể cả khi dùng số câu và thời gian của chứng chỉ.',
+  'QuizMos benchmark met': 'Đạt mốc luyện tập QuizMos',
+  'QuizMos benchmark not met': 'Chưa đạt mốc luyện tập QuizMos',
+  'QuizMos study benchmark: more than 80% raw accuracy. This is not an official certification result.':
+    'Mốc luyện tập QuizMos: tỷ lệ đúng trên 80%. Đây không phải kết quả chứng chỉ chính thức.',
+  'PAA certification also requires a separate hands-on lab stage.':
+    'Chứng chỉ PAA còn yêu cầu giai đoạn lab thực hành riêng.',
+  'Official case-study and domain coverage is not reproduced by random question selection.':
+    'Chọn câu ngẫu nhiên không tái hiện case study và phân bố lĩnh vực chính thức.',
+  'This bank remains DVA-C02. Its announced last delivery date is 30 November 2026.':
+    'Bank này vẫn là DVA-C02. Ngày thi cuối được công bố là 30/11/2026.',
+  'The bank syllabus version is unverified. CT-AI v1 and v2 have different point thresholds.':
+    'Chưa xác minh phiên bản syllabus của bank. CT-AI v1 và v2 có ngưỡng điểm khác nhau.',
+  'PDF generation timed out. Try again on a device with more available resources.':
+    'Tạo PDF quá thời gian cho phép. Hãy thử lại trên thiết bị có nhiều tài nguyên hơn.',
+  'Generated on this device. Up to 1,000 questions and 500 images; inaccessible or large images can prevent export.':
+    'Tạo file ngay trên thiết bị này. Tối đa 1.000 câu và 500 ảnh; ảnh lớn hoặc không truy cập được có thể làm xuất file thất bại.',
+  'Export PDF': 'Xuất PDF',
+  'Questions and answers': 'Câu hỏi và đáp án',
+  'Answer key': 'Đáp án',
+  'Answer unavailable in the supplied quiz.':
+    'Quiz được cung cấp chưa có đáp án hợp lệ cho câu này.',
+  'Export the entire quiz with questions and an answer key. Explanations and private notes are not included.':
+    'Xuất toàn bộ quiz gồm câu hỏi và đáp án. Không kèm giải thích hoặc ghi chú riêng.',
+  'Preparing quiz images…': 'Đang chuẩn bị hình ảnh…',
+  'Generating PDF…': 'Đang tạo PDF…',
+  'PDF download started.': 'Đã bắt đầu tải PDF.',
+  'PDF export cancelled.': 'Đã hủy xuất PDF.',
+  'Download PDF': 'Tải PDF',
+  'Retry PDF export': 'Thử xuất PDF lại',
+  'This quiz is not available for PDF export.': 'Quiz này không được phép xuất PDF.',
+  'This quiz contains invalid content and cannot be exported.':
+    'Quiz có nội dung không hợp lệ nên chưa thể xuất PDF.',
+  'This quiz exceeds the PDF export limits.': 'Quiz vượt giới hạn xử lý PDF.',
+  'An image could not be embedded. Check image access and try again. No PDF was downloaded.':
+    'Không thể đưa một hình ảnh vào PDF. Kiểm tra quyền truy cập ảnh rồi thử lại. Chưa tải file nào.',
+  'Quiz images exceed the PDF image limits. No PDF was downloaded.':
+    'Hình ảnh vượt giới hạn PDF. Chưa tải file nào.',
+  'Could not generate the PDF. Please try again.': 'Chưa thể tạo PDF. Vui lòng thử lại.',
+  Home: 'Trang chủ',
+  'Navigation and preferences': 'Điều hướng và tùy chọn',
+  Navigate: 'Điều hướng',
+  Menu: 'Menu',
+  'Notebook sync for this result has not been confirmed. Use Refresh and retry to capture it explicitly.':
+    'Chưa có xác nhận đồng bộ sổ ôn tập cho kết quả này. Chọn Làm mới và thử lại nếu bạn muốn đồng bộ kết quả.',
+  'This question reference is too large for notebook storage. You can continue studying it.':
+    'Thông tin định danh câu hỏi này vượt giới hạn lưu trữ sổ ôn tập. Bạn vẫn có thể tiếp tục học câu này.',
+  '{count} active filters': '{count} bộ lọc đang bật',
+  'Start a new practice session to synchronize future answers with your notebook.':
+    'Bắt đầu lượt luyện tập mới để đồng bộ các đáp án tiếp theo vào sổ ôn tập.',
+  'Read full note': 'Đọc toàn bộ ghi chú',
+  'Collapse note': 'Thu gọn ghi chú',
+  'Study notebook': 'Sổ ôn tập',
+  'Your mistakes, review progress, bookmarks and private notes.':
+    'Câu sai, tiến độ ôn lại, câu đã đánh dấu và ghi chú riêng của bạn.',
+  'Question notebook': 'Sổ ôn tập của câu hỏi',
+  'Bookmarks and notes are separate from Save position and Exam Flag.':
+    'Đánh dấu và ghi chú độc lập với Lưu vị trí và Cờ trong bài thi.',
+  'Loading notebook entry…': 'Đang tải mục ôn tập…',
+  'Mistake reviewed correctly': 'Câu sai đã ôn đúng',
+  'Mistake to review': 'Câu sai cần ôn lại',
+  'Bookmark this question': 'Đánh dấu câu hỏi này',
+  'Private note': 'Ghi chú riêng',
+  'Plain text, up to 2,000 characters and 8,000 UTF-8 bytes. Your note is not sent to AI.':
+    'Văn bản thuần, tối đa 2.000 ký tự và 8.000 byte UTF-8. Ghi chú không được gửi cho AI.',
+  'Tab recovery is unavailable. Keep this editor open to avoid losing unsaved text.':
+    'Không thể khôi phục trong tab. Hãy giữ cửa sổ này mở để tránh mất nội dung chưa lưu.',
+  'Latest saved note': 'Ghi chú đã lưu mới nhất',
+  'Saving notebook entry…': 'Đang lưu mục ôn tập…',
+  'Not synchronized yet': 'Chưa đồng bộ',
+  'Notebook entry loaded': 'Đã tải mục ôn tập',
+  'Save note': 'Lưu ghi chú',
+  'Retry original save': 'Thử lại lệnh lưu cũ',
+  'Refresh this notebook entry?': 'Làm mới mục ôn tập này?',
+  'Your text is kept. Read the latest saved state, then choose Save note to apply your edit.':
+    'Nội dung đang nhập được giữ lại. Xem trạng thái mới nhất rồi chọn Lưu ghi chú để áp dụng thay đổi.',
+  'Refresh entry': 'Làm mới mục',
+  'Remove this notebook entry?': 'Xóa mục ôn tập này?',
+  'This removes its mistake, bookmark and note. Your answers and saved position are kept.':
+    'Thao tác này xóa câu sai, đánh dấu và ghi chú của mục. Đáp án và vị trí đã lưu vẫn được giữ.',
+  'Remove entry': 'Xóa mục',
+  'Keep your note draft and close?': 'Giữ bản nháp ghi chú và đóng?',
+  'Unsaved text stays in this account and tab. It is not synchronized yet.':
+    'Nội dung chưa lưu được giữ cho tài khoản này trong tab này và chưa được đồng bộ.',
+  'Close editor': 'Đóng cửa sổ ghi chú',
+  'Keep editing': 'Tiếp tục chỉnh sửa',
+  'Sign in for bookmarks and notes': 'Đăng nhập để đánh dấu và ghi chú',
+  'Bookmark and note': 'Đánh dấu và ghi chú',
+  'Save this quiz to your account before adding notebook entries.':
+    'Lưu quiz vào tài khoản trước khi thêm vào sổ ôn tập.',
+  'Refresh notebook': 'Làm mới sổ ôn tập',
+  'Notebook filters': 'Bộ lọc sổ ôn tập',
+  'Quiz bank': 'Bộ câu hỏi',
+  'All quiz banks': 'Tất cả bộ câu hỏi',
+  'Mistakes only': 'Chỉ câu sai',
+  'Bookmarks only': 'Chỉ câu đã đánh dấu',
+  'Review status': 'Trạng thái ôn lại',
+  'All review states': 'Mọi trạng thái ôn lại',
+  'To review': 'Cần ôn lại',
+  'Reviewed correctly': 'Đã ôn đúng',
+  'Your notebook changed. Refresh the list before selecting more questions.':
+    'Sổ ôn tập đã thay đổi. Làm mới danh sách trước khi chọn thêm câu hỏi.',
+  '{count} of {limit} notebook entries': '{count} / {limit} mục ôn tập',
+  '{count} questions selected': 'Đã chọn {count} câu hỏi',
+  'Study selected questions': 'Ôn các câu đã chọn',
+  'Clear selection': 'Bỏ chọn tất cả',
+  'Loading notebook…': 'Đang tải sổ ôn tập…',
+  'No entries match these filters.': 'Không có mục khớp với các bộ lọc này.',
+  'Your notebook is empty. Add a bookmark, a note or complete a practice answer.':
+    'Sổ ôn tập chưa có mục nào. Hãy đánh dấu, ghi chú hoặc hoàn thành một câu luyện tập.',
+  'Unavailable quiz': 'Quiz không còn khả dụng',
+  'Private quiz': 'Quiz riêng',
+  'Select question {id} from {quiz}': 'Chọn câu {id} trong {quiz}',
+  'Question {id}': 'Câu {id}',
+  Bookmarked: 'Đã đánh dấu',
+  'Note only': 'Chỉ có ghi chú',
+  'Checking source…': 'Đang kiểm tra nguồn…',
+  'Edit notebook entry': 'Sửa mục ôn tập',
+  'Page {number}': 'Trang {number}',
+  'Checking selected sources…': 'Đang kiểm tra các nguồn đã chọn…',
+  'Back to notebook': 'Về sổ ôn tập',
+  '{count} selected questions are unavailable and excluded.':
+    'Đã loại {count} câu đã chọn do nguồn không còn khả dụng.',
+  'Notebook revision': 'Ôn tập từ sổ',
+  'No current questions are available in this selection. Your notes are kept.':
+    'Không có câu hỏi hiện hành trong nhóm đã chọn. Ghi chú của bạn vẫn được giữ.',
+  'Study notebook is not enabled yet.': 'Sổ ôn tập chưa được bật.',
+  'Sign in to use your private study notebook.': 'Đăng nhập để dùng sổ ôn tập riêng.',
+  'Notebook access was denied. Check your account and retry.':
+    'Không có quyền truy cập sổ ôn tập. Kiểm tra tài khoản rồi thử lại.',
+  'Could not reach your notebook. Check your connection and retry.':
+    'Không thể kết nối sổ ôn tập. Kiểm tra kết nối rồi thử lại.',
+  'This entry changed in another tab or device. Your text is kept. Refresh, compare and save again.':
+    'Mục này đã đổi ở tab hoặc thiết bị khác. Nội dung đang nhập được giữ lại. Hãy làm mới, đối chiếu rồi lưu lại.',
+  'Your notebook has reached 500 entries. Remove an entry before adding another.':
+    'Sổ ôn tập đã đạt 500 mục. Xóa một mục trước khi thêm mục mới.',
+  'Shorten the note to 2,000 characters and 8,000 UTF-8 bytes. The entry must fit its storage limit.':
+    'Rút gọn ghi chú còn tối đa 2.000 ký tự và 8.000 byte UTF-8. Mục phải nằm trong giới hạn lưu trữ.',
+  'Tab storage is unavailable. Your text stays here while this page is open.':
+    'Không thể lưu trong tab. Nội dung đang nhập vẫn được giữ khi trang này còn mở.',
+  'The source changed. Your existing notebook entry is kept.':
+    'Nguồn đã thay đổi. Mục ôn tập hiện có của bạn vẫn được giữ.',
+  'This revision selection is not available in this account and tab. Select questions again.':
+    'Nhóm ôn tập không có trong tài khoản và tab này. Hãy chọn lại câu hỏi.',
+  'Notebook data could not be validated. Refresh and retry.':
+    'Không thể xác thực dữ liệu sổ ôn tập. Hãy làm mới rồi thử lại.',
+  'Wait for the pending operation, or resolve its error before saving again.':
+    'Đợi thao tác đang chờ hoặc xử lý lỗi của thao tác đó trước khi lưu lại.',
+  'Ready to study': 'Sẵn sàng ôn tập',
+  'Source unavailable': 'Nguồn không còn khả dụng',
+  'Source changed': 'Nguồn đã thay đổi',
+  'Private quiz replaced': 'Quiz riêng đã được thay thế',
+  'Source could not be checked': 'Chưa kiểm tra được nguồn',
+  'Updating study notebook…': 'Đang cập nhật sổ ôn tập…',
+  'Study notebook synchronized': 'Sổ ôn tập đã đồng bộ',
+  'Some notebook updates are not synchronized. Your answers are kept.':
+    'Một số cập nhật sổ ôn tập chưa đồng bộ. Đáp án của bạn vẫn được giữ.',
+  'Newer notebook changes were preserved. Refresh before retrying.':
+    'Đã giữ các thay đổi mới hơn trong sổ ôn tập. Hãy làm mới trước khi thử lại.',
+  'Tab recovery storage is unavailable. Free space or enable storage, then retry.':
+    'Không thể lưu dữ liệu khôi phục trong tab. Hãy giải phóng dung lượng hoặc bật lưu trữ rồi thử lại.',
+  'Check your connection and access, then retry the original updates.':
+    'Kiểm tra kết nối và quyền truy cập rồi thử lại cập nhật cũ.',
+  'Retry notebook updates': 'Thử đồng bộ sổ ôn tập lại',
+  'Refresh failed notebook updates?': 'Làm mới các cập nhật sổ ôn tập bị lỗi?',
+  'This reads the latest state and may recreate entries you removed. Successful updates are kept.':
+    'Thao tác này đọc trạng thái mới nhất và có thể tạo lại mục bạn đã xóa. Các cập nhật thành công được giữ nguyên.',
+  'Refresh and retry': 'Làm mới và thử lại',
   'Added 75 Professional Agentic Architect (PAA) practice questions, including 7 multiple-answer questions.':
     'Bổ sung 75 câu luyện tập Professional Agentic Architect (PAA), gồm 7 câu nhiều đáp án.',
   'Refresh quizzes': 'Làm mới danh sách quiz',
@@ -269,6 +488,8 @@ export const vi = {
   Upload: 'Tải lên',
   Review: 'Kiểm tra',
   Study: 'Học',
+  'No questions are available for a new mock exam.':
+    'Không có câu hỏi nào phù hợp để bắt đầu bài thi thử mới.',
   'Upload your quiz': 'Tải quiz lên',
   'JSON · 1–100 questions · Max 1 MiB': 'JSON · 1–100 câu · Tối đa 1 MiB',
   'Only in this tab. Keep your JSON file.': 'Dùng trong tab này. Hãy giữ tệp JSON gốc.',
@@ -752,6 +973,10 @@ export const vi = {
 
 export function translate(language, key, params = {}) {
   const singular = {
+    '{count} active filters': '{count} active filter',
+    '{count} questions selected': '{count} question selected',
+    '{count} selected questions are unavailable and excluded.':
+      '{count} selected question is unavailable and excluded.',
     '{count} quiz sets': '{count} quiz set',
     '{count} questions': '{count} question',
     '{count} minutes': '{count} minute',

@@ -1,3 +1,4 @@
+import { headerControl, closeHeaderPanel, headerReturnTarget } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import { accountCases } from './viewports.js';
 import { clickAfterUiMotion, waitForUiMotion } from './uiMotion.js';
@@ -115,7 +116,7 @@ test('auth loading, guest sign-in failure and account changes never retain old P
     signIn.getByRole('button', { name: 'Continue with Google', exact: true })
   );
   await expect(profile(page)).toContainText('alice@example.test');
-  await page.getByRole('button', { name: 'Test account', exact: true }).click();
+  await (await headerControl(page, { name: 'Test account', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('menuitem', { name: 'Sign out', exact: true }));
   await clickAfterUiMotion(
     page
@@ -140,6 +141,7 @@ for (const destination of ['Profile', 'Manage quizzes'])
     const before = await readDraft();
     const trigger = page.getByRole('button', { name: 'Profile learner', exact: true });
     async function enter() {
+      await headerControl(page, { name: 'Profile learner', exact: true });
       await trigger.focus();
       await trigger.press('Enter');
       const item = page.getByRole('menuitem', { name: destination, exact: true });
@@ -149,12 +151,12 @@ for (const destination of ['Profile', 'Manage quizzes'])
     await enter();
     const guard = page.getByRole('dialog').filter({ hasText: 'Leave this exam?' });
     await clickAfterUiMotion(guard.getByRole('button', { name: 'Continue exam', exact: true }));
-    await expect(trigger).toBeFocused();
+    await expect(await headerReturnTarget(page, trigger)).toBeFocused();
     expect(await readDraft()).toEqual(before);
     await enter();
     await clickAfterUiMotion(guard.getByRole('button', { name: 'Leave exam', exact: true }));
     await expect(page).toHaveURL(destination === 'Profile' ? /#\/profile$/ : /#\/my-quizzes$/);
-    await page.getByRole('button', { name: 'Quiz Bank', exact: true }).click();
+    await (await headerControl(page, { name: 'Quiz Bank', exact: true })).click();
     await page.goto('./#/quiz/aws-aip-c01?mode=exam');
     await page.getByRole('button', { name: 'Resume', exact: true }).click();
     expect(await readDraft()).toEqual(before);
@@ -164,12 +166,9 @@ test('public update discovery preserves bank identity, provenance, reload and Ba
   page,
 }) => {
   await page.goto('./#/library');
+  await (await headerControl(page, { name: 'Quiz updates', exact: true })).click();
   await page
-    .locator('.app-header')
-    .getByRole('button', { name: 'Quiz updates', exact: true })
-    .click();
-  await page
-    .getByRole('dialog', { name: 'Quiz updates', exact: true })
+    .locator('.quiz-notification-panel')
     .getByRole('button', { name: 'View all updates', exact: true })
     .click();
   await expect(page.getByRole('heading', { name: 'Quiz updates', exact: true })).toBeVisible();
@@ -242,20 +241,24 @@ test('Profile, dropdown and update pages fit languages, themes and phone-to-land
   await page.goto('./#/profile');
   for (const state of accountCases(info.project.name)) {
     await page.setViewportSize({ width: state.width, height: state.height });
-    await page
-      .getByRole('button', {
+    await (
+      await headerControl(page, {
         name: state.language === 'vi' ? 'Tiếng Việt' : 'English',
         exact: true,
       })
-      .click();
+    ).click();
     if ((await page.locator('html').getAttribute('data-theme')) !== state.theme)
-      await page.locator('.theme-toggle').click();
+      await (
+        await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+      ).click();
     for (const control of await profile(page).locator('button, .ant-radio-button-wrapper').all())
       expect((await control.boundingBox()).height).toBeGreaterThanOrEqual(44);
     expect(
       await contrastRatio(profile(page).locator('.profile-preferences .ant-typography-secondary'))
     ).toBeGreaterThanOrEqual(4.5);
-    await page.locator('.profile-button').click();
+    await (
+      await headerControl(page, { name: /A deliberately long Google profile display name/ })
+    ).click();
     const menu = page.getByRole('menu');
     await waitForUiMotion(menu);
     for (const name of [
@@ -267,6 +270,7 @@ test('Profile, dropdown and update pages fit languages, themes and phone-to-land
       expect(await contrastRatio(item)).toBeGreaterThanOrEqual(4.5);
     }
     await page.keyboard.press('Escape');
+    await closeHeaderPanel(page);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true
     );
