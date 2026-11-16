@@ -95,7 +95,7 @@ export const quizzes = [
     file: 'quiz/Google/GCP-GAL.json',
     category: 'Google Cloud',
     difficulty: 'Foundations',
-    totalQuestions: 151,
+    totalQuestions: 98,
     code: 'GAL',
   },
   {
