@@ -763,6 +763,7 @@
       "D"
     ],
     "id": "55",
+    "retired": true,
     "imageUrl": "",
     "options": {
       "A": "Generate a new key in Cloud Key Management Service (Cloud KMS). Store all data in Cloud Storage using the customer-managed key option and select the created key. Set up a Dataflow pipeline to decrypt the data and to store it in a new BigQuery dataset.",
@@ -1432,6 +1433,7 @@
       "C"
     ],
     "id": "102",
+    "retired": true,
     "imageUrl": "",
     "options": {
       "A": "Change the Target type to DELTA_PER_MINUTE.",
