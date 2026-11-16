@@ -29,6 +29,59 @@ export function questionFingerprint(questions) {
   return 'v2:' + rawQuestionFingerprint(orderObjectKeys(questions));
 }
 
+// Known public-bank revisions, before the PCA and GAL imports. Only append-only
+// changes and newly added retired flags on the existing prefix are compatible.
+const PUBLIC_BANK_DRAFTS = {
+  'gcp-pca': { count: 279, signature: 'v2:1qaq81n:279', legacy: '1qaq81n:279' },
+  'gcp-gal': { count: 56, signature: 'v2:1twiedv:56', legacy: 'xn69jh:56' },
+};
+
+function migratePublicBankDraft(key, saved, questions, mode) {
+  const match = /^quiz-study-v1:([^:]+):(gcp-pca|gcp-gal):(exam|practice)$/.exec(key);
+  if (!match || match[3] !== mode) return null;
+  const revision = PUBLIC_BANK_DRAFTS[match[2]];
+  if (
+    questions.length <= revision.count ||
+    ![revision.signature, revision.legacy].includes(saved.signature)
+  )
+    return null;
+  if (
+    questions
+      .slice(0, revision.count)
+      .some((question) => question.retired !== undefined && typeof question.retired !== 'boolean')
+  )
+    return null;
+  const previous = questions
+    .slice(0, revision.count)
+    .map(({ retired: _retired, ...question }) => question);
+  if (questionFingerprint(previous) !== revision.signature) return null;
+  if (new Set(questions.map((question) => String(question.id))).size !== questions.length)
+    return null;
+  if (mode === 'practice') {
+    if (
+      !Array.isArray(saved.answers) ||
+      saved.answers.length !== revision.count ||
+      saved.index >= revision.count
+    )
+      return null;
+    return {
+      ...saved,
+      signature: questionFingerprint(questions),
+      answers: [...saved.answers, ...questions.slice(revision.count).map(emptyAnswer)],
+    };
+  }
+  if (!Array.isArray(saved.questions)) return null;
+  const originals = new Map(previous.map((question) => [String(question.id), question]));
+  if (
+    !saved.questions.every((question) => {
+      const original = originals.get(String(question.id));
+      return original && questionFingerprint([question]) === questionFingerprint([original]);
+    })
+  )
+    return null;
+  return { ...saved, signature: questionFingerprint(questions) };
+}
+
 function compatibleLegacyCloudDraft(key, saved, questions, mode) {
   // The caller's current cloud key comes from a server-confirmed owner/instance/
   // contentVersion. Rules require a new version for any actual content edit.
@@ -234,7 +287,10 @@ function readStoredStudySession(storage, key, questions, mode) {
     if (!saved || !Number.isInteger(saved.index) || saved.index < 0) return null;
     const signature = questionFingerprint(questions);
     if (saved.signature !== signature) {
+      const migrated = migratePublicBankDraft(key, saved, questions, mode);
+      if (migrated) saved = migrated;
       if (
+        !migrated &&
         saved.signature !== rawQuestionFingerprint(questions) &&
         !compatibleLegacyCloudDraft(key, saved, questions, mode)
       )
