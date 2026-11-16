@@ -37,6 +37,8 @@ test('an all-retired quiz cannot start a new exam, including by direct link', as
   );
   await page.goto('./#/quiz/az-900?mode=exam');
   await expect(page.getByText('No questions are available for a new mock exam.')).toBeVisible();
+  await expect(page.getByText(/null questions|1–0 questions/)).toHaveCount(0);
+  await expect(page.getByRole('combobox', { name: 'Questions' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Start mock exam' })).toBeDisabled();
   await page.goto('./#/quiz/az-900/exam');
   await expect(page.getByText('No questions are available for a new mock exam.')).toBeVisible();
