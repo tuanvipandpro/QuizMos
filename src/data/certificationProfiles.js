@@ -23,6 +23,7 @@ export const CERTIFICATION_SOURCES = Object.freeze({
   gh600Score:
     'https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/gh-600',
   ab100: 'https://learn.microsoft.com/en-us/credentials/certifications/exams/ab-100/',
+  ab730: 'https://learn.microsoft.com/en-us/credentials/certifications/exams/ab-730/',
   ab731: 'https://learn.microsoft.com/en-us/credentials/certifications/exams/ab-731/',
   ai103:
     'https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-apps-and-agents-developer-associate/',
@@ -125,6 +126,11 @@ export const certificationProfiles = Object.freeze([
     ['ab100', 'microsoftFormat', 'microsoftScore'],
     { formats: null }
   ),
+  profile('ab-730', 'AB-730', null, null, 45, scaled(700, 1), ['ab730', 'microsoftScore'], {
+    formats: null,
+    revision: '2026-11-16',
+    reviewedAt: '2026-11-16',
+  }),
   profile('ab-731', 'AB-731', null, null, 45, scaled(700, 1), ['ab731', 'microsoftScore'], {
     formats: null,
     revision: '2026-11-16',

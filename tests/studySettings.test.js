@@ -56,6 +56,8 @@ test('exact and range defaults follow the profile; partial profiles remain expli
   assert.equal(defaultExamSetup('az-900', pool(100)).kind, 'custom');
   assert.equal(defaultExamSetup('az-900', pool(100)).minutes, 45);
   assert.equal(defaultExamSetup('ab-100', pool(100)).minutes, 60);
+  assert.equal(defaultExamSetup('ab-730', pool(100)).kind, 'custom');
+  assert.equal(defaultExamSetup('ab-730', pool(100)).minutes, 45);
   assert.equal(defaultExamSetup('ab-731', pool(100)).kind, 'custom');
   assert.equal(defaultExamSetup('ab-731', pool(100)).minutes, 45);
   assert.equal(defaultExamSetup('custom', []).count, null);

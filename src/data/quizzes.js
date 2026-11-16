@@ -135,6 +135,15 @@ export const quizzes = [
     code: 'AB-100',
   },
   {
+    id: 'ab-730',
+    name: 'Microsoft AI Business Professional (AB-730)',
+    file: 'quiz/Azure/AB-730.json',
+    category: 'Microsoft',
+    difficulty: 'Beginner',
+    totalQuestions: 92,
+    code: 'AB-730',
+  },
+  {
     id: 'ab-731',
     name: 'Microsoft AI Transformation Leader (AB-731)',
     file: 'quiz/Azure/AB-731.json',
