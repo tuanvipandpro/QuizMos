@@ -1,3 +1,4 @@
+import { headerControl, expectHeaderAccount } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import {
   createNotebookReference,
@@ -130,7 +131,7 @@ test('Practice tools keep bookmark/note separate from checkpoints; a note surviv
     )
   ).toEqual({});
   await closeEditor(page);
-  await page.getByRole('button', { name: account.displayName, exact: true }).click();
+  await (await headerControl(page, { name: account.displayName, exact: true })).click();
   await page.getByRole('menuitem', { name: 'Study notebook', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Study notebook', exact: true })).toBeVisible();
   await expect(page.locator('.notebook-note-text')).toHaveText(
@@ -308,7 +309,7 @@ test('disabled/guest access makes no notebook IO; active Exam guards the account
     (uid) => JSON.parse(sessionStorage.getItem(`quiz-study-v1:${uid}:aws-aip-c01:exam`)),
     uid
   );
-  await page.getByRole('button', { name: account.displayName, exact: true }).click();
+  await (await headerControl(page, { name: account.displayName, exact: true })).click();
   await page.getByRole('menuitem', { name: 'Study notebook', exact: true }).click();
   await page
     .getByRole('dialog')
@@ -478,7 +479,7 @@ test('a late owner write cannot leak notes into the next account, and the origin
     sessionStorage.removeItem('quiz-e2e-notebook-defer:mutate');
     window.dispatchEvent(new Event('quiz-e2e-notebook-release:mutate'));
   }, bob);
-  await expect(page.getByRole('button', { name: bob.displayName, exact: true })).toBeVisible();
+  await expectHeaderAccount(page, bob.displayName);
   await expect(
     page.getByText(
       'Your notebook is empty. Add a bookmark, a note or complete a practice answer.',

@@ -61,6 +61,10 @@ export const vi = {
     'Bank này vẫn là DVA-C02. Ngày thi cuối được công bố là 30/11/2026.',
   'The bank syllabus version is unverified. CT-AI v1 and v2 have different point thresholds.':
     'Chưa xác minh phiên bản syllabus của bank. CT-AI v1 và v2 có ngưỡng điểm khác nhau.',
+  Home: 'Trang chủ',
+  'Navigation and preferences': 'Điều hướng và tùy chọn',
+  Navigate: 'Điều hướng',
+  Menu: 'Menu',
   'Notebook sync for this result has not been confirmed. Use Refresh and retry to capture it explicitly.':
     'Chưa có xác nhận đồng bộ sổ ôn tập cho kết quả này. Chọn Làm mới và thử lại nếu bạn muốn đồng bộ kết quả.',
   'This question reference is too large for notebook storage. You can continue studying it.':

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { headerControl, expectHeaderAccount, waitForHeaderPanelClosed } from './headerControls.js';
 import fs from 'node:fs';
 import { accountCases } from './viewports.js';
 import { translate } from '../../src/i18n/messages.js';
@@ -74,15 +75,19 @@ for (const item of accountCases('phone').concat(accountCases('desktop'))) {
     }, item);
     await page.goto('./#/quiz/aws-aip-c01?mode=exam');
     // Set through the real utility controls so preference key changes cannot mask a locale/theme error.
-    await page
-      .getByRole('button', { name: item.language === 'vi' ? 'Tiếng Việt' : 'English', exact: true })
-      .click();
+    await (
+      await headerControl(page, {
+        name: item.language === 'vi' ? 'Tiếng Việt' : 'English',
+        exact: true,
+      })
+    ).click();
     const t = (key, params) => translate(item.language, key, params);
-    const theme = page.getByRole('button', {
+    const theme = await headerControl(page, {
       name: t(item.theme === 'dark' ? 'Switch to dark mode' : 'Switch to light mode'),
       exact: true,
     });
     if (await theme.count()) await theme.click();
+    await waitForHeaderPanelClosed(page);
     await expect(page.locator('#study-count')).toHaveValue('75');
     await expect(page.locator('#study-time')).toHaveValue('180');
     await expect(page.locator('#study-time')).toHaveAttribute('readonly', '');
@@ -304,10 +309,10 @@ test('private short Practice keeps the source version/checkpoint and clears only
   const question = example('single'),
     questions = Array.from({ length: 25 }, (_, id) => ({ ...question, id: String(id) }));
   await page.goto('./');
-  await page.getByRole('banner').getByRole('button', { name: 'Sign in', exact: true }).click();
+  await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   await page.getByRole('button', { name: 'Continue with Google', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Test account', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'My quizzes', exact: true }).click();
+  await expectHeaderAccount(page, 'Test account');
+  await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
   await page.locator('input[type=file]').setInputFiles({
     name: 'private-short.json',
     mimeType: 'application/json',
@@ -347,10 +352,10 @@ test('private short Practice keeps the source version/checkpoint and clears only
   await page.reload();
   await expect(page.locator('.study-position')).toContainText('Question 1 of 10');
   expect(await records()).toEqual(before);
-  await page.getByRole('button', { name: 'Test account', exact: true }).click();
+  await (await headerControl(page, { name: 'Test account', exact: true })).click();
   await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Sign out', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
+  await expectHeaderAccount(page, 'Sign in');
   expect(
     await page.evaluate(() =>
       Object.keys(sessionStorage).filter((k) => k.startsWith('quiz-study-v1:test-alice:'))
