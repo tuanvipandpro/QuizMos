@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   createExamSession,
+  examEligibleQuestions,
   examStats,
   finishExam,
   initialStudySession,
@@ -49,6 +50,32 @@ const storage = () => {
   });
   return values;
 };
+
+test('new exams exclude retired questions without changing practice or compatible drafts', () => {
+  const bank = [questions[0], { ...questions[1], retired: true }, questions[2]];
+  assert.deepEqual(
+    examEligibleQuestions(bank).map((q) => q.id),
+    ['one', 'three']
+  );
+  for (const random of [() => 0, () => 0.99]) {
+    const exam = createExamSession(bank, 50, 60, { random, idFactory: () => 'attempt' });
+    assert.equal(exam.questions.length, 2);
+    assert.ok(exam.questions.every((q) => q.retired !== true));
+    assert.equal(exam.signature, questionFingerprint(bank));
+  }
+  assert.equal(bank.length, 3);
+  assert.throws(() => createExamSession([{ ...questions[0], retired: true }], 1, 60), /eligible/);
+  assert.throws(() => createExamSession(bank, 1, 60, { selectionQuestions: [bank[1]] }), {
+    code: 'SESSION_INVALID_POOL',
+  });
+  const store = storage();
+  const key = sessionKey('alice', 'bank', 'exam');
+  const draft = createExamSession(bank, 2, 60, { idFactory: () => 'attempt' });
+  draft.questions = [bank[1]];
+  draft.answers = [['A', 'C']];
+  store.setItem(key, JSON.stringify(draft));
+  assert.deepEqual(readStudySession(store, key, bank, 'exam'), draft);
+});
 
 test('Google ACE restores a legacy practice draft within the same account and preserves existing canonical answers', () => {
   const store = storage();

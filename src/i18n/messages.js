@@ -47,6 +47,8 @@ export const vi = {
     'Giới hạn bài luyện: 1–{count} câu và 1–{minutes} phút.',
   '{count} eligible; {excluded} excluded because answers or certification formats are incompatible.':
     '{count} câu hợp lệ; loại {excluded} câu do đáp án hoặc dạng câu không tương thích.',
+  '{count} eligible; {excluded} excluded because questions are retired or incompatible.':
+    '{count} câu hợp lệ; loại {excluded} câu đã ngừng sử dụng hoặc không tương thích.',
   'Learning mode is custom training with feedback, even when it uses the certification count and time.':
     'Chế độ Học là luyện tập tùy chỉnh có phản hồi, kể cả khi dùng số câu và thời gian của chứng chỉ.',
   'QuizMos benchmark met': 'Đạt mốc luyện tập QuizMos',
@@ -486,6 +488,8 @@ export const vi = {
   Upload: 'Tải lên',
   Review: 'Kiểm tra',
   Study: 'Học',
+  'No questions are available for a new mock exam.':
+    'Không có câu hỏi nào phù hợp để bắt đầu bài thi thử mới.',
   'Upload your quiz': 'Tải quiz lên',
   'JSON · 1–100 questions · Max 1 MiB': 'JSON · 1–100 câu · Tối đa 1 MiB',
   'Only in this tab. Keep your JSON file.': 'Dùng trong tab này. Hãy giữ tệp JSON gốc.',
