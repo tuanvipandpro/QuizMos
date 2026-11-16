@@ -148,6 +148,9 @@ test('ranged, insufficient, unknown and retiring profiles keep training explicit
   await page.goto('./#/quiz/gcp-gal?mode=exam');
   await expect(page.locator('#study-count')).toHaveValue('50');
   await page.locator('#study-count').fill('60');
+  await expect(page.locator('#study-settings-error')).toBeEmpty();
+  await page.getByRole('radio', { name: 'Custom timed training', exact: true }).check();
+  await page.locator('#study-count').fill('99');
   await expect(page.locator('#study-settings-error')).toContainText('Not enough eligible');
   await expect(page.getByRole('button', { name: 'Start mock exam', exact: true })).toBeDisabled();
   await page.goto('./#/quiz/istqb-ctal-ta-v4-0?mode=exam');
