@@ -65,6 +65,9 @@ test('new exams exclude retired questions without changing practice or compatibl
   }
   assert.equal(bank.length, 3);
   assert.throws(() => createExamSession([{ ...questions[0], retired: true }], 1, 60), /eligible/);
+  assert.throws(() => createExamSession(bank, 1, 60, { selectionQuestions: [bank[1]] }), {
+    code: 'SESSION_INVALID_POOL',
+  });
   const store = storage();
   const key = sessionKey('alice', 'bank', 'exam');
   const draft = createExamSession(bank, 2, 60, { idFactory: () => 'attempt' });

@@ -22,10 +22,10 @@ test('retired questions remain in practice and are excluded from new mock exams'
   await page.route('**/quiz/Azure/AZ-900.json*', (route) =>
     route.fulfill({ json: [question('active'), question('retired', true)] })
   );
-  await page.goto('./#/quiz/az-900/practice?question=retired');
+  await page.goto('./#/quiz/az-900/practice?question=retired', { waitUntil: 'domcontentloaded' });
   await expect(page.getByRole('heading', { name: 'Question retired' })).toBeVisible();
   await page.goto('./#/quiz/az-900?mode=exam');
-  await expect(page.getByText('1 question', { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole('combobox', { name: 'Questions' })).toHaveValue('1');
   await page.getByRole('button', { name: 'Start mock exam' }).click();
   await expect(page.getByRole('heading', { name: 'Question active' })).toBeVisible();
   await expect(page.getByText('Question 1 of 1')).toBeVisible();

@@ -1,3 +1,4 @@
+import { headerControl, waitForHeaderPanelClosed } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { createExamSession } from '../../src/utils/studySession.js';
@@ -36,11 +37,17 @@ test('PAA catalog/search aliases and actions fit the existing locale/theme/viewp
     await page.emulateMedia({
       reducedMotion: [390, 1280].includes(view.width) ? 'no-preference' : 'reduce',
     });
-    await page
-      .getByRole('button', { name: view.language === 'vi' ? 'Tiếng Việt' : 'English', exact: true })
-      .click();
+    await (
+      await headerControl(page, {
+        name: view.language === 'vi' ? 'Tiếng Việt' : 'English',
+        exact: true,
+      })
+    ).click();
     if ((await page.locator('html').getAttribute('data-theme')) !== view.theme)
-      await page.locator('.theme-toggle').click();
+      await (
+        await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+      ).click();
+    await waitForHeaderPanelClosed(page);
     const t = (k) => translate(view.language, k);
     const search = page.getByRole('textbox', { name: t('Find a certification'), exact: true });
     for (const query of ['GCP-PAA', 'GCP_PAA', 'Professional Agentic Architect']) {
@@ -217,7 +224,9 @@ test('a cancelled late PAA response cannot replace the library after navigation'
   });
   await page.goto('./#/quiz/gcp-paa/practice');
   await expect.poll(() => !!release).toBe(true);
-  await page.locator('.app-nav').getByRole('button', { name: 'Quiz Bank', exact: true }).click();
+  await (
+    await headerControl(page, { name: 'Quiz Bank', exact: true }, page.locator('.app-nav'))
+  ).click();
   await expect(page.getByRole('heading', { name: 'Quiz Bank', exact: true })).toBeVisible();
   release();
   await finished;
@@ -237,11 +246,16 @@ test('long PAA options and included references remain readable in the full UI ma
     await page.emulateMedia({
       reducedMotion: [390, 1280].includes(view.width) ? 'no-preference' : 'reduce',
     });
-    await page
-      .getByRole('button', { name: view.language === 'vi' ? 'Tiếng Việt' : 'English', exact: true })
-      .click();
+    await (
+      await headerControl(page, {
+        name: view.language === 'vi' ? 'Tiếng Việt' : 'English',
+        exact: true,
+      })
+    ).click();
     if ((await page.locator('html').getAttribute('data-theme')) !== view.theme)
-      await page.locator('.theme-toggle').click();
+      await (
+        await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+      ).click();
     const t = (k) => translate(view.language, k);
     await expect(page.locator('.question-title')).toContainText('healthcare organization');
     for (const option of await page.locator('.question-option').all()) {

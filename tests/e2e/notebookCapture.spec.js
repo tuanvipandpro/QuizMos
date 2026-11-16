@@ -117,7 +117,7 @@ test('terminal Exam capture preserves score/flags/deadline and StrictMode/reload
   context,
 }) => {
   await init(page, context, { strict: true });
-  await page.goto('./#/quiz/aws-aip-c01/exam?feedback=standard');
+  await page.goto('./#/quiz/aws-aip-c01/exam?feedback=standard&count=1&time=60');
   await expect(page.locator('.question-title')).toBeVisible();
   await page.getByRole('radio', { name: 'Wrong option', exact: true }).check();
   await page.getByRole('button', { name: 'Flag', exact: true }).click();
@@ -268,7 +268,7 @@ test('Learning expiry captures at the absolute deadline, while reopening an old 
 }) => {
   await init(page, context, { strict: true });
   await page.clock.install();
-  await page.goto('./#/quiz/aws-aip-c01/exam?feedback=learning');
+  await page.goto('./#/quiz/aws-aip-c01/exam?feedback=learning&count=1&time=60');
   await page.getByRole('radio', { name: 'Wrong option', exact: true }).check();
   const before = await draft(page, 'exam');
   await page.clock.fastForward(60 * 60 * 1000 + 1000);
@@ -298,7 +298,7 @@ test('an eligible restored result with no journal never recreates a deleted entr
   context,
 }) => {
   await init(page, context);
-  await page.goto('./#/quiz/aws-aip-c01/exam');
+  await page.goto('./#/quiz/aws-aip-c01/exam?count=1&time=60');
   await page.getByRole('radio', { name: 'Wrong option', exact: true }).check();
   await page.getByRole('button', { name: 'Submit exam', exact: true }).click();
   await page
@@ -319,7 +319,7 @@ test('an eligible restored result with no journal never recreates a deleted entr
     ({ uid, id }) => sessionStorage.removeItem(`quiz-notebook-capture-v1:${uid}:${id}`),
     { uid, id: before.notebook.sessionId }
   );
-  await page.goto('./#/quiz/aws-aip-c01/exam');
+  await page.goto('./#/quiz/aws-aip-c01/exam?count=1&time=60');
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Exam results', exact: true })).toBeVisible();
   await expect(
