@@ -5,8 +5,12 @@ import { useNotebookRevision } from '../hooks/useNotebookSources';
 import { notebookMessage, NOTEBOOK_SOURCE_LABELS } from '../data/studyNotebookMessages.js';
 import StudyNotebookPage from './StudyNotebookPage';
 import PracticeMode from './PracticeMode';
+import QuickPracticeMode from './QuickPracticeMode';
+import PracticeSizeSelect from './PracticeSizeSelect';
+import StudySetupError from './StudySetupError';
+import { eligibleStudyPool, practiceSize } from '../utils/studySettings';
 
-function Revision({ notebook, selectionId, onNavigate, progressState, onSignIn }) {
+function Revision({ notebook, selectionId, params, onNavigate, progressState, onSignIn }) {
   const { t } = useLanguage();
   const state = useNotebookRevision(notebook.uid, selectionId, notebook.enabled);
   const back = () => onNavigate('#/notebook');
@@ -27,8 +31,36 @@ function Revision({ notebook, selectionId, onNavigate, progressState, onSignIn }
         </Space>
       </div>
     );
+  let size;
+  try {
+    size = practiceSize(params.get('size'));
+  } catch (error) {
+    return <StudySetupError error={error} onExit={back} exitLabel="Back to notebook" />;
+  }
+  const identities = state.pool.current.map((item) => item.entryKey);
+  const eligible = eligibleStudyPool(state.pool.questions, { identities }).items.length;
+  const studyUrl = (next, fresh = null) =>
+    `#/notebook/study/${selectionId}` +
+    (next === 'all' ? '' : `?size=${next}${fresh ? `&fresh=${fresh}` : ''}`);
+  const Practice = size === 'all' ? PracticeMode : QuickPracticeMode;
   return (
     <>
+      <div className="practice-size-picker">
+        <PracticeSizeSelect
+          id="notebook-practice-size"
+          value={size}
+          onChange={(value) => onNavigate(studyUrl(value))}
+        />
+        <Typography.Paragraph type="secondary">
+          {t(
+            '{count} questions available for short Practice. Notes and full-bank sessions are kept.',
+            { count: eligible }
+          )}
+        </Typography.Paragraph>
+        <Typography.Paragraph type="secondary">
+          {t('Notebook revision is untimed Practice. Each question keeps its original source.')}
+        </Typography.Paragraph>
+      </div>
       {!!state.pool.excluded.length && (
         <Alert
           type="warning"
@@ -50,8 +82,12 @@ function Revision({ notebook, selectionId, onNavigate, progressState, onSignIn }
         />
       )}
       {state.pool.current.length ? (
-        <PracticeMode
-          key={`${notebook.uid}:${selectionId}`}
+        <Practice
+          key={`${notebook.uid}:${selectionId}:${size}:${params.get('fresh') || ''}`}
+          size={size}
+          questionIdentities={identities}
+          fresh={size === 'all' ? null : params.get('fresh')}
+          onRestart={() => onNavigate(studyUrl(size, String(Date.now())))}
           questions={state.pool.questions}
           quizId={null}
           sessionId={state.selection.sessionId}
@@ -83,6 +119,7 @@ export default function StudyNotebookWorkspace({
   notebook,
   authLoading,
   selectionId,
+  params = new URLSearchParams(),
   onNavigate,
   onSignIn,
   progressState,
@@ -112,7 +149,7 @@ export default function StudyNotebookWorkspace({
       </div>
     );
   return selectionId ? (
-    <Revision {...{ notebook, selectionId, onNavigate, onSignIn, progressState }} />
+    <Revision {...{ notebook, selectionId, params, onNavigate, onSignIn, progressState }} />
   ) : (
     <StudyNotebookPage notebook={notebook} onNavigate={onNavigate} />
   );

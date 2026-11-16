@@ -63,6 +63,7 @@
     "antd": "^5.27.0",
     "firebase": "^12.6.0",
     "jose": "6.2.14",
+    "pdfmake": "0.2.23",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-markdown": "^10.1.0",
