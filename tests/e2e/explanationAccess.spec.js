@@ -1,5 +1,6 @@
 import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
+import { expectHeaderAccount } from './headerControls.js';
 import { accountCases } from './viewports.js';
 import { clickAfterUiMotion } from './uiMotion.js';
 import { contrastRatio } from './uiContrast.js';
@@ -57,10 +58,7 @@ for (const signedIn of [false, true]) {
     });
     await page.goto('./#/quiz/anthropic-ccar-p/practice');
     await expect(page.locator('.question-title')).toBeVisible();
-    if (signedIn)
-      await expect(
-        page.getByRole('button', { name: 'Reference reader', exact: true })
-      ).toBeVisible();
+    if (signedIn) await expectHeaderAccount(page, 'Reference reader');
     const before = await page.evaluate(() => ({ ...window.explanationIO }));
     const beforeRequests = requests.length;
     const explain = page.getByRole('button', { name: 'Explain', exact: true });
