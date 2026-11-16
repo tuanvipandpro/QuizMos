@@ -193,3 +193,8 @@
     margin-bottom: 8px;
   }
 }
+
+.history-attempt .ant-tag,
+.history-score .ant-tag {
+  white-space: normal;
+}

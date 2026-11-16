@@ -73,6 +73,11 @@ export default function ArchivedExamReview({
           {t('Delete archive')}
         </Button>
       </div>
+      <Paragraph type="secondary">
+        {t(
+          'QuizMos study benchmark: more than 80% raw accuracy. This is not an official certification result.'
+        )}
+      </Paragraph>
       <Card className="history-score">
         <div>
           <Text type="secondary">{t('Archived score')}</Text>
@@ -80,7 +85,7 @@ export default function ArchivedExamReview({
             {summary.correct} / {summary.questionCount} · {score}%
           </Title>
           <Tag color={summary.passed ? 'success' : 'default'}>
-            {t(summary.passed ? 'Pass' : 'Not passed')}
+            {t(summary.passed ? 'QuizMos benchmark met' : 'QuizMos benchmark not met')}
           </Tag>
         </div>
         <dl>

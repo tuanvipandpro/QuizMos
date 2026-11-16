@@ -204,7 +204,9 @@ export default function ExamHistoryPage({
                           </div>
                           <Tag color={summary.passed ? 'success' : 'default'}>
                             {summary.correct}/{summary.questionCount} ·{' '}
-                            {t(summary.passed ? 'Pass' : 'Not passed')}
+                            {t(
+                              summary.passed ? 'QuizMos benchmark met' : 'QuizMos benchmark not met'
+                            )}
                           </Tag>
                         </div>
                         <Paragraph type="secondary">

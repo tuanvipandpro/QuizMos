@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Card, Radio, Select, Typography } from 'antd';
+import { Alert, Button, Card, Radio, Typography } from 'antd';
 import { PlayCircleOutlined, FormOutlined, ReadOutlined } from '@ant-design/icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { EXAM_FEEDBACK_MODES, getExamFeedbackMode } from '../data/examModes';
+
+import { useExamSetup } from '../hooks/useExamSetup';
+import PracticeSizeSelect from './PracticeSizeSelect';
+import ExamSettingsFields from './ExamSettingsFields';
+import { eligibleStudyPool } from '../utils/studySettings';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -10,6 +15,8 @@ export default function QuizMode({
   onSelectMode,
   onModeChange,
   totalQuestions,
+  quizId,
+  questions,
   quickSummary = null,
   initialMode = 'practice',
   hasExamDraft = false,
@@ -21,13 +28,12 @@ export default function QuizMode({
   useEffect(() => {
     setSelectedMode(initialMode === 'summary' && !quickSummary ? 'practice' : initialMode);
   }, [initialMode, quickSummary]);
-  const [time, setTime] = useState(60);
-  const [count, setCount] = useState(Math.min(50, totalQuestions));
-  const [feedbackMode, setFeedbackMode] = useState(() => getExamFeedbackMode().id);
-  const counts =
-    totalQuestions < 50
-      ? [totalQuestions]
-      : [50, 60, 70, 80].filter((value) => value <= totalQuestions);
+  const exam = useExamSetup(quizId, questions);
+  const { count, minutes: time, kind, feedbackMode } = exam.setup;
+  const [size, setSize] = useState('all');
+  const practicePool = eligibleStudyPool(questions);
+  const eligibleCount = practicePool.items.length;
+  const practiceInvalid = size !== 'all' && size > eligibleCount;
   const modes = [
     {
       id: 'practice',
@@ -75,34 +81,34 @@ export default function QuizMode({
           </Radio.Button>
         ))}
       </Radio.Group>
+      {selectedMode === 'practice' && (
+        <div className="practice-size-picker">
+          <PracticeSizeSelect value={size} onChange={setSize} />
+          <Paragraph type="secondary">
+            {t(
+              'Short Practice is random, untimed and saved separately from full-bank answers and checkpoints.'
+            )}
+          </Paragraph>
+          {size !== 'all' && (
+            <Paragraph type="secondary">
+              {t(
+                '{count} eligible; {excluded} excluded because answers or certification formats are incompatible.',
+                { count: eligibleCount, excluded: practicePool.excluded.length }
+              )}
+            </Paragraph>
+          )}
+          {practiceInvalid && (
+            <Alert
+              type="warning"
+              showIcon
+              message={t('Not enough eligible questions. Choose a smaller training session.')}
+            />
+          )}
+        </div>
+      )}
       {selectedMode === 'exam' && (
         <>
-          <div className="quiz-exam-fields">
-            <label>
-              {t('Questions')}
-              <Select
-                aria-label={t('Questions')}
-                value={count}
-                onChange={setCount}
-                options={counts.map((value) => ({
-                  value,
-                  label: t('{count} questions', { count: value }),
-                }))}
-              />
-            </label>
-            <label>
-              {t('Time limit')}
-              <Select
-                aria-label={t('Time limit')}
-                value={time}
-                onChange={setTime}
-                options={[60, 120].map((value) => ({
-                  value,
-                  label: t('{count} minutes', { count: value }),
-                }))}
-              />
-            </label>
-          </div>
+          <ExamSettingsFields state={exam} />
           <fieldset
             className="exam-feedback-picker"
             role="radiogroup"
@@ -122,7 +128,7 @@ export default function QuizMode({
                     name="exam-feedback"
                     value={mode.id}
                     checked={feedbackMode === mode.id}
-                    onChange={() => setFeedbackMode(mode.id)}
+                    onChange={() => exam.change('feedbackMode', mode.id)}
                     aria-labelledby={`exam-feedback-${mode.id}-label`}
                     aria-describedby={`exam-feedback-${mode.id}-hint`}
                   />
@@ -153,12 +159,23 @@ export default function QuizMode({
         <Text type="secondary">
           {selectedMode === 'exam'
             ? t('{count} questions', { count }) + ' · ' + t('{count} minutes', { count: time })
-            : t('{count} questions', { count: totalQuestions })}
+            : t('{count} questions', {
+                count: selectedMode === 'practice' && size !== 'all' ? size : totalQuestions,
+              })}
         </Text>
         <div className="quiz-action-group">
+          {selectedMode === 'practice' && size !== 'all' && (
+            <Button
+              disabled={practiceInvalid}
+              onClick={() => onSelectMode('practice', { size, fresh: true })}
+            >
+              {t('Start a new practice session')}
+            </Button>
+          )}
           {selectedMode === 'exam' && hasExamDraft && (
             <Button
-              onClick={() => onSelectMode('exam', { time, count, feedbackMode, fresh: true })}
+              disabled={!!exam.error}
+              onClick={() => onSelectMode('exam', { time, count, kind, feedbackMode, fresh: true })}
             >
               {t('Start a new exam')}
             </Button>
@@ -166,7 +183,12 @@ export default function QuizMode({
           <Button
             type="primary"
             size="large"
-            onClick={() => onSelectMode(selectedMode, { time, count, feedbackMode })}
+            disabled={
+              selectedMode === 'exam'
+                ? !hasExamDraft && !!exam.error
+                : selectedMode === 'practice' && practiceInvalid
+            }
+            onClick={() => onSelectMode(selectedMode, { time, count, kind, feedbackMode, size })}
           >
             {t(
               selectedMode === 'summary'

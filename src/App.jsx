@@ -56,7 +56,8 @@ const { Title, Text } = Typography;
 const UPLOAD_KEY = 'quiz-tab-upload-v1';
 const QuizPdfExport = lazy(() => import('./components/QuizPdfExport'));
 const PracticeMode = lazy(() => import('./components/PracticeMode'));
-const ExamMode = lazy(() => import('./components/ExamMode'));
+const ExamMode = lazy(() => import('./components/ConfiguredExam'));
+const QuickPracticeMode = lazy(() => import('./components/QuickPracticeMode'));
 const QuickSummaryMode = lazy(() => import('./components/QuickSummaryMode'));
 const SettingsModal = lazy(() => import('./components/SettingsModal'));
 const ExamHistoryPage = lazy(() => import('./components/ExamHistoryPage'));
@@ -365,13 +366,14 @@ export default function App() {
     }
   }
   const hasExamDraft = !!examDraft && !examDraft.submitted;
-  const selectMode = (mode, { time, count, feedbackMode, fresh = false }) => {
+  const selectMode = (mode, { time, count, kind, size = 'all', feedbackMode, fresh = false }) => {
     const start = () =>
       go(
         activeQuizUrl(
           mode,
           mode === 'exam'
             ? {
+                format: kind,
                 time: String(time),
                 count: String(count),
                 feedback: getExamFeedbackMode(
@@ -379,7 +381,9 @@ export default function App() {
                 ).id,
                 ...(fresh || !hasExamDraft ? { fresh: String(Date.now()) } : {}),
               }
-            : {}
+            : mode === 'practice' && size !== 'all'
+              ? { size: String(size), ...(fresh ? { fresh: String(Date.now()) } : {}) }
+              : {}
         )
       );
     if (mode === 'exam' && fresh && hasExamDraft)
@@ -387,6 +391,14 @@ export default function App() {
         title: t('Start a new exam?'),
         content: t('This replaces the draft in this tab.'),
         okText: t('Start mock exam'),
+        cancelText: t('Cancel'),
+        onOk: start,
+      });
+    else if (mode === 'practice' && fresh && size !== 'all')
+      modal.confirm({
+        title: t('Reset this practice session?'),
+        content: t('Your cloud checkpoint is kept.'),
+        okText: t('Start practice'),
         cancelText: t('Cancel'),
         onOk: start,
       });
@@ -452,6 +464,7 @@ export default function App() {
         notebook={notebook}
         authLoading={authLoading}
         selectionId={route.selectionId}
+        params={route.params}
         onNavigate={go}
         onSignIn={openLogin}
         progressState={progressState}
@@ -583,9 +596,19 @@ export default function App() {
       route.params.get('resume') === '1'
         ? resolveCheckpoint(active.questions, studyProgress.progress[active.id])
         : null;
+    const Practice =
+      route.params.has('size') && route.params.get('size') !== 'all'
+        ? QuickPracticeMode
+        : PracticeMode;
     screen = (
-      <PracticeMode
-        key={`${studyId}:${uid || 'guest'}:${route.params.get('fresh') || ''}:${questionId || ''}:${route.params.get('entry') || ''}`}
+      <Practice
+        size={route.params.get('size')}
+        onRestart={() =>
+          go(
+            activeQuizUrl('practice', { size: route.params.get('size'), fresh: String(Date.now()) })
+          )
+        }
+        key={`${studyId}:${uid || 'guest'}:${route.params.get('size') || 'all'}:${route.params.get('fresh') || ''}:${questionId || ''}:${route.params.get('entry') || ''}`}
         questions={active.questions}
         quizId={active.id === 'custom' ? null : active.id}
         sourceQuiz={active}
@@ -615,13 +638,9 @@ export default function App() {
         sourceQuiz={active}
         notebook={notebook}
         quizName={active.name}
-        examTimeMinutes={Number(route.params.get('time')) === 120 ? 120 : 60}
+        params={route.params}
+        profileId={active.id}
         feedbackMode={route.params.get('feedback')}
-        examQuestionCount={
-          [50, 60, 70, 80].includes(Number(route.params.get('count')))
-            ? Number(route.params.get('count'))
-            : Math.min(50, active.questions.length)
-        }
         fresh={route.params.get('fresh')}
         onRunningChange={setExamActive}
         historySource={examHistorySource(active, uid)}
@@ -682,6 +701,8 @@ export default function App() {
           onSelectMode={selectMode}
           onModeChange={(mode) => replace(activeQuizUrl('overview', { mode }))}
           totalQuestions={active.questions.length}
+          questions={active.questions}
+          quizId={active.id}
           quickSummary={guide}
           initialMode={
             ['exam', 'summary'].includes(route.params.get('mode'))

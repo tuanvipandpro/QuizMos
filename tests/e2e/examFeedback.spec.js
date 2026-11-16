@@ -274,7 +274,7 @@ test('Learning exam remains usable and reports unavailable draft storage', async
     page.getByText('Draft storage is unavailable in this browser.', { exact: true })
   ).toBeVisible();
   await page.getByRole('button', { name: 'Next question', exact: true }).click();
-  await expect(page.getByText('Question 2 of 50', { exact: true })).toBeVisible();
+  await expect(page.getByText('Question 2 of 75', { exact: true })).toBeVisible();
   expect(await readDraft(page, 'aws-aip-c01')).toBeNull();
 });
 
