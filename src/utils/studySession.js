@@ -67,6 +67,8 @@ export function sessionKey(uid, quizId, mode) {
   return `${SESSION_PREFIX}${uid || 'guest'}:${canonicalQuizId(quizId)}:${mode}`;
 }
 
+export const examEligibleQuestions = (questions) => questions.filter((q) => q.retired !== true);
+
 export function createExamSession(
   questions,
   count,
@@ -81,15 +83,15 @@ export function createExamSession(
     historySource = null,
   } = {}
 ) {
-  if (!questions.length) throw new Error('An exam needs at least one question.');
-  const pool = [...questions];
+  const pool = examEligibleQuestions(questions);
+  if (!pool.length) throw new Error('An exam needs at least one eligible question.');
   for (let index = pool.length - 1; index > 0; index--) {
     const other = Math.floor(random() * (index + 1));
     [pool[index], pool[other]] = [pool[other], pool[index]];
   }
   const size = Number.isInteger(count) && count > 0 ? count : 50;
   const selected = pool
-    .slice(0, Math.min(size, questions.length))
+    .slice(0, Math.min(size, pool.length))
     .map((question) => shuffleQuestionOptions(question, random));
   return {
     attemptId: idFactory(),

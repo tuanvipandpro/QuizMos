@@ -10,6 +10,7 @@ export default function QuizMode({
   onSelectMode,
   onModeChange,
   totalQuestions,
+  examEligibleCount = totalQuestions,
   quickSummary = null,
   initialMode = 'practice',
   hasExamDraft = false,
@@ -22,12 +23,14 @@ export default function QuizMode({
     setSelectedMode(initialMode === 'summary' && !quickSummary ? 'practice' : initialMode);
   }, [initialMode, quickSummary]);
   const [time, setTime] = useState(60);
-  const [count, setCount] = useState(Math.min(50, totalQuestions));
+  const [count, setCount] = useState(Math.min(50, examEligibleCount));
   const [feedbackMode, setFeedbackMode] = useState(() => getExamFeedbackMode().id);
   const counts =
-    totalQuestions < 50
-      ? [totalQuestions]
-      : [50, 60, 70, 80].filter((value) => value <= totalQuestions);
+    examEligibleCount < 50
+      ? examEligibleCount
+        ? [examEligibleCount]
+        : []
+      : [50, 60, 70, 80].filter((value) => value <= examEligibleCount);
   const modes = [
     {
       id: 'practice',
@@ -77,32 +80,41 @@ export default function QuizMode({
       </Radio.Group>
       {selectedMode === 'exam' && (
         <>
-          <div className="quiz-exam-fields">
-            <label>
-              {t('Questions')}
-              <Select
-                aria-label={t('Questions')}
-                value={count}
-                onChange={setCount}
-                options={counts.map((value) => ({
-                  value,
-                  label: t('{count} questions', { count: value }),
-                }))}
-              />
-            </label>
-            <label>
-              {t('Time limit')}
-              <Select
-                aria-label={t('Time limit')}
-                value={time}
-                onChange={setTime}
-                options={[60, 120].map((value) => ({
-                  value,
-                  label: t('{count} minutes', { count: value }),
-                }))}
-              />
-            </label>
-          </div>
+          {!examEligibleCount && (
+            <Alert
+              type="info"
+              showIcon
+              message={t('No questions are available for a new mock exam.')}
+            />
+          )}
+          {!!examEligibleCount && (
+            <div className="quiz-exam-fields">
+              <label>
+                {t('Questions')}
+                <Select
+                  aria-label={t('Questions')}
+                  value={count}
+                  onChange={setCount}
+                  options={counts.map((value) => ({
+                    value,
+                    label: t('{count} questions', { count: value }),
+                  }))}
+                />
+              </label>
+              <label>
+                {t('Time limit')}
+                <Select
+                  aria-label={t('Time limit')}
+                  value={time}
+                  onChange={setTime}
+                  options={[60, 120].map((value) => ({
+                    value,
+                    label: t('{count} minutes', { count: value }),
+                  }))}
+                />
+              </label>
+            </div>
+          )}
           <fieldset
             className="exam-feedback-picker"
             role="radiogroup"
@@ -158,6 +170,7 @@ export default function QuizMode({
         <div className="quiz-action-group">
           {selectedMode === 'exam' && hasExamDraft && (
             <Button
+              disabled={!examEligibleCount}
               onClick={() => onSelectMode('exam', { time, count, feedbackMode, fresh: true })}
             >
               {t('Start a new exam')}
@@ -166,6 +179,7 @@ export default function QuizMode({
           <Button
             type="primary"
             size="large"
+            disabled={selectedMode === 'exam' && !examEligibleCount && !hasExamDraft}
             onClick={() => onSelectMode(selectedMode, { time, count, feedbackMode })}
           >
             {t(

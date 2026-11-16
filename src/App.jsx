@@ -42,7 +42,12 @@ import { getExamFeedbackMode } from './data/examModes';
 import { appBrand } from './data/appBrand';
 import { resolveCheckpoint } from './utils/quizProgress';
 import { validateQuizQuestions } from './utils/questionModel';
-import { clearStudySessions, readStudySession, sessionKey } from './utils/studySession';
+import {
+  clearStudySessions,
+  examEligibleQuestions,
+  readStudySession,
+  sessionKey,
+} from './utils/studySession';
 import { canonicalQuizHash, DEFAULT_HASH, quizUrl, resolveLoadedQuiz } from './utils/navigation';
 import { readDarkMode, THEME_KEY } from './utils/appearance';
 import { examHistorySource } from './utils/examHistory.js';
@@ -351,7 +356,7 @@ export default function App() {
                       : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
   }, [route.page, active?.name, t]);
   let examDraft = null;
-  if (active && route.mode === 'overview') {
+  if (active && ['overview', 'exam'].includes(route.mode)) {
     try {
       examDraft = readStudySession(
         sessionStorage,
@@ -605,7 +610,24 @@ export default function App() {
         }
       />
     );
-  } else if (route.mode === 'exam')
+  } else if (
+    route.mode === 'exam' &&
+    !examEligibleQuestions(active.questions).length &&
+    (!examDraft ||
+      (route.params.get('fresh') && route.params.get('fresh') !== examDraft.freshToken))
+  )
+    screen = (
+      <div className="load-state">
+        <Alert
+          type="info"
+          showIcon
+          message={t('No questions are available for a new mock exam.')}
+        />
+        <Button onClick={() => go(activeQuizUrl('practice'))}>{t('Start practice')}</Button>
+        <Button onClick={() => go(activeQuizUrl())}>{t('Back to quiz overview')}</Button>
+      </div>
+    );
+  else if (route.mode === 'exam')
     screen = (
       <ExamMode
         key={`${studyId}:${uid || 'guest'}:${route.params.get('fresh') || ''}`}
@@ -619,7 +641,7 @@ export default function App() {
         examQuestionCount={
           [50, 60, 70, 80].includes(Number(route.params.get('count')))
             ? Number(route.params.get('count'))
-            : Math.min(50, active.questions.length)
+            : Math.min(50, examEligibleQuestions(active.questions).length)
         }
         fresh={route.params.get('fresh')}
         onRunningChange={setExamActive}
@@ -680,6 +702,7 @@ export default function App() {
           onSelectMode={selectMode}
           onModeChange={(mode) => replace(activeQuizUrl('overview', { mode }))}
           totalQuestions={active.questions.length}
+          examEligibleCount={examEligibleQuestions(active.questions).length}
           quickSummary={guide}
           initialMode={
             ['exam', 'summary'].includes(route.params.get('mode'))
