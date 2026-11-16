@@ -144,6 +144,15 @@ export const quizzes = [
     code: 'AB-730',
   },
   {
+    id: 'ab-731',
+    name: 'Microsoft AI Transformation Leader (AB-731)',
+    file: 'quiz/Azure/AB-731.json',
+    category: 'Microsoft',
+    difficulty: 'Beginner',
+    totalQuestions: 100,
+    code: 'AB-731',
+  },
+  {
     id: 'ai-103',
     name: 'Microsoft Azure AI Apps and Agents Developer Associate (AI-103)',
     file: 'quiz/Azure/AI-103.json',
