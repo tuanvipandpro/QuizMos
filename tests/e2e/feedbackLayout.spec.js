@@ -1,3 +1,4 @@
+import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { accountCases } from './viewports.js';
@@ -31,13 +32,13 @@ for (const mode of ['practice', 'learning']) {
         reducedMotion: view.theme === 'dark' ? 'reduce' : 'no-preference',
       });
       await page.goto('./');
-      await page
-        .getByRole('button', {
+      await (
+        await headerControl(page, {
           name: view.language === 'vi' ? 'Tiếng Việt' : 'English',
           exact: true,
         })
-        .click();
-      const themeToggle = page.getByRole('button', {
+      ).click();
+      const themeToggle = await headerControl(page, {
         name: t(view.theme === 'dark' ? 'Switch to dark mode' : 'Switch to light mode'),
         exact: true,
       });

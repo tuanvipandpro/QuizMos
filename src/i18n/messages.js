@@ -1,4 +1,8 @@
 export const vi = {
+  Home: 'Trang chủ',
+  'Navigation and preferences': 'Điều hướng và tùy chọn',
+  Navigate: 'Điều hướng',
+  Menu: 'Menu',
   'Notebook sync for this result has not been confirmed. Use Refresh and retry to capture it explicitly.':
     'Chưa có xác nhận đồng bộ sổ ôn tập cho kết quả này. Chọn Làm mới và thử lại nếu bạn muốn đồng bộ kết quả.',
   'This question reference is too large for notebook storage. You can continue studying it.':

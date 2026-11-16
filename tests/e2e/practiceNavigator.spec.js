@@ -1,3 +1,4 @@
+import { headerControl } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import {
@@ -24,10 +25,10 @@ async function openNavigator(page) {
 }
 async function start(page, question, language = 'en', theme = 'light') {
   await page.goto('./');
-  await page
-    .getByRole('button', { name: language === 'vi' ? 'Tiếng Việt' : 'English', exact: true })
-    .click();
-  const themeToggle = page.getByRole('button', {
+  await (
+    await headerControl(page, { name: language === 'vi' ? 'Tiếng Việt' : 'English', exact: true })
+  ).click();
+  const themeToggle = await headerControl(page, {
     name: translate(language, theme === 'dark' ? 'Switch to dark mode' : 'Switch to light mode'),
     exact: true,
   });

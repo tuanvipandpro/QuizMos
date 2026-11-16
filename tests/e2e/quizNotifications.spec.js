@@ -1,3 +1,9 @@
+import {
+  headerControl,
+  expectHeaderAccount,
+  openHeaderPanel,
+  closeHeaderPanel,
+} from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import { accountCases } from './viewports.js';
 import { contrastRatio } from './uiContrast.js';
@@ -5,9 +11,8 @@ import { quizUpdates } from '../../src/data/quizUpdates.js';
 import { translate } from '../../src/i18n/messages.js';
 import { clickAfterUiMotion } from './uiMotion.js';
 const errors = new WeakMap();
-const bell = (page) =>
-  page.locator('.app-header').getByRole('button', { name: 'Quiz updates', exact: true });
-const panel = (page) => page.getByRole('dialog', { name: 'Quiz updates', exact: true });
+const bell = (page) => headerControl(page, { name: 'Quiz updates', exact: true });
+const panel = (page) => page.locator('.quiz-notification-panel');
 test.beforeEach(async ({ page }) => {
   const found = [];
   errors.set(page, found);
@@ -36,10 +41,11 @@ test('header notifications support keyboard, read persistence and provenance-fre
   await expect(
     page.locator('.quiz-library').getByRole('button', { name: 'Quiz updates', exact: true })
   ).toHaveCount(0);
+  await bell(page);
   await expect(page.locator('.quiz-notification-trigger .ant-badge-count')).toHaveText(
     String(quizUpdates.length)
   );
-  await bell(page).focus();
+  await (await bell(page)).focus();
   await page.keyboard.press('Enter');
   await expect(panel(page)).toBeVisible();
   await expect(
@@ -51,10 +57,10 @@ test('header notifications support keyboard, read persistence and provenance-fre
   await expect(panel(page).getByRole('link')).toHaveCount(0);
   await page.keyboard.press('Escape');
   await expect(panel(page)).toHaveCount(0);
-  await expect(bell(page)).toBeFocused();
+  await expect(await bell(page)).toBeFocused();
   await expect(page.locator('.quiz-notification-trigger .ant-badge-count')).toHaveCount(0);
   await page.reload();
-  await bell(page).click();
+  await (await bell(page)).click();
   await expect(page.locator('.quiz-notification-trigger .ant-badge-count')).toHaveCount(0);
   await panel(page).getByRole('button', { name: 'View all updates', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Quiz updates', exact: true })).toBeVisible();
@@ -82,8 +88,10 @@ test('public notification access survives auth loading, owner changes and blocke
     };
   });
   await page.goto('./#/library');
-  await expect(page.locator('.app-header .ant-spin')).toBeVisible();
-  await bell(page).click();
+  await openHeaderPanel(page);
+  await expect(page.locator('.header-auth-loading')).toBeVisible();
+  await closeHeaderPanel(page);
+  await (await bell(page)).click();
   await expect(panel(page)).toBeVisible();
   await page.keyboard.press('Escape');
   await page.evaluate(() => {
@@ -93,11 +101,12 @@ test('public notification access survives auth loading, owner changes and blocke
     );
     window.dispatchEvent(new Event('quiz-e2e-auth-ready'));
   });
-  await expect(page.getByRole('button', { name: 'Notice Alice', exact: true })).toBeVisible();
-  await bell(page).click();
+  await expectHeaderAccount(page, 'Notice Alice');
+  await expect(page.locator('.quiz-notification-trigger .ant-badge-count')).toHaveCount(0);
+  await (await bell(page)).click();
   await expect(panel(page)).toBeVisible();
   await panel(page).getByRole('button', { name: 'Close quiz updates', exact: true }).click();
-  await expect(bell(page)).toBeFocused();
+  await expect(await bell(page)).toBeFocused();
   await expect(page.locator('.quiz-notification-trigger .ant-badge-count')).toHaveCount(0);
 });
 test('empty notifications retain a usable history link and outside click closes the popup', async ({
@@ -107,11 +116,11 @@ test('empty notifications retain a usable history link and outside click closes 
     r.fulfill({ contentType: 'application/javascript', body: 'export const quizUpdates=[];' })
   );
   await page.goto('./#/library');
-  await bell(page).click();
+  await (await bell(page)).click();
   await expect(panel(page)).toContainText('No reviewed quiz updates yet.');
-  await page.locator('.theme-toggle').click();
+  await (await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })).click();
   await expect(panel(page)).toHaveCount(0);
-  await bell(page).click();
+  await (await bell(page)).click();
   await panel(page).getByRole('button', { name: 'View all updates', exact: true }).click();
   await expect(page.locator('.updates-page')).toContainText('No reviewed quiz updates yet.');
 });
@@ -138,20 +147,23 @@ test('long notification content and header fit all locales/themes/phone-landscap
     await page.emulateMedia({
       reducedMotion: [390, 1280].includes(v.width) ? 'no-preference' : 'reduce',
     });
-    await page
-      .getByRole('button', { name: v.language === 'vi' ? 'Tiếng Việt' : 'English', exact: true })
-      .click();
+    await (
+      await headerControl(page, {
+        name: v.language === 'vi' ? 'Tiếng Việt' : 'English',
+        exact: true,
+      })
+    ).click();
     if ((await page.locator('html').getAttribute('data-theme')) !== v.theme)
-      await page.locator('.theme-toggle').click();
+      await (
+        await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+      ).click();
     const t = (k) => translate(v.language, k);
-    const trigger = page
-      .locator('.app-header')
-      .getByRole('button', { name: t('Quiz updates'), exact: true });
+    const trigger = await headerControl(page, { name: t('Quiz updates'), exact: true });
     const b = await trigger.boundingBox();
     expect(b.width).toBeGreaterThanOrEqual(44);
     expect(b.height).toBeGreaterThanOrEqual(44);
     await trigger.click();
-    const popup = page.getByRole('dialog', { name: t('Quiz updates'), exact: true });
+    const popup = panel(page);
     await expect(popup).toBeVisible();
     const box = await popup.boundingBox();
     expect(box.x).toBeGreaterThanOrEqual(0);
@@ -182,7 +194,7 @@ test('notification navigation retains active-exam Cancel and unchanged stored de
   const before = await page.evaluate(() =>
     sessionStorage.getItem('quiz-study-v1:guest:aws-aip-c01:exam')
   );
-  await bell(page).click();
+  await (await bell(page)).click();
   await panel(page).getByRole('button', { name: 'Open quiz', exact: true }).first().click();
   const leave = page.getByRole('dialog').filter({ hasText: 'Leave this exam?' });
   await expect(leave).toBeVisible();
@@ -200,7 +212,9 @@ test('public refresh reloads current app/filter without resetting an existing ex
   const before = await page.evaluate(() =>
     JSON.parse(sessionStorage.getItem('quiz-study-v1:guest:aws-aip-c01:exam'))
   );
-  await page.locator('.app-nav').getByRole('button', { name: 'Quiz Bank', exact: true }).click();
+  await (
+    await headerControl(page, { name: 'Quiz Bank', exact: true }, page.locator('.app-nav'))
+  ).click();
   await clickAfterUiMotion(
     page
       .getByRole('dialog')
@@ -275,10 +289,9 @@ for (const change of ['route', 'owner'])
     await button.evaluate((el) => el.click());
     await expect.poll(() => count).toBe(1);
     if (change === 'route') {
-      await page
-        .locator('.app-nav')
-        .getByRole('button', { name: 'My quizzes', exact: true })
-        .click();
+      await (
+        await headerControl(page, { name: 'My quizzes', exact: true }, page.locator('.app-nav'))
+      ).click();
       await expect(page.getByRole('heading', { name: 'My quizzes', exact: true })).toBeVisible();
     } else {
       await page.evaluate(() =>
@@ -288,7 +301,7 @@ for (const change of ['route', 'owner'])
           })
         )
       );
-      await expect(page.getByRole('button', { name: 'Refresh Bob', exact: true })).toBeVisible();
+      await expectHeaderAccount(page, 'Refresh Bob');
     }
     release();
     await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 100)));

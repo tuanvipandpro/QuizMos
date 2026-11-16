@@ -1,3 +1,4 @@
+import { headerControl, expectHeaderAccount } from './headerControls.js';
 import { test, expect } from '@playwright/test';
 import { clickAfterUiMotion } from './uiMotion.js';
 import { fileURLToPath } from 'node:url';
@@ -236,14 +237,14 @@ test('sign-out clears Learning drafts and the next guest exam starts as Standard
   page,
 }) => {
   await page.goto('./#/quiz/aws-aip-c01?mode=exam');
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('button', { name: 'Continue with Google', exact: true }));
-  await expect(page.getByRole('button', { name: 'Test account', exact: true })).toBeVisible();
+  await expectHeaderAccount(page, 'Test account');
   await page.getByRole('radio', { name: 'Learning exam', exact: true }).check();
   await page.getByRole('button', { name: 'Start mock exam', exact: true }).click();
   await expect(page.locator('.exam-mode-label')).toContainText('Learning exam');
   await page.getByRole('button', { name: 'Flag', exact: true }).click();
-  await page.getByRole('button', { name: 'Test account', exact: true }).click();
+  await (await headerControl(page, { name: 'Test account', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('menuitem', { name: 'Sign out', exact: true }));
   const dialog = page.getByRole('dialog').filter({ hasText: 'Sign out?' });
   await expect(dialog).toContainText('end this exam');
@@ -283,9 +284,9 @@ test('sign-in during a guest exam returns to setup without creating an account d
   await page.goto('./#/quiz/aws-aip-c01/exam?feedback=learning');
   await expect(page.locator('.exam-mode-label')).toContainText('Learning exam');
   await page.getByRole('button', { name: 'Flag', exact: true }).click();
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('button', { name: 'Continue with Google', exact: true }));
-  await expect(page.getByRole('button', { name: 'Test account', exact: true })).toBeVisible();
+  await expectHeaderAccount(page, 'Test account');
   await expect(page.getByRole('radio', { name: 'Standard exam', exact: true })).toBeChecked();
   expect(await readDraft(page, 'aws-aip-c01')).toBeNull();
   expect(await readDraft(page, 'aws-aip-c01', 'test-alice')).toBeNull();
@@ -311,12 +312,17 @@ test(
     await expect(learning).toBeChecked();
     await expect(learning).toBeFocused();
     for (const language of ['en', 'vi']) {
-      await page
-        .getByRole('button', { name: language === 'en' ? 'English' : 'Tiếng Việt', exact: true })
-        .click();
+      await (
+        await headerControl(page, {
+          name: language === 'en' ? 'English' : 'Tiếng Việt',
+          exact: true,
+        })
+      ).click();
       for (const theme of ['light', 'dark']) {
         if ((await page.locator('html').getAttribute('data-theme')) !== theme) {
-          await page.locator('.theme-toggle').click();
+          await (
+            await headerControl(page, { name: /Switch to .* mode|Chuyển sang giao diện/ })
+          ).click();
         }
         for (const { width, height } of viewportCases(testInfo.project.name)) {
           await page.setViewportSize({ width, height });
@@ -326,11 +332,13 @@ test(
               exact: true,
             })
           ).toBeVisible();
-          expect(
-            await page.evaluate(
-              () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+          await expect
+            .poll(() =>
+              page.evaluate(
+                () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+              )
             )
-          ).toBe(true);
+            .toBe(true);
           for (const option of await page.locator('.exam-feedback-option').all()) {
             const box = await option.boundingBox();
             expect(box.width).toBeGreaterThanOrEqual(44);
