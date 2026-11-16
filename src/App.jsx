@@ -54,6 +54,7 @@ import './markdown.css';
 const { Content } = Layout;
 const { Title, Text } = Typography;
 const UPLOAD_KEY = 'quiz-tab-upload-v1';
+const QuizPdfExport = lazy(() => import('./components/QuizPdfExport'));
 const PracticeMode = lazy(() => import('./components/PracticeMode'));
 const ExamMode = lazy(() => import('./components/ExamMode'));
 const QuickSummaryMode = lazy(() => import('./components/QuickSummaryMode'));
@@ -675,6 +676,7 @@ export default function App() {
             </Text>
           </div>
         </div>
+        <QuizPdfExport key={`pdf:${studyId}:${uid || 'guest'}`} quiz={active} />
         <QuizMode
           key={`${active.id}:${uid || 'guest'}`}
           onSelectMode={selectMode}

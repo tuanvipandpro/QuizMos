@@ -1,4 +1,30 @@
 export const vi = {
+  'PDF generation timed out. Try again on a device with more available resources.':
+    'Tạo PDF quá thời gian cho phép. Hãy thử lại trên thiết bị có nhiều tài nguyên hơn.',
+  'Generated on this device. Up to 1,000 questions and 500 images; inaccessible or large images can prevent export.':
+    'Tạo file ngay trên thiết bị này. Tối đa 1.000 câu và 500 ảnh; ảnh lớn hoặc không truy cập được có thể làm xuất file thất bại.',
+  'Export PDF': 'Xuất PDF',
+  'Questions and answers': 'Câu hỏi và đáp án',
+  'Answer key': 'Đáp án',
+  'Answer unavailable in the supplied quiz.':
+    'Quiz được cung cấp chưa có đáp án hợp lệ cho câu này.',
+  'Export the entire quiz with questions and an answer key. Explanations and private notes are not included.':
+    'Xuất toàn bộ quiz gồm câu hỏi và đáp án. Không kèm giải thích hoặc ghi chú riêng.',
+  'Preparing quiz images…': 'Đang chuẩn bị hình ảnh…',
+  'Generating PDF…': 'Đang tạo PDF…',
+  'PDF download started.': 'Đã bắt đầu tải PDF.',
+  'PDF export cancelled.': 'Đã hủy xuất PDF.',
+  'Download PDF': 'Tải PDF',
+  'Retry PDF export': 'Thử xuất PDF lại',
+  'This quiz is not available for PDF export.': 'Quiz này không được phép xuất PDF.',
+  'This quiz contains invalid content and cannot be exported.':
+    'Quiz có nội dung không hợp lệ nên chưa thể xuất PDF.',
+  'This quiz exceeds the PDF export limits.': 'Quiz vượt giới hạn xử lý PDF.',
+  'An image could not be embedded. Check image access and try again. No PDF was downloaded.':
+    'Không thể đưa một hình ảnh vào PDF. Kiểm tra quyền truy cập ảnh rồi thử lại. Chưa tải file nào.',
+  'Quiz images exceed the PDF image limits. No PDF was downloaded.':
+    'Hình ảnh vượt giới hạn PDF. Chưa tải file nào.',
+  'Could not generate the PDF. Please try again.': 'Chưa thể tạo PDF. Vui lòng thử lại.',
   Home: 'Trang chủ',
   'Navigation and preferences': 'Điều hướng và tùy chọn',
   Navigate: 'Điều hướng',
