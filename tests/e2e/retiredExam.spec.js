@@ -45,3 +45,29 @@ test('an all-retired quiz cannot start a new exam, including by direct link', as
   await page.getByRole('button', { name: 'Start practice' }).click();
   await expect(page.getByRole('heading', { name: 'Question retired' })).toBeVisible();
 });
+
+test('an older exam link resumes a compatible newer draft for an all-retired quiz', async ({
+  page,
+}) => {
+  await page.route('**/quiz/Azure/AZ-900.json*', (route) =>
+    route.fulfill({ json: [question('existing', true)] })
+  );
+  await page.goto('./#/quiz/az-900?mode=exam');
+  await expect(page.getByText('No questions are available for a new mock exam.')).toBeVisible();
+  // Model a compatible draft made before this bank became all-retired.
+  await page.evaluate(
+    async ({ active, retired }) => {
+      const { createExamSession, questionFingerprint, sessionKey } = await import(
+        '/quiz-app/src/utils/studySession.js'
+      );
+      const draft = createExamSession([active], 1, 45);
+      draft.signature = questionFingerprint([retired]);
+      draft.freshToken = '100';
+      sessionStorage.setItem(sessionKey(null, 'az-900', 'exam'), JSON.stringify(draft));
+    },
+    { active: question('existing'), retired: question('existing', true) }
+  );
+  await page.goto('./#/quiz/az-900/exam?fresh=1');
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Question existing' })).toBeVisible();
+});

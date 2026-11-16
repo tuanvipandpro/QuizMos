@@ -638,7 +638,11 @@ export default function App() {
     route.mode === 'exam' &&
     !examEligibleQuestions(active.questions).length &&
     (!examDraft ||
-      (route.params.get('fresh') && route.params.get('fresh') !== examDraft.freshToken))
+      (route.params.get('fresh') &&
+        route.params.get('fresh') !== examDraft.freshToken &&
+        !(
+          examDraft.freshToken && Number(route.params.get('fresh')) < Number(examDraft.freshToken)
+        )))
   )
     screen = (
       <div className="load-state">

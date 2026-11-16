@@ -33,7 +33,7 @@ export default function QuizMode({
   const [size, setSize] = useState('all');
   const practicePool = eligibleStudyPool(questions);
   const eligibleCount = practicePool.items.length;
-  const noExamQuestions = !eligibleStudyPool(questions, { excludeRetired: true }).items.length;
+  const noExamQuestions = questions.length > 0 && questions.every((item) => item.retired === true);
   const practiceInvalid = size !== 'all' && size > eligibleCount;
   const modes = [
     {
