@@ -37,6 +37,10 @@ export default function PracticeMode({
   questions,
   quizId,
   sessionId,
+  draftKey,
+  shortPractice = false,
+  subsetPersisted = true,
+  onRestart,
   quizName,
   initialQuestionIndex = null,
   fresh,
@@ -67,7 +71,7 @@ export default function PracticeMode({
     ),
   });
   const [session, setSession, draftSaved] = useStudySession(
-    sessionKey(user?.uid, sessionId, 'practice'),
+    draftKey || sessionKey(user?.uid, sessionId, 'practice'),
     questions,
     'practice',
     create,
@@ -172,7 +176,7 @@ export default function PracticeMode({
             <Button icon={<CopyOutlined aria-hidden="true" />} onClick={copy} loading={copying}>
               {t('Copy')}
             </Button>
-            {!revision && (
+            {!revision && !shortPractice && (
               <Button
                 icon={
                   isSaved ? <BookFilled aria-hidden="true" /> : <BookOutlined aria-hidden="true" />
@@ -201,12 +205,12 @@ export default function PracticeMode({
               onSignIn={onSignIn}
             />
           </div>
-          {!revision && !isAuthenticated && (
+          {!revision && !shortPractice && !isAuthenticated && (
             <Paragraph type="secondary" className="study-hint">
               {t('Sign in to save a cloud checkpoint.')}
             </Paragraph>
           )}
-          {!revision && isAuthenticated && !quizId && (
+          {!revision && !shortPractice && isAuthenticated && !quizId && (
             <Paragraph type="secondary" className="study-hint">
               {t('Cloud checkpoints are available for library quizzes.')}
             </Paragraph>
@@ -246,7 +250,7 @@ export default function PracticeMode({
           <div className="draft-status">
             <Text type="secondary" role="status">
               {t(
-                draftSaved
+                draftSaved && subsetPersisted
                   ? 'Draft saved in this tab'
                   : 'Draft storage is unavailable in this browser.'
               )}
@@ -261,6 +265,10 @@ export default function PracticeMode({
                   okText: t('Start practice'),
                   cancelText: t('Cancel'),
                   onOk: () => {
+                    if (shortPractice) {
+                      onRestart?.();
+                      return;
+                    }
                     setSession((previous) => ({
                       ...create(),
                       freshToken: previous.freshToken,

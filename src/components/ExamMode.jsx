@@ -20,6 +20,7 @@ import {
 } from '../utils/studySession';
 import { EXAM_HISTORY_ENABLED } from '../config/examHistoryConfig';
 import { useExamArchive } from '../hooks/useExamArchive';
+import CertificationProfileInfo from './CertificationProfileInfo';
 import ExamArchiveStatus from './ExamArchiveStatus';
 import { isAnswerComplete, isAnswerCorrect } from '../utils/questionModel';
 import { scrollToTop } from '../utils/scroll';
@@ -42,6 +43,9 @@ export default function ExamMode({
   examTimeMinutes,
   examQuestionCount = 50,
   feedbackMode,
+  selectionQuestions,
+  sessionSettings,
+  restoredSession,
   fresh,
   historySource,
   onHistory,
@@ -57,8 +61,11 @@ export default function ExamMode({
     questions,
     'exam',
     () => {
+      if (restoredSession) return restoredSession;
       const created = createExamSession(questions, examQuestionCount, examTimeMinutes, {
         feedbackMode,
+        selectionQuestions,
+        sessionSettings,
         historyOwner: user?.uid || null,
         captureHistory: EXAM_HISTORY_ENABLED && !!historySource,
         historySource,
@@ -157,6 +164,13 @@ export default function ExamMode({
           </Button>
           <Title level={1}>{t(session.submitted ? 'Exam results' : 'Mock exam')}</Title>
           <Text type="secondary">{quizName}</Text>
+          <Paragraph>
+            {t(
+              session.sessionSettings?.kind === 'cert'
+                ? 'Certification format'
+                : 'Custom timed training'
+            )}
+          </Paragraph>
           <Paragraph className="exam-mode-label">
             {t('Exam mode')}: <strong>{t(feedback.label)}</strong>
           </Paragraph>
@@ -166,18 +180,24 @@ export default function ExamMode({
         <>
           {session.timeExpired && <Alert type="info" showIcon message={t('Time is up')} />}
           <ExamArchiveStatus state={archive} onHistory={onHistory} onSignIn={onSignIn} />
+          <CertificationProfileInfo profile={session.sessionSettings?.profile} />
           <NotebookCaptureStatus capture={capture} />
           <section className="exam-score">
             <div>
-              <Text type="secondary">{t('Score')}</Text>
+              <Text type="secondary">{t('Raw accuracy')}</Text>
               <div className="score-number">
                 {stats.correct}
                 <small> / {session.questions.length}</small>
               </div>
               <Text strong>
-                {score.toFixed(1)}% · {t(score > 80 ? 'Pass' : 'Not passed')}
+                {score.toFixed(1)}% ·{' '}
+                {t(score > 80 ? 'QuizMos benchmark met' : 'QuizMos benchmark not met')}
               </Text>
-              <Paragraph type="secondary">{t('Passing requires more than 80%.')}</Paragraph>
+              <Paragraph type="secondary">
+                {t(
+                  'QuizMos study benchmark: more than 80% raw accuracy. This is not an official certification result.'
+                )}
+              </Paragraph>
               {feedback.perQuestion && (
                 <Paragraph type="secondary">
                   {t('Learning exam score uses your final answers.')}
