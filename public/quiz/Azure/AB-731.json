@@ -194,12 +194,12 @@
       "s2": "B",
       "s3": "A"
     },
-    "explanation": "Microsoft 365 Copilot's work-based chat experience, which grounds natural language prompts in an organization's data (emails, files, chats, meetings) via Microsoft Graph, requires the dedicated Microsoft 365 Copilot add-on license; only the free web-grounded Copilot Chat is available without it. Microsoft 365 Copilot is sold as a separate add-on to eligible base subscriptions such as Microsoft 365 E3 and E5 — it is not bundled into those licenses and must be purchased/assigned separately. Additionally, Microsoft provides pay-as-you-go, consumption-based billing for certain Copilot services, such as Microsoft 365 Copilot Chat usage and SharePoint/declarative agents, letting organizations pay based on usage rather than a fixed per-user license.",
+    "explanation": "The full built-in work-based chat experience grounded in Microsoft Graph requires a Microsoft 365 Copilot add-on license. Eligible Copilot Chat users without the add-on can also work with uploaded files and use certain agents with usage-based billing. The add-on is purchased separately from eligible base subscriptions, and some Copilot services have pay-as-you-go billing.",
     "type": "yes_no",
     "statements": [
       {
         "id": "s1",
-        "text": "Users that want to reason over work data by using a natural language prompt in Microsoft 365 Copilot must have a Copilot add-on license."
+        "text": "Users who want the full built-in work-based chat experience grounded in Microsoft Graph need a Microsoft 365 Copilot add-on license."
       },
       {
         "id": "s2",
@@ -1007,7 +1007,7 @@
       "s2": "A",
       "s3": "A"
     },
-    "explanation": "Basic access to organizational data (email, files, calendar, Teams content) from a mobile device requires only the standard Microsoft 365 subscription license, not the Microsoft 365 Copilot add-on license. In contrast, reasoning over organizational data through Microsoft Graph is a defining capability of Microsoft 365 Copilot's work-based chat experience; per Microsoft documentation, work-based chat that surfaces results the user's Entra work/school account can access 'is available with a Microsoft 365 Copilot license,' whereas the free web-based chat is limited to internet results only. The Analyst agent (along with the Researcher agent) is an advanced, built-in Copilot agent bundled with the Microsoft 365 Copilot license; without that license a user's agent access is limited and excludes these advanced agents.",
+    "explanation": "Basic access to organizational data from a mobile device does not itself require a Microsoft 365 Copilot add-on. The full built-in work-based chat experience grounded in Microsoft Graph and the Analyst agent require a Microsoft 365 Copilot license. Eligible Copilot Chat users can also use uploaded files and certain agents without that add-on, subject to applicable usage-based charges.",
     "type": "yes_no",
     "statements": [
       {
@@ -1016,7 +1016,7 @@
       },
       {
         "id": "s2",
-        "text": "To reason over your organizational data by using Microsoft Graph, you need a Microsoft 365 Copilot license."
+        "text": "To use the full built-in work-based chat experience grounded in Microsoft Graph, you need a Microsoft 365 Copilot license."
       },
       {
         "id": "s3",
@@ -1056,7 +1056,7 @@
   },
   {
     "id": "46",
-    "question": "Your organization has a Microsoft 365 subscription and makes use of Microsoft 365 Copilot Chat. Some users need to be able to build and use declarative agents that can access work data.\n\nWhich type of license should you recommend for these users?",
+    "question": "Your organization has a Microsoft 365 subscription and makes use of Microsoft 365 Copilot Chat. Some users need to build and use declarative agents that can access work data without usage-based charges for these interactions.\n\nWhich type of license should you recommend for these users?",
     "options": {
       "A": "a Microsoft 365 Copilot add-on license",
       "B": "Microsoft Copilot Studio user license",
@@ -1940,10 +1940,10 @@
     },
     "answer": {
       "s1": "A",
-      "s2": "B",
+      "s2": "A",
       "s3": "A"
     },
-    "explanation": "Microsoft 365 Copilot integrates with Outlook to draft professional emails and provide coaching tips on tone/clarity, and it can summarize email threads and chat conversations, so the first statement is true. In Excel, Copilot's 'Draft' capability provides suggestions for formulas, chart types, and data insights; it does not autonomously alter workbook data — users retain control and must review and apply any proposed changes, so the claim that it can 'autonomously update' sales data is false. Copilot is broadly able to summarize content in Word documents, Excel spreadsheets, PowerPoint presentations, and other files such as PDFs, so the third statement is true.",
+    "explanation": "Copilot can help draft emails, summarize conversations and summarize supported business files. In Excel, edit mode can modify a workbook in response to a user's request, subject to the user's permissions and available features; users remain in control of the changes.",
     "type": "yes_no",
     "statements": [
       {
@@ -1952,7 +1952,7 @@
       },
       {
         "id": "s2",
-        "text": "When prompted, Microsoft 365 Copilot can autonomously update a spreadsheet that contains sales data."
+        "text": "When prompted and allowed to edit, Microsoft 365 Copilot can update a spreadsheet that contains sales data."
       },
       {
         "id": "s3",
