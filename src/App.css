@@ -414,6 +414,9 @@ summary:focus-visible {
     justify-content: center;
     text-align: center;
   }
+  .continue-learning .library-quiz-actions {
+    justify-content: center;
+  }
   .featured-quiz h3.ant-typography {
     font-size: 19px;
   }
