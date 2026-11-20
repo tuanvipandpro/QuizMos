@@ -169,13 +169,18 @@ export default function QuizLibrary({
                 <Title level={3}>{latest.name}</Title>
                 <Text type="secondary">{checkpointLabel(progressState.progress[latest.id])}</Text>
               </div>
-              <Button
-                type="primary"
-                icon={<ArrowRightOutlined aria-hidden="true" />}
-                onClick={() => onOpen(latest, 'practice', true)}
-              >
-                {t('Resume')}
-              </Button>
+              <div className="library-quiz-actions">
+                <Button
+                  type="primary"
+                  icon={<ArrowRightOutlined aria-hidden="true" />}
+                  onClick={() => onOpen(latest, 'practice', true)}
+                >
+                  {t('Resume')}
+                </Button>
+                <Button onClick={() => onOpen(latest, 'overview', false, 'exam')}>
+                  {t('Mock exam')}
+                </Button>
+              </div>
             </section>
           )}
         </>
