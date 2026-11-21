@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Radio, Checkbox, Typography } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import StructuredQuestion from './StructuredQuestion';
+import QuestionImage from './QuestionImage';
 import { isStructuredQuestion } from '../utils/questionModel';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -66,7 +67,7 @@ export default function Question({
         {question}
       </Title>
       {imageUrl?.trim() && (
-        <img className="question-image" src={imageUrl} alt={t('Question illustration')} />
+        <QuestionImage key={JSON.stringify([data?.id ?? question, imageUrl])} src={imageUrl} />
       )}
       <fieldset className="question-fieldset">
         <legend>

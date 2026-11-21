@@ -1,0 +1,79 @@
+.question-image-trigger {
+  position: relative;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.question-image-trigger:disabled {
+  cursor: default;
+}
+
+.question-image-trigger img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: inherit;
+}
+
+.question-image-zoom-indicator {
+  position: absolute;
+  inset-inline-end: 8px;
+  inset-block-end: 8px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: var(--app-text);
+  background: var(--app-surface);
+}
+
+.question-image-trigger:disabled .question-image-zoom-indicator {
+  visibility: hidden;
+}
+
+.question-image-zoom-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.question-image-modal .ant-modal-close,
+.question-image-zoom-controls .ant-btn {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.question-image-zoom-controls .ant-btn[aria-disabled='true'] {
+  border-color: var(--app-border);
+  color: var(--app-muted);
+  cursor: default;
+}
+
+.question-image-scroll {
+  --question-image-fit-height: max(80px, min(62dvh, calc(100dvh - 132px), 620px));
+  max-height: var(--question-image-fit-height);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.question-image-scroll:focus-visible {
+  outline: 3px solid var(--app-primary);
+  outline-offset: 2px;
+}
+
+.question-image-preview {
+  display: block;
+  width: calc(
+    var(--question-image-scale) *
+      min(100%, var(--question-image-fit-height) * var(--question-image-aspect))
+  );
+  max-width: none;
+  height: auto;
+  margin-inline: auto;
+}

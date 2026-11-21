@@ -10,6 +10,7 @@ import {
 import './StructuredQuestion.css';
 import { useLanguage } from '../contexts/LanguageContext';
 import DragDropAnswers from './DragDropAnswers';
+import QuestionImage from './QuestionImage';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -71,10 +72,10 @@ export default function StructuredQuestion({
           : data.question}
       </Title>
       {data.imageUrl?.trim() && (
-        <img
+        <QuestionImage
+          key={JSON.stringify([data.id, data.imageUrl])}
           className="structured-question-image"
           src={data.imageUrl}
-          alt={t('Question illustration')}
         />
       )}
       {data.instruction && <Paragraph>{data.instruction}</Paragraph>}
