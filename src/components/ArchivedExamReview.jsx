@@ -5,6 +5,7 @@ import { getExamFeedbackMode } from '../data/examModes.js';
 import { formatAnswerLines, isStructuredQuestion } from '../utils/questionModel.js';
 import { scrollToTop } from '../utils/scroll';
 import Question from './Question';
+import QuestionImage from './QuestionImage';
 import StudyNavigation from './StudyNavigation';
 
 const { Title, Text, Paragraph } = Typography;
@@ -18,27 +19,13 @@ const sourceLabels = {
     'The original source status could not be checked. Archived content is still available.',
 };
 function ArchiveImage({ url }) {
-  const { t } = useLanguage();
-  const [failed, setFailed] = useState(false);
-  if (failed)
-    return (
-      <Alert
-        className="archive-image-status"
-        type="info"
-        message={t(
-          'The original illustration is unavailable. Saved question text remains available.'
-        )}
-      />
-    );
   const src = /^(?:https?:|data:|blob:)/i.test(url)
     ? url
     : import.meta.env.BASE_URL + url.replace(/^\/+/, '');
   return (
-    <img
-      className="question-image"
+    <QuestionImage
       src={src}
-      alt={t('Question illustration')}
-      onError={() => setFailed(true)}
+      unavailableMessage="The original illustration is unavailable. Saved question text remains available."
     />
   );
 }

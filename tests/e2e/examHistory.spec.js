@@ -619,6 +619,7 @@ test('archived answers/grade stay frozen when the source changes or its illustra
   const attempt = await createHistoryAttempt(finishExam(session, 2000, true), uid, sourceQuestions);
   const payload = JSON.parse(attempt.snapshot.payload);
   payload.questions[0].imageUrl = 'archive-missing-fixture.png';
+  payload.questions[1].imageUrl = 'archive-illustration-fixture.svg';
   payload.gradingVersion = 'quizmos-score-v2';
   payload.passed = true;
   attempt.summary.gradingVersion = payload.gradingVersion;
@@ -643,6 +644,12 @@ test('archived answers/grade stay frozen when the source changes or its illustra
   await page.route('**/archive-missing-fixture.png', (route) =>
     route.fulfill({ status: 404, body: 'missing' })
   );
+  await page.route('**/archive-illustration-fixture.svg', (route) =>
+    route.fulfill({
+      contentType: 'image/svg+xml',
+      body: '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="40"><rect width="80" height="40" fill="navy"/></svg>',
+    })
+  );
   await page.goto('./#/history/' + attempt.summary.attemptId);
   await expect(page.locator('.history-source-status')).toContainText('source quiz changed');
   await expect(page.locator('.history-score')).toContainText('quizmos-score-v2');
@@ -654,6 +661,17 @@ test('archived answers/grade stay frozen when the source changes or its illustra
     page.getByText('The original illustration is unavailable.', { exact: false })
   ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Explain', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Next question', exact: true }).click();
+  const openImage = page.getByRole('button', { name: 'Open question illustration', exact: true });
+  await openImage.click();
+  const preview = page.getByRole('dialog', { name: 'Question illustration', exact: true });
+  await expect(
+    preview.getByRole('img', { name: 'Question illustration', exact: true })
+  ).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(preview).toBeHidden();
+  await expect(openImage).toBeFocused();
+  await expect(page.locator('.history-question-outcome')).toContainText('Question 2 of 2');
 });
 
 test('delayed saves/reads and sign-out/account changes cannot leak archived content to the next account', async ({
