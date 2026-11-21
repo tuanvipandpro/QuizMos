@@ -8,7 +8,7 @@ In Practice and submitted exam review, **Explain** opens the quiz's included exp
 
 The root opens a dark-first landing with four viewport sections, native scroll snap and reduced-motion support; **Start practicing** opens `#/library`. **Donate** is visible in the header/hero and opens `#/donate`; its Back buttons return to the first Home section. Public receiving details and its activation flag live in [donation configuration](src/data/donation.js). Recheck the static QR and bank recipient before changing or reactivating the receiving account.
 
-[Live app](https://quizmos.runs-at.dev/) · [Agent workflow](AGENTS.md) · [Custom-quiz cloud storage backlog](https://github.com/tuanvipandpro/quiz-app/issues/42)
+[Live app](https://quizmos.runs-on.dev/) · [Agent workflow](AGENTS.md) · [Custom-quiz cloud storage backlog](https://github.com/tuanvipandpro/quiz-app/issues/42)
 
 The account menu opens **Profile**, **Manage quizzes**, AI Settings and Sign out. Profile shows read-only Google identity; QuizMos language/theme choices use existing device-local preferences and do not sync between devices. Manage quizzes opens the existing private quiz workspace.
 
@@ -179,9 +179,9 @@ Browser shards use the official Playwright Noble container pinned by version and
 
 Backend CD requires the GitHub Actions **Secret** `CLOUDFLARE_API_TOKEN`; the account ID is already in `worker/wrangler.jsonc`. See [backend CD setup](worker/README.md#github-actions-backend-cd). Missing credentials or an incompatible D1 schema block backend release with an explicit error; CI does not automatically apply migrations or Firebase Rules.
 
-Production runs at `https://quizmos.runs-at.dev/`. CI sets `VITE_BASE=/` for the verified build; assets and quiz data use `import.meta.env.BASE_URL`. Local development and the isolated E2E server keep `/quiz-app/`. Supply the same `VITE_BASE` when building and previewing an override locally. `public/CNAME` preserves the custom domain when `gh-pages` publishes `dist/`; the old GitHub Pages URL redirects to the custom domain.
+Production runs at `https://quizmos.runs-on.dev/`. CI sets `VITE_BASE=/` for the verified build; assets and quiz data use `import.meta.env.BASE_URL`. Local development and the isolated E2E server keep `/quiz-app/`. Supply the same `VITE_BASE` when building and previewing an override locally. `public/CNAME` preserves the custom domain when `gh-pages` publishes `dist/`; the default GitHub Pages URL redirects to the custom domain.
 
-Before testing Google sign-in on the new origin, add `quizmos.runs-at.dev` to Firebase Authentication's authorized domains. Browser-only guest data remains scoped to the old origin; cloud data keeps its existing account and quiz IDs. To roll back to the default GitHub Pages address, remove the custom domain and `public/CNAME`, then build with `VITE_BASE=/quiz-app/`.
+Confirm that Firebase Authentication's authorized domains include `quizmos.runs-on.dev` before testing Google sign-in. Browser-only guest data is scoped to the origin where it was created; cloud data keeps its existing account and quiz IDs. To roll back to the default GitHub Pages address, remove the custom domain and `public/CNAME`, then build with `VITE_BASE=/quiz-app/`.
 
 ## Next setup increments
 
