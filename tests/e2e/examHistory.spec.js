@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { historyAttempt } from '../fixtures/historyAttempt.js';
-import { clickAfterUiMotion } from './uiMotion.js';
+import { clickAfterUiMotion, waitForUiMotion } from './uiMotion.js';
 import { accountCases } from './viewports.js';
 import { contrastRatio } from './uiContrast.js';
 import { createExamSession, finishExam } from '../../src/utils/studySession.js';
@@ -668,6 +668,8 @@ test('archived answers/grade stay frozen when the source changes or its illustra
   await expect(
     preview.getByRole('img', { name: 'Question illustration', exact: true })
   ).toBeVisible();
+  await waitForUiMotion(preview);
+  await expect.poll(() => preview.evaluate((el) => el.contains(document.activeElement))).toBe(true);
   await page.keyboard.press('Escape');
   await expect(preview).toBeHidden();
   await expect(openImage).toBeFocused();
