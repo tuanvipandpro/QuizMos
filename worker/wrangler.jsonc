@@ -8,6 +8,7 @@
   "vars": {
     "APP_AI_ENABLED": "true",
     "FIREBASE_PROJECT_ID": "quiz-app-f70d5",
+    // Keep browser origins explicit. Local development origins belong in staging.
     "ALLOWED_ORIGINS": "https://quizmos.runs-on.dev,https://quizmos.runs-at.dev,https://tuanvipandpro.github.io",
   },
   "ai": { "binding": "AI" },
