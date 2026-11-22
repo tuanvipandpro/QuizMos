@@ -52,6 +52,10 @@ test('published exact/range values, answering time and scaled/weighted bases rem
   assert.equal(getCertificationProfile('gcp-ace').score.kind, 'undisclosed');
   assert.equal(getCertificationProfile('anthropic-cca-f').minutes, 120);
   assert.equal(getCertificationProfile('anthropic-cca-f').seatMinutes, 135);
+  const ccdvp = getCertificationProfile('anthropic-ccdv-p');
+  assert.deepEqual(ccdvp.count, { kind: 'exact', min: 70, max: 70 });
+  assert.equal(ccdvp.minutes, 120);
+  assert.equal(ccdvp.score.threshold, 720);
   assert.deepEqual(getCertificationProfile('istqb-ctal-ta-v4-0').score, {
     kind: 'points',
     threshold: 51,
