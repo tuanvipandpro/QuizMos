@@ -37,7 +37,7 @@ test('every built-in bank remains loadable with legacy placeholder compatibility
       count++;
     }
   }
-  assert.equal(count, 25);
+  assert.equal(count, 26);
 });
 
 test('all imported banks validate and include five dropdown and five yes-no questions', () => {
@@ -46,6 +46,7 @@ test('all imported banks validate and include five dropdown and five yes-no ques
     ['CCAR_P', 126],
     ['CCAO_F', 137],
     ['CCDV_F', 96],
+    ['CCDV_P', 100],
   ]) {
     const questions = read(file);
     assert.equal(validateQuizQuestions(questions), questions);

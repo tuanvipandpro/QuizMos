@@ -17,6 +17,7 @@ const cases = [
   ['anthropic-ccar-p', 'CCAR_P', 'ccar-p-65'],
   ['anthropic-ccao-f', 'CCAO_F', 'ccao-f-142'],
   ['anthropic-ccdv-f', 'CCDV_F', 'ccdv-f-56'],
+  ['anthropic-ccdv-p', 'CCDV_P', '17'],
 ];
 for (const [id, file, questionId] of cases)
   test(`reviewed guide opens the intended stable question: ${id}/${questionId}`, async ({
@@ -30,7 +31,9 @@ for (const [id, file, questionId] of cases)
     await page.goto(`./#/quiz/${id}/summary`);
     await expect(page.locator('.quick-summary-topic')).toHaveCount(8);
     await expect(page.locator('.quick-summary-stale')).toHaveCount(0);
-    await expect(page.locator('.quick-summary-header')).toContainText('v2 · 2026-11-06');
+    await expect(page.locator('.quick-summary-header')).toContainText(
+      `v${meta.version} · ${meta.updatedAt}`
+    );
     const section = page.locator('#summary-' + topic.id);
     await section.locator('.quick-summary-practice summary').focus();
     await page.keyboard.press('Enter');
