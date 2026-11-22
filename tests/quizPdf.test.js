@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import pdfMake from 'pdfmake/build/pdfmake.js';
+import fonts from 'pdfmake/build/vfs_fonts.js';
 import {
   projectQuizPdf,
   quizPdfDocument,
@@ -22,6 +24,18 @@ const questions = formats.map((f, i) => ({
   explanation: 'MUST_NOT_EXPORT_EXPLANATION',
 }));
 const quiz = { id: 'aws-aip-c01', kind: 'bank', name: 'Bộ câu hỏi tiếng Việt', questions };
+const answerKeyIndex = (doc) => doc.content.findIndex((node) => node.id === 'pdf-answer-key');
+
+async function renderPageLines(document) {
+  pdfMake.addVirtualFileSystem(fonts);
+  const pages = await new Promise((resolve) => pdfMake.createPdf(document)._getPages({}, resolve));
+  return pages.map(({ items }) =>
+    items
+      .filter((entry) => entry.type === 'line')
+      .map(({ item }) => item.inlines.map(({ text }) => text).join(''))
+  );
+}
+
 test('whole projection preserves original seven-format identities and mapping, strips explanations, and produces separate aligned answer key', () => {
   const before = structuredClone(quiz),
     model = projectQuizPdf(quiz, null, quizPdfAccess(quiz, null));
@@ -33,7 +47,7 @@ test('whole projection preserves original seven-format identities and mapping, s
   assert.equal(JSON.stringify(model).includes('MUST_NOT_EXPORT'), false);
   const doc = quizPdfDocument(model);
   assert.ok(JSON.stringify(doc).includes('Bộ câu hỏi tiếng Việt'));
-  assert.equal(doc.content.filter((x) => x.pageBreak === 'before').length, 1);
+  assert.ok(answerKeyIndex(doc) > 0);
   for (const q of model.questions) assert.ok(q.answers.length);
   assert.ok(model.questions[6].template);
 });
@@ -130,10 +144,11 @@ test('correct choices are bold by original key across seven surfaces, including 
     );
     const start = doc.content.findIndex((node) => node.text === i + 1 + '. Question ' + q.id);
     const next = doc.content.findIndex(
-      (node, index) => index > start && (node.headlineLevel === 1 || node.pageBreak === 'before')
+      (node, index) => index > start && (node.headlineLevel === 1 || node.id === 'pdf-answer-key')
     );
     const rendered = doc.content
       .slice(start, next)
+      .flatMap((node) => node.stack || [node])
       .filter((node) => node.margin?.join(',') === '10,0,0,5');
     assert.deepEqual(
       rendered.map((node) => node.bold),
@@ -148,7 +163,7 @@ test('correct choices are bold by original key across seven surfaces, including 
     model.questions[8].parts[0].choices.some((c) => c.correct),
     false
   );
-  const key = doc.content.slice(doc.content.findIndex((node) => node.pageBreak === 'before') + 1);
+  const key = doc.content.slice(answerKeyIndex(doc) + 1);
   assert.equal(
     key
       .filter(
@@ -160,4 +175,43 @@ test('correct choices are bold by original key across seven surfaces, including 
     true
   );
   assert.deepEqual(source, before);
+});
+
+test('the seven-format private export keeps its final slot together and uses the continuation page for the answer key', async () => {
+  const privateQuiz = {
+    kind: 'cloud-custom',
+    owner: 'pdf-owner',
+    name: 'PDF QA 158',
+    questions: questions.map((q, i) => ({
+      ...q,
+      id: 'pdfqa158-' + (i + 1),
+      question: 'PDF QA ' + (i + 1) + ' — tiếng Việt. ' + q.question,
+    })),
+  };
+  const model = projectQuizPdf(privateQuiz, 'pdf-owner', quizPdfAccess(privateQuiz, 'pdf-owner'));
+  const pages = await renderPageLines(quizPdfDocument(model));
+  assert.equal(pages.length, 3);
+  assert.ok(pages[1].includes('First message [first]'));
+  assert.deepEqual(pages[2].slice(0, 3), ['Second message [second]', 'A. start', 'B. finish']);
+  assert.ok(pages[2].indexOf('Answer key') > 2);
+  assert.ok(pages[2].includes('Second message [second]: B. finish'));
+});
+
+test('oversized structured options continue onto later pages without dropping text', async () => {
+  const model = projectQuizPdf(quiz, null, quizPdfAccess(quiz, null));
+  const lastPart = model.questions.at(-1).parts.at(-1);
+  const lines = Array.from({ length: 120 }, (_, i) => 'Continuation QA line ' + (i + 1));
+  lastPart.choices[1].text = lines.join('\n');
+  const pages = await renderPageLines(quizPdfDocument(model));
+  const output = pages.flat();
+  const keyStart = output.indexOf('Answer key');
+  assert.ok(keyStart > 0);
+  const rendered = output
+    .slice(0, keyStart)
+    .map((line) => line.replace(/^B\. /, ''))
+    .filter((line) => line.startsWith('Continuation QA line'));
+  assert.deepEqual(rendered, lines);
+  assert.ok(
+    pages.filter((page) => page.some((line) => line.includes('Continuation QA line'))).length > 1
+  );
 });
