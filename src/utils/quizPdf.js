@@ -98,6 +98,7 @@ export function projectQuizPdf(quiz, uid, access) {
   return projected;
 }
 export function quizPdfDocument(model, { t = (key) => key, images = {} } = {}) {
+  const slotBoundaries = new Map();
   const content = [
     { text: model.title, style: 'title' },
     { text: 'QuizMos · ' + t('Questions and answers'), margin: [0, 0, 0, 18] },
@@ -119,19 +120,35 @@ export function quizPdfDocument(model, { t = (key) => key, images = {} } = {}) {
     }
     if (q.template)
       content.push({ text: q.template, fontSize: 9, background: '#f1f3f5', margin: [8, 6, 8, 10] });
-    for (const part of q.parts) {
-      if (part.id)
-        content.push({ text: part.label + ' [' + part.id + ']', bold: true, margin: [0, 5, 0, 4] });
-      for (const choice of part.choices)
-        content.push({
-          text: choice.key + '. ' + choice.text,
-          bold: choice.correct,
-          margin: [10, 0, 0, 5],
-        });
+    const partPrefix = 'pdf-part-' + i + '-';
+    for (const [partIndex, part] of q.parts.entries()) {
+      const choices = part.choices.map((choice) => ({
+        text: choice.key + '. ' + choice.text,
+        bold: choice.correct,
+        margin: [10, 0, 0, 5],
+      }));
+      if (!part.id) {
+        content.push(...choices);
+        continue;
+      }
+      const id = partPrefix + partIndex;
+      slotBoundaries.set(id, partPrefix + (partIndex + 1));
+      content.push({
+        id,
+        stack: [
+          { text: part.label + ' [' + part.id + ']', bold: true, margin: [0, 5, 0, 4] },
+          ...choices,
+        ],
+      });
     }
-    content.push({ text: ' ', margin: [0, 0, 0, 6] });
+    content.push({ id: partPrefix + q.parts.length, text: ' ', margin: [0, 0, 0, 6] });
   }
-  content.push({ text: t('Answer key'), style: 'title', pageBreak: 'before' });
+  content.push({
+    id: 'pdf-answer-key',
+    text: t('Answer key'),
+    style: 'title',
+    margin: [0, 18, 0, 12],
+  });
   for (const [i, q] of model.questions.entries())
     content.push(
       { text: i + 1 + '. ' + t('Question') + ' ' + q.id, bold: true, margin: [0, 8, 0, 4] },
@@ -157,6 +174,19 @@ export function quizPdfDocument(model, { t = (key) => key, images = {} } = {}) {
       fontSize: 8,
       margin: [0, 14, 0, 0],
     }),
-    pageBreakBefore: (current, following) => current.headlineLevel === 1 && following.length === 0,
+    pageBreakBefore: (current, following, nextPage) => {
+      if (current.id === 'pdf-answer-key') return following.length < 2;
+      if (current.headlineLevel === 1) return following.length === 0;
+      const boundaryId = slotBoundaries.get(current.id);
+      if (!boundaryId || current.pageNumbers.length !== 2) return false;
+      const boundary = nextPage.find(
+        (node) => node.id === boundaryId && node.startPosition.pageNumber === current.pageNumbers[1]
+      );
+      // A slot fits if its continuation uses less space than the space above its start.
+      // Leave the stack breakable so a long option can still flow without losing content.
+      return Boolean(
+        boundary && boundary.startPosition.verticalRatio < current.startPosition.verticalRatio
+      );
+    },
   };
 }
