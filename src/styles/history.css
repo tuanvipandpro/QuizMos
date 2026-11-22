@@ -120,6 +120,11 @@
 .history-score dd {
   margin: 0;
 }
+.history-review-filters {
+  display: grid;
+  gap: 8px;
+  margin-block: 16px;
+}
 .archive-question-picker {
   display: grid;
   gap: 8px;

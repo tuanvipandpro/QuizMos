@@ -167,6 +167,24 @@ test('concurrent duplicates and a lost commit response are idempotent, conflicti
   assert.equal((await getDoc(targets.quota)).data().count, 2);
 });
 
+test('flag-aware retries preserve legacy archives and keep conflicting saved flags immutable', async () => {
+  const legacy = await historyAttempt({ captureFlags: false });
+  const flagged = await historyAttempt({ id: legacy.summary.attemptId, flags: [0] });
+  const service = repository();
+  await service.save('alice', legacy);
+  const saved = await service.save('alice', flagged);
+  assert.equal(saved.payloadHash, legacy.summary.payloadHash);
+  assert.equal((await service.get('alice', saved.attemptId)).payload.flags, undefined);
+  const newer = await historyAttempt({ flags: [0] });
+  await service.save('alice', newer);
+  await assert.rejects(
+    service.save('alice', await historyAttempt({ id: newer.summary.attemptId, flags: [] })),
+    { code: 'HISTORY_CONFLICT' }
+  );
+  assert.deepEqual((await service.get('alice', newer.summary.attemptId)).payload.flags, [0]);
+  assert.equal((await service.state('alice')).count, 2);
+});
+
 test('independent concurrent attempts consume their actual slots and concurrent deletion decrements each only once', async () => {
   const service = repository(),
     attempts = await Promise.all([historyAttempt(), historyAttempt(), historyAttempt()]);

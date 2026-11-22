@@ -339,6 +339,33 @@ test('archive replay preserves stored grading versions/outcomes and rejects corr
   });
 });
 
+test('snapshots accept legacy missing flags, preserve sorted new flags and reject invalid flag indices', async () => {
+  const questions = ['single', 'dropdown-rows']
+    .flatMap(example)
+    .map((question, index) => ({ ...question, id: 'flags-' + index }));
+  const result = finishExam(complete(make(questions)), 2000, true);
+  const archive = (flags) => createHistoryAttempt({ ...result, flags }, uid, questions);
+  const legacy = await archive(undefined);
+  assert.equal((await decodeHistorySnapshot(legacy.summary, legacy.snapshot)).flags, undefined);
+  const empty = await archive([]);
+  assert.deepEqual((await decodeHistorySnapshot(empty.summary, empty.snapshot)).flags, []);
+  const flagged = await archive([1, 0]);
+  assert.deepEqual((await decodeHistorySnapshot(flagged.summary, flagged.snapshot)).flags, [0, 1]);
+  assert.equal((await archive([0, 1])).summary.payloadHash, flagged.summary.payloadHash);
+  for (const flags of [[0, 0], [-1], [2], [0.5], null]) {
+    await assert.rejects(archive(flags), { code: 'HISTORY_INVALID' });
+    const payload = JSON.stringify({ ...JSON.parse(flagged.snapshot.payload), flags });
+    const payloadHash = await contentHash(payload);
+    await assert.rejects(
+      decodeHistorySnapshot(
+        { ...flagged.summary, payloadHash },
+        { ...flagged.snapshot, payload, payloadHash }
+      ),
+      { code: 'HISTORY_INVALID' }
+    );
+  }
+});
+
 test('retained statistics use every summary, canonical aliases and private instance rather than slot', async () => {
   const questions = example('single');
   const { summary } = await createHistoryAttempt(

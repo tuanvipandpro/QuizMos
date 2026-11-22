@@ -49,6 +49,7 @@ const SNAPSHOT_FIELDS = HISTORY_SUMMARY_FIELDS.filter((field) => field !== 'payl
   'answers',
   'outcomes',
 ]);
+const FLAGGED_SNAPSHOT_FIELDS = [...SNAPSHOT_FIELDS, 'flags'];
 const record = (value) => !!value && typeof value === 'object' && !Array.isArray(value);
 const exactKeys = (value, keys) =>
   record(value) &&
@@ -61,6 +62,11 @@ const sortedRecord = (value) =>
 const invalid = () => {
   throw historyError('INVALID');
 };
+const validFlags = (flags, count) =>
+  Array.isArray(flags) &&
+  flags.length <= count &&
+  new Set(flags).size === flags.length &&
+  flags.every((index) => whole(index) && index < count);
 
 export function validateHistorySummary(value) {
   if (
@@ -175,14 +181,15 @@ export function archivedQuestion(question) {
   return copy;
 }
 
-export async function encodeHistorySnapshot(base, questions, answers) {
+export async function encodeHistorySnapshot(base, questions, answers, flags) {
   if (base.gradingVersion !== EXAM_GRADING_VERSION) invalid();
   if (
     !Array.isArray(questions) ||
     !questions.length ||
     questions.length > MAX_HISTORY_QUESTIONS ||
     !Array.isArray(answers) ||
-    answers.length !== questions.length
+    answers.length !== questions.length ||
+    (flags !== undefined && !validFlags(flags, questions.length))
   )
     invalid();
   const snapshotQuestions = questions.map(archivedQuestion);
@@ -210,6 +217,7 @@ export async function encodeHistorySnapshot(base, questions, answers) {
     questions: snapshotQuestions,
     answers: selected,
     outcomes,
+    ...(flags === undefined ? {} : { flags: [...flags].sort((a, b) => a - b) }),
   });
   if (
     new TextEncoder().encode(payload).length > MAX_HISTORY_PAYLOAD_BYTES ||
@@ -257,7 +265,14 @@ export async function decodeHistorySnapshot(summary, envelope) {
   } catch {
     invalid();
   }
-  if (!exactKeys(payload, SNAPSHOT_FIELDS)) invalid();
+  if (
+    !exactKeys(payload, SNAPSHOT_FIELDS) &&
+    !(
+      exactKeys(payload, FLAGGED_SNAPSHOT_FIELDS) &&
+      validFlags(payload.flags, summary.questionCount)
+    )
+  )
+    invalid();
   for (const key of HISTORY_SUMMARY_FIELDS.filter((field) => field !== 'payloadHash')) {
     const normalize = (value) => (record(value) ? sortedRecord(value) : value);
     if (JSON.stringify(normalize(payload[key])) !== JSON.stringify(normalize(summary[key])))
@@ -325,4 +340,13 @@ export async function decodeHistorySnapshot(summary, envelope) {
     invalid();
   // Deliberately preserve archived outcomes; never invoke today's scorer here.
   return payload;
+}
+
+export function equivalentLegacyHistoryPayloads(saved, candidate) {
+  const { flags: savedFlags, ...savedContent } = saved;
+  const { flags: candidateFlags, ...candidateContent } = candidate;
+  return (
+    (savedFlags === undefined) !== (candidateFlags === undefined) &&
+    JSON.stringify(savedContent) === JSON.stringify(candidateContent)
+  );
 }
