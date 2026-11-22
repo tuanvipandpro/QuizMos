@@ -14,23 +14,20 @@ const assets = [
   { quizId: 'anthropic-cca-f', bank: 'Anthropic/CCA_F.json', label: 'CCAR-F' },
   { quizId: 'anthropic-ccao-f', bank: 'Anthropic/CCAO_F.json', label: 'CCAO-F' },
   { quizId: 'anthropic-ccdv-f', bank: 'Anthropic/CCDV_F.json', label: 'CCDV-F' },
+  { quizId: 'anthropic-ccdv-p', bank: 'Anthropic/CCDV_P.json', label: 'CCDV-P' },
   { quizId: 'aws-aip-c01', bank: 'AWS/AIP_C01.json', label: 'AIP-C01' },
-].map((asset) => ({
-  ...asset,
-  questions: JSON.parse(
-    fs.readFileSync(new URL('../public/quiz/' + asset.bank, import.meta.url), 'utf8')
-  ),
-  meta: JSON.parse(
-    fs.readFileSync(
-      new URL('../public/summaries/' + asset.quizId + '/meta.json', import.meta.url),
-      'utf8'
-    )
-  ),
-  markdown: fs.readFileSync(
-    new URL('../public/summaries/' + asset.quizId + '/vi.md', import.meta.url),
-    'utf8'
-  ),
-}));
+].map((asset) => {
+  const directory = new URL('../public/summaries/' + asset.quizId + '/', import.meta.url);
+  const meta = JSON.parse(fs.readFileSync(new URL('meta.json', directory), 'utf8'));
+  return {
+    ...asset,
+    questions: JSON.parse(
+      fs.readFileSync(new URL('../public/quiz/' + asset.bank, import.meta.url), 'utf8')
+    ),
+    meta,
+    markdown: fs.readFileSync(new URL(meta.contentFile, directory), 'utf8'),
+  };
+});
 const { quizId, meta, markdown } = assets[0];
 const reviewedIds = new Set(meta.topics.flatMap((topic) => topic.questionIds));
 const questions = assets[0].questions.filter((question) => reviewedIds.has(String(question.id)));
@@ -143,7 +140,10 @@ test('guide requests honor deployment base paths and pass cancellation to both f
       });
       const prefix = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       assert.equal(calls[0].url, prefix + 'summaries/' + asset.quizId + '/meta.json');
-      assert.equal(calls[1].url, prefix + 'summaries/' + asset.quizId + '/vi.md');
+      assert.equal(
+        calls[1].url,
+        prefix + 'summaries/' + asset.quizId + '/' + asset.meta.contentFile
+      );
       assert.ok(calls.every((call) => call.options.signal === controller.signal));
       assert.equal(
         guide.sourceChanged,
