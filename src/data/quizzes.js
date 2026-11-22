@@ -43,6 +43,15 @@ export const quizzes = [
     code: 'CCDV-F',
   },
   {
+    id: 'anthropic-ccdv-p',
+    name: 'Claude Certified Developer – Professional (CCDV-P)',
+    file: 'quiz/Anthropic/CCDV_P.json',
+    category: 'Anthropic',
+    difficulty: 'Professional',
+    totalQuestions: 100,
+    code: 'CCDV-P',
+  },
+  {
     id: 'gcp-ace',
     name: 'Associate Cloud Engineer (ACE)',
     file: 'quiz/Google/GCP-ACE.json',

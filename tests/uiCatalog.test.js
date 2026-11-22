@@ -50,6 +50,7 @@ test('English is the default while an explicit saved VN/EN choice is respected',
 test('canonical exam codes and legacy quiz identities remain stable', () => {
   const expected = {
     'anthropic-cca-f': 'CCAR-F',
+    'anthropic-ccdv-p': 'CCDV-P',
     'gcp-ace': 'ACE',
     'gcp-pcde': 'PDE',
     'aws-saa': 'SAA-C03',
@@ -76,7 +77,7 @@ test('the catalog contains unique question banks and the mislabeled AWS copy onl
     assert.equal(hashes.has(hash), false, `${quiz.id} duplicates ${hashes.get(hash)}`);
     hashes.set(hash, quiz.id);
   }
-  assert.equal(quizzes.length, 24);
+  assert.equal(quizzes.length, 25);
   assert.equal(quizzes.filter((quiz) => quiz.category === 'AWS').length, 4);
   assert.equal(
     quizzes.some((quiz) => quiz.code === 'CLF-C02' || quiz.id === 'aws-ace'),

@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { clickAfterUiMotion, waitForUiMotion } from './uiMotion.js';
 import { contrastRatio } from './uiContrast.js';
 import { accountCases, viewportCases } from './viewports.js';
+import { quizzes } from '../../src/data/quizzes.js';
 
 const example = (name) =>
   fileURLToPath(new URL(`../../public/examples/quiz-${name}.json`, import.meta.url));
@@ -350,7 +351,7 @@ test(
   async ({ page }, testInfo) => {
     await page.goto('./#/library');
     await expect(page.getByRole('heading', { name: 'Quiz Bank', exact: true })).toBeVisible();
-    await expect(page.getByText('24 quiz sets', { exact: true })).toBeVisible();
+    await expect(page.getByText(`${quizzes.length} quiz sets`, { exact: true })).toBeVisible();
     await expect(page.locator('.header-settings')).toHaveCount(0);
     await expect(page.locator('.provider-jumps button')).toHaveCount(5);
     await expect

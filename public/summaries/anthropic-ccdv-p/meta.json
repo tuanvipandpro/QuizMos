@@ -1,0 +1,209 @@
+{
+  "quizId": "anthropic-ccdv-p",
+  "title": "CCDV-P Quick Summary",
+  "description": "Review production decisions across the eight CCDV-P exam domains, with practice links for all 100 questions.",
+  "language": "en",
+  "status": "published",
+  "version": 1,
+  "updatedAt": "2026-11-22",
+  "readingMinutes": 6,
+  "sourceQuestionCount": 100,
+  "sourceQuizHash": "9dd986550918617e3a891b48b1a57b1938f7235d9acc6d63df35db9bc3bd00d0",
+  "contentFile": "en.md",
+  "topics": [
+    {
+      "id": "architecture",
+      "title": "Agent architecture and orchestration",
+      "questionIds": [
+        "10",
+        "14",
+        "18",
+        "24",
+        "26",
+        "30",
+        "35",
+        "42",
+        "45",
+        "46",
+        "48",
+        "56",
+        "57",
+        "58",
+        "63",
+        "76",
+        "85"
+      ]
+    },
+    {
+      "id": "integration",
+      "title": "Production integration and grounding",
+      "questionIds": [
+        "1",
+        "15",
+        "21",
+        "31",
+        "34",
+        "37",
+        "39",
+        "54",
+        "55",
+        "60",
+        "71",
+        "73",
+        "75",
+        "79",
+        "81",
+        "84",
+        "91",
+        "92",
+        "93",
+        "95"
+      ]
+    },
+    {
+      "id": "observability",
+      "title": "Observability and monitoring",
+      "questionIds": [
+        "6",
+        "12",
+        "17",
+        "19",
+        "22",
+        "33",
+        "38",
+        "52",
+        "61",
+        "86",
+        "96",
+        "98"
+      ]
+    },
+    {
+      "id": "incidents",
+      "title": "Debugging and incident response",
+      "questionIds": [
+        "8",
+        "9",
+        "28",
+        "41",
+        "44",
+        "51",
+        "78",
+        "80",
+        "89",
+        "94"
+      ]
+    },
+    {
+      "id": "evaluation",
+      "title": "Evaluation and quality",
+      "questionIds": [
+        "4",
+        "7",
+        "16",
+        "23",
+        "27",
+        "29",
+        "49",
+        "59",
+        "66",
+        "70",
+        "82",
+        "87"
+      ]
+    },
+    {
+      "id": "optimization",
+      "title": "Cost and latency",
+      "questionIds": [
+        "11",
+        "13",
+        "32",
+        "43",
+        "50",
+        "64",
+        "69",
+        "77"
+      ]
+    },
+    {
+      "id": "guardrails",
+      "title": "Runtime guardrails and security",
+      "questionIds": [
+        "2",
+        "3",
+        "36",
+        "40",
+        "47",
+        "65",
+        "68",
+        "72",
+        "74",
+        "88",
+        "97"
+      ]
+    },
+    {
+      "id": "fleet",
+      "title": "Agent fleet operations",
+      "questionIds": [
+        "5",
+        "20",
+        "25",
+        "53",
+        "62",
+        "67",
+        "83",
+        "90",
+        "99",
+        "100"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "Anthropic · CCDV-P exam guide v1.0",
+      "url": "https://cc.sj-cdn.net/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1794947325/Claude_Certified_Developer-Professional_Exam_Guide.pdf"
+    },
+    {
+      "title": "Anthropic · Building effective agents",
+      "url": "https://www.anthropic.com/research/building-effective-agents"
+    },
+    {
+      "title": "Claude Platform · Stop reasons",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons"
+    },
+    {
+      "title": "Claude Platform · Batch processing",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing"
+    },
+    {
+      "title": "Claude Platform · Prompt caching",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+    },
+    {
+      "title": "Claude Platform · Define success and build evaluations",
+      "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests"
+    },
+    {
+      "title": "OpenTelemetry · Context propagation",
+      "url": "https://opentelemetry.io/docs/concepts/context-propagation/"
+    },
+    {
+      "title": "Google SRE · Alerting on SLOs",
+      "url": "https://sre.google/workbook/alerting-on-slos/"
+    },
+    {
+      "title": "MCP · HTTP authorization",
+      "url": "https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization"
+    },
+    {
+      "title": "Claude Code · Checkpointing",
+      "url": "https://code.claude.com/docs/en/checkpointing"
+    },
+    {
+      "title": "Claude Code · Settings and precedence",
+      "url": "https://code.claude.com/docs/en/settings"
+    }
+  ]
+}
