@@ -232,6 +232,27 @@ test('release gate rejects unverified evidence and release without corresponding
     );
 });
 
+test('Worker publish tolerates unselected jobs but requires a passing production release gate', () => {
+  const source = fs.readFileSync('.github/workflows/test.yml', 'utf8').replace(/\r\n/g, '\n');
+  const backend = source.match(/^  deploy-backend:\n((?: {4,}[^\n]*\n)*)/m)?.[1];
+  assert.ok(backend, 'the backend publish job must exist');
+  assert.match(backend, /^    needs: \[plan, test-and-build\]$/m);
+  const condition = backend.match(/^    if: >-\n((?: {6,}[^\n]*\n)*)/m)?.[1];
+  assert.ok(condition, 'the backend publish job must have an explicit condition');
+  for (const guard of [
+    '!cancelled()',
+    "github.event_name == 'push'",
+    "github.ref == format('refs/heads/{0}', github.event.repository.default_branch)",
+    'contains(fromJSON(\'["main","master"]\'), github.event.repository.default_branch)',
+    "needs.plan.result == 'success'",
+    "needs.test-and-build.result == 'success'",
+    "needs.plan.outputs.release-backend == 'true'",
+  ]) {
+    assert.ok(condition.includes(guard), `missing publish guard: ${guard}`);
+  }
+  assert.ok(!condition.includes('||'), 'all production publish guards must be required');
+});
+
 test('workflow gate parses false release flags literally and blocks missing or invalid evidence', () => {
   const env = {
     ...process.env,
