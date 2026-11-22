@@ -234,10 +234,10 @@ test('release gate rejects unverified evidence and release without corresponding
 
 test('Worker publish tolerates unselected jobs but requires a passing production release gate', () => {
   const source = fs.readFileSync('.github/workflows/test.yml', 'utf8').replace(/\r\n/g, '\n');
-  const backend = source.match(/^  deploy-backend:\n((?: {4,}[^\n]*\n)*)/m)?.[1];
+  const backend = source.match(/^ {2}deploy-backend:\n((?: {4,}[^\n]*\n)*)/m)?.[1];
   assert.ok(backend, 'the backend publish job must exist');
-  assert.match(backend, /^    needs: \[plan, test-and-build\]$/m);
-  const condition = backend.match(/^    if: >-\n((?: {6,}[^\n]*\n)*)/m)?.[1];
+  assert.match(backend, /^ {4}needs: \[plan, test-and-build\]$/m);
+  const condition = backend.match(/^ {4}if: >-\n((?: {6,}[^\n]*\n)*)/m)?.[1];
   assert.ok(condition, 'the backend publish job must have an explicit condition');
   for (const guard of [
     '!cancelled()',
