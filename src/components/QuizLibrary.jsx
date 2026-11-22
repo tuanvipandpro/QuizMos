@@ -287,6 +287,7 @@ export default function QuizLibrary({
                             </button>
                           </Title>
                           {FEATURED_QUIZ_IDS.includes(quiz.id) && <Tag>{t('Featured')}</Tag>}
+                          {quiz.beta && <Tag>{t('Beta')}</Tag>}
                         </div>
                         <Text type="secondary">
                           {t('{count} questions', { count: quiz.totalQuestions })} ·{' '}
