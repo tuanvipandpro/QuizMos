@@ -11,7 +11,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because an error can occur after a 200 has already been returned, and it is delivered as an event in the stream, so the client must handle those events.\nC fails because non-streaming long requests carry their own timeout risks and give up the latency benefit, and it does not fix the underlying handling gap.\nA fails because a longer timeout does not recover a stream that ended with an error event.\nD fails because the cut-offs are errors, not length stops."
+    "explanation": "B is right because an error can occur after a 200 has already been returned, and it is delivered as an event in the stream, so the client must handle those events.\nC fails because non-streaming long requests carry their own timeout risks and give up the latency benefit, and it does not fix the underlying handling gap.\nA fails because a longer timeout does not recover a stream that ended with an error event.\nD fails because the cut-offs are errors, not length stops.\n\n**Practice takeaway**\n\nA successful HTTP handshake tells you that the stream opened. Track whether it reaches its terminal event, surface interrupted output distinctly in the UI, and test a failure after some text has already appeared."
   },
   {
     "id": "2",
@@ -27,7 +27,7 @@
       "B",
       "E"
     ],
-    "explanation": "B is right because the main exposure is indirect injection through content the agent processes.\nE is right because defenses regress, and kept attacks verify fixes over time.\nC fails because it covers only one channel.\nD fails because the system and threats change.\nA fails because tuning to a known list gives a false sense of security and does not generalize."
+    "explanation": "B is right because the main exposure is indirect injection through content the agent processes.\nE is right because defenses regress, and kept attacks verify fixes over time.\nC fails because it covers only one channel.\nD fails because the system and threats change.\nA fails because tuning to a known list gives a false sense of security and does not generalize.\n\n**Practice takeaway**\n\nPut observable pass conditions around the exercise, such as whether an unauthorized action was blocked and whether the attempted action was recorded. Keep sanitized fixtures in a test environment so the same guardrail behavior can be checked after changes."
   },
   {
     "id": "3",
@@ -41,7 +41,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because federation removes long-lived secrets and ties access to the workload's identity and conditions.\nD fails because a static key remains a standing secret that can leak between rotations.\nC fails because a key embedded in an image is exposed to anyone who can pull it.\nA fails because personal keys multiply long-lived secrets and tie CI to individuals."
+    "explanation": "B is right because federation removes long-lived secrets and ties access to the workload's identity and conditions.\nD fails because a static key remains a standing secret that can leak between rotations.\nC fails because a key embedded in an image is exposed to anyone who can pull it.\nA fails because personal keys multiply long-lived secrets and tie CI to individuals.\n\n**Practice takeaway**\n\nBind the federation trust policy to the expected issuer, audience, and workload claims. Short credential lifetime limits exposure, while the authentication policy determines which jobs may exchange their identity in the first place."
   },
   {
     "id": "4",
@@ -55,7 +55,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because vague holistic scales produce low reliability, and specific anchored criteria make both humans and judges more consistent.\nC fails because an explanation does not repair an ambiguous rubric.\nB fails because finer scales add noise, not signal.\nA fails because it removes the reference needed to validate the judge."
+    "explanation": "D is right because vague holistic scales produce low reliability, and specific anchored criteria make both humans and judges more consistent.\nC fails because an explanation does not repair an ambiguous rubric.\nB fails because finer scales add noise, not signal.\nA fails because it removes the reference needed to validate the judge.\n\n**Practice takeaway**\n\nUse the same labeled examples to compare a vague score against the anchored rubric. Per-criterion judgments can reveal weak factual support even when polished writing and full coverage earn high scores elsewhere."
   },
   {
     "id": "5",
@@ -69,7 +69,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because isolated worktrees prevent concurrent writes to the same files, and a controlled merge handles integration.\nC fails because it removes the parallelism rather than fixing the isolation.\nA fails because frequent commits in a shared tree still overwrite each other.\nB fails because negotiation between agents is not enforceable and adds communication cost."
+    "explanation": "D is right because isolated worktrees prevent concurrent writes to the same files, and a controlled merge handles integration.\nC fails because it removes the parallelism rather than fixing the isolation.\nA fails because frequent commits in a shared tree still overwrite each other.\nB fails because negotiation between agents is not enforceable and adds communication cost.\n\n**Practice takeaway**\n\nA worktree isolates files during development. Agree on interfaces and shared-file ownership before work begins, then run integration tests after changes meet on the destination branch."
   },
   {
     "id": "6",
@@ -83,7 +83,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because metadata answers most operational questions without storing content, and a configurable content switch allows capture in safe environments only.\nA fails because the policy forbids retention of the content, and encryption does not change that.\nD fails because blind operation makes incidents undiagnosable and metadata is not the regulated content.\nC fails because excerpts of patient-related prompts can still contain identifiers."
+    "explanation": "B is right because metadata answers most operational questions without storing content, and a configurable content switch allows capture in safe environments only.\nA fails because the policy forbids retention of the content, and encryption does not change that.\nD fails because blind operation makes incidents undiagnosable and metadata is not the regulated content.\nC fails because excerpts of patient-related prompts can still contain identifiers.\n\n**Practice takeaway**\n\nUse request and trace IDs to connect safe metadata across services, and version the prompt so regressions can be attributed to a deployment. Review structured fields, including tool metadata, for accidental customer data and apply the same retention policy across exporters."
   },
   {
     "id": "7",
@@ -97,7 +97,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because agents are judged by whether the work got done and at what efficiency, not by prose quality.\nC fails because length is not correctness.\nD fails because typing speed is unrelated to outcome.\nB fails because more tool calls often indicate wasted effort."
+    "explanation": "A is right because agents are judged by whether the work got done and at what efficiency, not by prose quality.\nC fails because length is not correctness.\nD fails because typing speed is unrelated to outcome.\nB fails because more tool calls often indicate wasted effort.\n\n**Practice takeaway**\n\nScore what the agent actually accomplished and divide cost by successful tasks, including attempts that failed. A fluent final response can still accompany a missing update or a tool sequence that consumed the entire budget."
   },
   {
     "id": "8",
@@ -111,7 +111,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because the controlled comparison shows that the retrieved material is the variable that changes the outcome, so the fix belongs in retrieval and safety handling.\nA fails because the evidence points to the input data, not an unexplained model fault.\nD fails because identical refused requests will keep being declined.\nC fails because instructing the model to override a safety decision is unreliable and inappropriate."
+    "explanation": "B is right because the controlled comparison shows that the retrieved material is the variable that changes the outcome, so the fix belongs in retrieval and safety handling.\nA fails because the evidence points to the input data, not an unexplained model fault.\nD fails because identical refused requests will keep being declined.\nC fails because instructing the model to override a safety decision is unreliable and inappropriate.\n\n**Practice takeaway**\n\nReplay the same input with and without the retrieved passage while keeping the prompt and model fixed. That isolates the retrieval contribution and helps the team distinguish a content policy outcome from a general reliability issue."
   },
   {
     "id": "9",
@@ -127,7 +127,7 @@
       "C",
       "D"
     ],
-    "explanation": "C is right because the origin is the first wrong handoff, not the last agent.\nD is right because many agent failures come from context assembly, such as truncation or missing results.\nB fails because the writer was faithful, so the defect is upstream.\nE fails because one run proves little and changes a variable without isolating the origin.\nA fails because a checker may catch the symptom but leaves the faulty stage in place."
+    "explanation": "C is right because the origin is the first wrong handoff, not the last agent.\nD is right because many agent failures come from context assembly, such as truncation or missing results.\nB fails because the writer was faithful, so the defect is upstream.\nE fails because one run proves little and changes a variable without isolating the origin.\nA fails because a checker may catch the symptom but leaves the faulty stage in place.\n\n**Practice takeaway**\n\nTrace the incorrect value to the earliest handoff where it changed or disappeared. A worker can be arithmetically correct on incomplete input, so inspect the input provenance and truncation boundary before editing its prompt."
   },
   {
     "id": "10",
@@ -141,7 +141,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because the failure comes from the handoff: oversized transcripts crowd out the later results and nothing checks contradictions.\nCompact structured returns restore headroom, and a verification step catches conflicts.\nA fails because more workers means even more returned content and does nothing about the handoff format.\nB fails because a prompt cannot make material fit in a context that is already full.\nC fails because sequential execution in one context makes the overflow worse and loses the isolation benefit."
+    "explanation": "D is right because the failure comes from the handoff: oversized transcripts crowd out the later results and nothing checks contradictions.\nCompact structured returns restore headroom, and a verification step catches conflicts.\nA fails because more workers means even more returned content and does nothing about the handoff format.\nB fails because a prompt cannot make material fit in a context that is already full.\nC fails because sequential execution in one context makes the overflow worse and loses the isolation benefit.\n\n**Practice takeaway**\n\nA small schema makes evidence easy to compare across workers and keeps the supervisor's context within budget. Preserve source references so the supervisor can fetch the relevant evidence when two compact results disagree."
   },
   {
     "id": "11",
@@ -157,7 +157,7 @@
       "A",
       "E"
     ],
-    "explanation": "A is right because a cached prefix removes repeated prompt processing from the critical path.\nE is right because effort scales the reasoning time, which is wasted on simple steps.\nB fails because the output allowance is not the bottleneck and a higher one can lengthen responses.\nD fails because batch adds delay and cuts cost, which is the opposite goal.\nC fails because retries add work and do not speed up a slow call."
+    "explanation": "A is right because a cached prefix removes repeated prompt processing from the critical path.\nE is right because effort scales the reasoning time, which is wasted on simple steps.\nB fails because the output allowance is not the bottleneck and a higher one can lengthen responses.\nD fails because batch adds delay and cuts cost, which is the opposite goal.\nC fails because retries add work and do not speed up a slow call.\n\n**Practice takeaway**\n\nSeparate repeated input processing from reasoning time in the latency trace. Measure cache reads and routing accuracy after changing effort, since cache reuse depends on the model and how the effort setting is applied."
   },
   {
     "id": "12",
@@ -171,7 +171,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because per-step spans show where time is spent and let you compare slow and fast requests by step.\nA fails because a total and a count still cannot attribute the delay.\nD fails because more samples of the same coarse span add volume but no new information.\nB fails because output text does not reveal timing and may create privacy exposure."
+    "explanation": "C is right because per-step spans show where time is spent and let you compare slow and fast requests by step.\nA fails because a total and a count still cannot attribute the delay.\nD fails because more samples of the same coarse span add volume but no new information.\nB fails because output text does not reveal timing and may create privacy exposure.\n\n**Practice takeaway**\n\nGive each span a duration and an outcome so slow retrieval, tool retries, and model generation show up independently in a waterfall. Record the end-to-end trace ID on correlated logs to find the same request without storing its full prompt."
   },
   {
     "id": "13",
@@ -185,7 +185,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because the calls are independent, so total time becomes the slowest call rather than the sum.\nC fails because the time is spent in the tools, not in the model.\nB fails because it serializes work deliberately.\nA fails because it drops needed data."
+    "explanation": "D is right because the calls are independent, so total time becomes the slowest call rather than the sum.\nC fails because the time is spent in the tools, not in the model.\nB fails because it serializes work deliberately.\nA fails because it drops needed data.\n\n**Practice takeaway**\n\nCheck the dependency graph before parallelizing. Independent calls can run together, then their results can be placed in one follow-up message with the original tool-use IDs intact, even if responses arrived out of order."
   },
   {
     "id": "14",
@@ -199,7 +199,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because trace data shows the path is nearly deterministic for most runs, which is the signal to harden it into a workflow that is cheaper, faster and testable while retaining agentic flexibility for the tail.\nA fails because a larger model makes the agent slower and costlier and does not remove unnecessary decision-making.\nC fails because adding agents adds coordination cost to a fixed sequence.\nD fails because more tools expand the decision space, which usually hurts the tail further."
+    "explanation": "B is right because trace data shows the path is nearly deterministic for most runs, which is the signal to harden it into a workflow that is cheaper, faster and testable while retaining agentic flexibility for the tail.\nA fails because a larger model makes the agent slower and costlier and does not remove unnecessary decision-making.\nC fails because adding agents adds coordination cost to a fixed sequence.\nD fails because more tools expand the decision space, which usually hurts the tail further.\n\n**Practice takeaway**\n\nMeasure the common workflow and exception path separately. The workflow can make the known path cheaper and easier to test, while the exceptional path gets a budget and an escalation route."
   },
   {
     "id": "15",
@@ -213,7 +213,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because a 400 describes a defect in the request, so retries and failover reproduce it at extra cost, and here the cause is code that altered content blocks the API requires unmodified.\nC fails because more attempts of an invalid request cannot succeed.\nD fails because a circuit breaker protects against unhealthy dependencies, and a malformed request is not an outage, so the secondary region rejects it too.\nB fails because the error class is not a rate limit and queueing delays the failure."
+    "explanation": "A is right because a 400 describes a defect in the request, so retries and failover reproduce it at extra cost, and here the cause is code that altered content blocks the API requires unmodified.\nC fails because more attempts of an invalid request cannot succeed.\nD fails because a circuit breaker protects against unhealthy dependencies, and a malformed request is not an outage, so the secondary region rejects it too.\nB fails because the error class is not a rate limit and queueing delays the failure.\n\n**Practice takeaway**\n\nPreserve the latest assistant message's thinking content as received when returning tool results in that turn. Route the specific validation error to request-construction debugging so retry budgets remain available for transient failures."
   },
   {
     "id": "16",
@@ -227,7 +227,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because separating retrieval and generation metrics localizes the failing stage, so effort goes to the right component.\nB fails because more end-to-end samples still cannot attribute a failure.\nC fails because prompt tuning cannot recover documents that retrieval missed.\nD fails because fluency is unrelated to correctness and can mask fabrication."
+    "explanation": "A is right because separating retrieval and generation metrics localizes the failing stage, so effort goes to the right component.\nB fails because more end-to-end samples still cannot attribute a failure.\nC fails because prompt tuning cannot recover documents that retrieval missed.\nD fails because fluency is unrelated to correctness and can mask fabrication.\n\n**Practice takeaway**\n\nSeparate whether retrieval found the right evidence from whether the answer followed it. Good retrieval with poor groundedness points to generation, while missing evidence points upstream to retrieval or indexing."
   },
   {
     "id": "17",
@@ -243,7 +243,7 @@
       "A",
       "E"
     ],
-    "explanation": "A is right because dimensional cost metrics with anomaly detection surface spend changes in minutes, attributed to an owner.\nE is right because per-task ceilings catch a loop directly, before it accumulates cost.\nC fails because invoices arrive too late.\nB fails because a loop may issue few requests with huge token counts.\nD fails because loops make responses slower, not faster, and latency is a poor cost proxy."
+    "explanation": "A is right because dimensional cost metrics with anomaly detection surface spend changes in minutes, attributed to an owner.\nE is right because per-task ceilings catch a loop directly, before it accumulates cost.\nC fails because invoices arrive too late.\nB fails because a loop may issue few requests with huge token counts.\nD fails because loops make responses slower, not faster, and latency is a poor cost proxy.\n\n**Practice takeaway**\n\nA tenant-level baseline finds concentrated cost spikes that a global average can hide. Per-task iteration and token ceilings give the team an earlier signal when a single agent enters a costly loop."
   },
   {
     "id": "18",
@@ -257,7 +257,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because deferring tool definitions keeps the catalog out of the window and presents the model with a small, relevant candidate set.\nB fails because caching lowers the price of repeated tokens but leaves the same 400 choices crowding the context, so selection accuracy does not recover.\nD fails because terse descriptions make selection harder.\nC fails because random removal deletes capabilities that users need."
+    "explanation": "A is right because deferring tool definitions keeps the catalog out of the window and presents the model with a small, relevant candidate set.\nB fails because caching lowers the price of repeated tokens but leaves the same 400 choices crowding the context, so selection accuracy does not recover.\nD fails because terse descriptions make selection harder.\nC fails because random removal deletes capabilities that users need.\n\n**Practice takeaway**\n\nDeferred loading pays off when a large tool catalog contains only a few useful tools for each request. Measure tool discovery recall and latency because reducing context can introduce a discovery step."
   },
   {
     "id": "19",
@@ -271,7 +271,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because distributed tracing depends on passing context across process or agent boundaries so that spans link into one trace.\nB fails because naming does not connect spans.\nD fails because retention does not link traces.\nA fails because time-window joins are ambiguous under concurrency and misattribute work between requests."
+    "explanation": "C is right because distributed tracing depends on passing context across process or agent boundaries so that spans link into one trace.\nB fails because naming does not connect spans.\nD fails because retention does not link traces.\nA fails because time-window joins are ambiguous under concurrency and misattribute work between requests.\n\n**Practice takeaway**\n\nCarry trace context across worker dispatch and queue boundaries. A common trace ID with parent-child relationships makes fan-out and fan-in visible as a single request timeline."
   },
   {
     "id": "20",
@@ -285,7 +285,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because shadow mode generates evidence of agreement with humans without blocking anyone, and calibration decides what is safe to gate.\nD fails because blocking on every comment would amplify the noise.\nA fails because removing humans removes the check on the reviewer's misses.\nB fails because unmeasured output cannot be improved or trusted."
+    "explanation": "C is right because shadow mode generates evidence of agreement with humans without blocking anyone, and calibration decides what is safe to gate.\nD fails because blocking on every comment would amplify the noise.\nA fails because removing humans removes the check on the reviewer's misses.\nB fails because unmeasured output cannot be improved or trusted.\n\n**Practice takeaway**\n\nShadow mode means findings are recorded while humans retain the merge decision. Report precision and recall by defect category because one reliable category can coexist with unacceptable false positives or missed defects elsewhere."
   },
   {
     "id": "21",
@@ -299,7 +299,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because the failure is at the retrieval stage: the chunk is never found, and lexical matching handles rare exact tokens that embeddings blur.\nD fails because the model cannot use text that was not retrieved.\nB fails because larger chunks dilute the match and do not guarantee the code is recalled.\nC fails because a better generator cannot ground an answer in a source that was never supplied."
+    "explanation": "A is right because the failure is at the retrieval stage: the chunk is never found, and lexical matching handles rare exact tokens that embeddings blur.\nD fails because the model cannot use text that was not retrieved.\nB fails because larger chunks dilute the match and do not guarantee the code is recalled.\nC fails because a better generator cannot ground an answer in a source that was never supplied.\n\n**Practice takeaway**\n\nExact model numbers and ticket IDs are strong lexical signals. Combine lexical and vector candidates, then compare recall for identifier queries before changing the reranker or the generation prompt."
   },
   {
     "id": "22",
@@ -313,7 +313,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because the degradation is in the content of successful responses, which HTTP and latency metrics cannot see, and baseline comparison by version exposes drift.\nD fails because the latency was not the symptom.\nC fails because a blanket token alert would fire constantly and may not correspond to the problem.\nB fails because communication does not measure anything."
+    "explanation": "A is right because the degradation is in the content of successful responses, which HTTP and latency metrics cannot see, and baseline comparison by version exposes drift.\nD fails because the latency was not the symptom.\nC fails because a blanket token alert would fire constantly and may not correspond to the problem.\nB fails because communication does not measure anything.\n\n**Practice takeaway**\n\nA successful request can contain a refusal or a truncated answer. Segment stop reasons and quality checks by model and prompt version so deployment effects remain visible in otherwise healthy transport metrics."
   },
   {
     "id": "23",
@@ -327,7 +327,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because the blended average hid a severe slice regression, and slice-level criteria expose it.\nB fails because a higher overall bar can still be met while a small slice collapses.\nC fails because removing the cases hides the failure rather than preventing it.\nD fails because repeating averages reduces noise but still blends slices."
+    "explanation": "A is right because the blended average hid a severe slice regression, and slice-level criteria expose it.\nB fails because a higher overall bar can still be met while a small slice collapses.\nC fails because removing the cases hides the failure rather than preventing it.\nD fails because repeating averages reduces noise but still blends slices.\n\n**Practice takeaway**\n\nA blended score can hide harm to a smaller audience. Set a minimum sample and explicit threshold for each release-critical slice, and examine uncertainty before declaring that a small slice has recovered."
   },
   {
     "id": "24",
@@ -341,7 +341,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because the failure is a silent contract break at the inter-agent boundary, and schema validation with a contract test turns it into an immediate, visible error.\nD fails because the prompt cannot reliably detect a value that was defaulted to zero.\nB fails because retries reproduce the same renamed field.\nA fails because model size is unrelated to a code change in the output schema."
+    "explanation": "C is right because the failure is a silent contract break at the inter-agent boundary, and schema validation with a contract test turns it into an immediate, visible error.\nD fails because the prompt cannot reliably detect a value that was defaulted to zero.\nB fails because retries reproduce the same renamed field.\nA fails because model size is unrelated to a code change in the output schema.\n\n**Practice takeaway**\n\nValidate tool and worker outputs where they cross the boundary. Missing values should surface as contract violations so a consumer can stop or quarantine the operation instead of using a plausible-looking default."
   },
   {
     "id": "25",
@@ -355,7 +355,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because event-driven first response should gather evidence and propose changes within bounded privileges and keep humans informed.\nA fails because direct pushes with admin rights bypass review.\nC fails because repeating a failing build hides flaky or real failures and burns resources.\nD fails because disabling tests destroys the safety net while hiding the problem."
+    "explanation": "B is right because event-driven first response should gather evidence and propose changes within bounded privileges and keep humans informed.\nA fails because direct pushes with admin rights bypass review.\nC fails because repeating a failing build hides flaky or real failures and burns resources.\nD fails because disabling tests destroys the safety net while hiding the problem.\n\n**Practice takeaway**\n\nGive the unattended job a bounded scope and a human review surface. If it cannot diagnose safely within its budget, preserve relevant logs and notify the owner instead of granting more privileges."
   },
   {
     "id": "26",
@@ -369,7 +369,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because the bulky intermediate data never needs to pass through the model's context; code processes it and only the result is returned.\nB fails because compaction reacts after the rows have entered context and risks losing numbers.\nA fails because it postpones the limit and still pays for tokens the model does not need to read.\nC fails because every row still lands in the context."
+    "explanation": "D is right because the bulky intermediate data never needs to pass through the model's context; code processes it and only the result is returned.\nB fails because compaction reacts after the rows have entered context and risks losing numbers.\nA fails because it postpones the limit and still pays for tokens the model does not need to read.\nC fails because every row still lands in the context.\n\n**Practice takeaway**\n\nAggregate rows close to their source and return only the fields the reasoning step needs. Limit permissions and result size in the execution environment, then verify aggregate totals with deterministic checks where possible."
   },
   {
     "id": "27",
@@ -383,7 +383,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because verbosity bias is a measurable flaw, and rubric design plus controls, validated against human labels, is how a judge is made trustworthy.\nC fails because a kappa of 0.35 is weak and the known bias would pass longer but worse answers.\nA fails because an unspecific request does not correct a systematic bias.\nD fails because averaging repeats the same bias."
+    "explanation": "B is right because verbosity bias is a measurable flaw, and rubric design plus controls, validated against human labels, is how a judge is made trustworthy.\nC fails because a kappa of 0.35 is weak and the known bias would pass longer but worse answers.\nA fails because an unspecific request does not correct a systematic bias.\nD fails because averaging repeats the same bias.\n\n**Practice takeaway**\n\nLength bias can make preferred answers look better merely because they are more verbose. Compare human and judge decisions on similar-quality answers of different lengths using a held-out calibration set."
   },
   {
     "id": "28",
@@ -397,7 +397,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because the gap was monitoring coverage of the degraded path, and the fix is to measure quality there and decide in advance how to behave.\nD fails because it trades a quality problem for an availability one.\nA fails because capacity is not under the team's control during a provider event.\nB fails because it ignores the learning the incident provided."
+    "explanation": "C is right because the gap was monitoring coverage of the degraded path, and the fix is to measure quality there and decide in advance how to behave.\nD fails because it trades a quality problem for an availability one.\nA fails because capacity is not under the team's control during a provider event.\nB fails because it ignores the learning the incident provided.\n\n**Practice takeaway**\n\nThe fallback path needs its own success and quality measures. A runbook with quality thresholds gives responders a basis for selecting degraded service, a safe default, or temporary interruption."
   },
   {
     "id": "29",
@@ -411,7 +411,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because a saturated suite no longer measures anything, so new, harder and representative cases are needed.\nB fails because the issue is lack of discrimination, not strictness.\nA fails because feedback is late and incomplete, and a suite is still valuable once refreshed.\nC fails because duplicates of easy cases do not add discriminating power."
+    "explanation": "D is right because a saturated suite no longer measures anything, so new, harder and representative cases are needed.\nB fails because the issue is lack of discrimination, not strictness.\nA fails because feedback is late and incomplete, and a suite is still valuable once refreshed.\nC fails because duplicates of easy cases do not add discriminating power.\n\n**Practice takeaway**\n\nA high score on a static suite can coexist with blind spots in current traffic. Add independently labeled recent failures and track coverage by use case so a changing suite can still diagnose changes over time."
   },
   {
     "id": "30",
@@ -425,7 +425,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because concurrent writers to one mutable resource cause lost updates, and giving each worker private output with a single merger removes the shared-write race by design.\nA fails because effort does not change the concurrency problem.\nD fails because read-before-write still leaves a window between reading and writing and relies on the model for correctness.\nC fails because serializing would hide the symptom at the cost of the parallel speedup you wanted, without fixing the shared-state design."
+    "explanation": "B is right because concurrent writers to one mutable resource cause lost updates, and giving each worker private output with a single merger removes the shared-write race by design.\nA fails because effort does not change the concurrency problem.\nD fails because read-before-write still leaves a window between reading and writing and relies on the model for correctness.\nC fails because serializing would hide the symptom at the cost of the parallel speedup you wanted, without fixing the shared-state design.\n\n**Practice takeaway**\n\nSeparate output ownership keeps a worker from overwriting peers' results. The supervisor can merge after completion, mark missing records, and apply a consistent conflict policy before downstream action."
   },
   {
     "id": "31",
@@ -439,7 +439,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because pause_turn means the server-side loop hit its iteration limit and the work should be continued by sending back the assistant content as it was.\nC fails because dropping the earlier content discards the work in progress, and a user message after it is not the specified continuation.\nB fails because it is not an error and restarting repeats the work.\nA fails because the output budget is the cause of max_tokens stops, not of pause_turn."
+    "explanation": "D is right because pause_turn means the server-side loop hit its iteration limit and the work should be continued by sending back the assistant content as it was.\nC fails because dropping the earlier content discards the work in progress, and a user message after it is not the specified continuation.\nB fails because it is not an error and restarting repeats the work.\nA fails because the output budget is the cause of max_tokens stops, not of pause_turn.\n\n**Practice takeaway**\n\nA server-side pause represents unfinished work. Carry forward the assistant content and any returned container identifier when applicable, and cap the continuation loop to keep a stalled tool sequence bounded."
   },
   {
     "id": "32",
@@ -453,7 +453,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because the job tolerates delay, which is what batch economics reward, and the live tool needs interactive latency.\nC fails because batch results are asynchronous and would break the live tool.\nD fails because it leaves the savings unclaimed and still competes for real-time capacity.\nB fails because it reverses the fit."
+    "explanation": "A is right because the job tolerates delay, which is what batch economics reward, and the live tool needs interactive latency.\nC fails because batch results are asynchronous and would break the live tool.\nD fails because it leaves the savings unclaimed and still competes for real-time capacity.\nB fails because it reverses the fit.\n\n**Practice takeaway**\n\nAsynchronous work can trade completion time for lower cost and a separate capacity profile. Keep interactive requests on their latency path and instrument each population independently."
   },
   {
     "id": "33",
@@ -467,7 +467,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because burn-rate alerting ties pages to the user-facing SLO, so short harmless blips do not page while sustained budget loss does.\nB fails because it would miss serious partial degradations that still violate the SLO.\nA fails because the busy period is when real incidents hurt most.\nC fails because it increases noise further."
+    "explanation": "D is right because burn-rate alerting ties pages to the user-facing SLO, so short harmless blips do not page while sustained budget loss does.\nB fails because it would miss serious partial degradations that still violate the SLO.\nA fails because the busy period is when real incidents hurt most.\nC fails because it increases noise further.\n\n**Practice takeaway**\n\nBurn rate relates observed failures to the error budget for the target period. Combining a short and a long observation window helps catch real depletion while allowing brief spikes to recover."
   },
   {
     "id": "34",
@@ -481,7 +481,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because one-shot retrieval gives low latency and cost for predictable lookups, while iterative search copes with multi-hop questions and changing data when latency is tolerable.\nB fails because iterative search would blow the sub-second budget and cost for FAQs.\nC fails because one-shot retrieval struggles with multi-hop questions.\nD fails because it reverses the fit between latency needs and approach."
+    "explanation": "A is right because one-shot retrieval gives low latency and cost for predictable lookups, while iterative search copes with multi-hop questions and changing data when latency is tolerable.\nB fails because iterative search would blow the sub-second budget and cost for FAQs.\nC fails because one-shot retrieval struggles with multi-hop questions.\nD fails because it reverses the fit between latency needs and approach.\n\n**Practice takeaway**\n\nMatch retrieval to the shape and deadline of the task. A simple, indexed lookup is predictable for FAQs, while exploratory questions can justify multiple bounded queries across sources."
   },
   {
     "id": "35",
@@ -495,7 +495,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because caching matches an exact prefix, so any edit to the system prompt or tools invalidates everything after it, while appended messages leave the earlier prefix valid.\nD fails because a longer lifetime does not help when each rewrite creates a different prefix.\nA fails because breakpoints mark where to cache but cannot make a changing prefix match.\nC fails because the policy text is still rewritten in place, which changes the prefix."
+    "explanation": "B is right because caching matches an exact prefix, so any edit to the system prompt or tools invalidates everything after it, while appended messages leave the earlier prefix valid.\nD fails because a longer lifetime does not help when each rewrite creates a different prefix.\nA fails because breakpoints mark where to cache but cannot make a changing prefix match.\nC fails because the policy text is still rewritten in place, which changes the prefix.\n\n**Practice takeaway**\n\nKeep static content before the cache breakpoint and append changing values later. Security policies that must be enforced still need a trusted instruction channel or a runtime control when their values change."
   },
   {
     "id": "36",
@@ -509,7 +509,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because memory is a persistence layer for injection, so writes need provenance and controls, and untrusted entries must not be treated as instructions.\nC fails because dilution does not remove the poisoned entry.\nB fails because skepticism advice is not enforceable.\nD fails because it is excessive and removes legitimate value rather than controlling the risk."
+    "explanation": "A is right because memory is a persistence layer for injection, so writes need provenance and controls, and untrusted entries must not be treated as instructions.\nC fails because dilution does not remove the poisoned entry.\nB fails because skepticism advice is not enforceable.\nD fails because it is excessive and removes legitimate value rather than controlling the risk.\n\n**Practice takeaway**\n\nTreat provenance as part of the memory record and recheck trust when that memory is read. Approved long-term facts and externally supplied text need different visibility and write rules."
   },
   {
     "id": "37",
@@ -523,7 +523,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because platforms do not always have feature parity, so a fallback must be tested and must degrade gracefully when a feature is missing.\nD fails because removing the fallback gives up resilience when the real fix is to handle parity.\nA fails because retrying a request for an unsupported feature repeats the same 400.\nC fails because banning features overcorrects and sacrifices value on the primary path."
+    "explanation": "B is right because platforms do not always have feature parity, so a fallback must be tested and must degrade gracefully when a feature is missing.\nD fails because removing the fallback gives up resilience when the real fix is to handle parity.\nA fails because retrying a request for an unsupported feature repeats the same 400.\nC fails because banning features overcorrects and sacrifices value on the primary path.\n\n**Practice takeaway**\n\nCompatibility includes feature behavior, request shape, and safety guarantees. Exercise the degraded route with representative traffic or fixtures so missing capabilities are discovered before an incident."
   },
   {
     "id": "38",
@@ -537,7 +537,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because the cohort comparison isolates a dimension where failure rates differ sharply, a pattern invisible in individual traces, and replays can then pin the cause.\nD fails because the data show a strong concentration by input length, not an even spread.\nA fails because prompt versions show similar rates.\nB fails because tenants show similar rates too."
+    "explanation": "C is right because the cohort comparison isolates a dimension where failure rates differ sharply, a pattern invisible in individual traces, and replays can then pin the cause.\nD fails because the data show a strong concentration by input length, not an even spread.\nA fails because prompt versions show similar rates.\nB fails because tenants show similar rates too.\n\n**Practice takeaway**\n\nThe long-input slice contributes about 2.48 failures per 100 total tasks, which is roughly 62% of observed failures. That concentration justifies targeted replay, and the replay is needed to establish the cause."
   },
   {
     "id": "39",
@@ -553,7 +553,7 @@
       "D",
       "E"
     ],
-    "explanation": "D is right because a refusal is a distinct, successful-status outcome that needs deliberate handling.\nE is right because tracking refusal rate by version lets you notice when a change starts causing declines.\nC fails because rewording to defeat a safety decision is inappropriate and unpredictable.\nA fails because repeating the same request tends to repeat the same refusal at more cost.\nB fails because mislabeling it as an infrastructure error corrupts your reliability metrics and hides a policy or prompt problem."
+    "explanation": "D is right because a refusal is a distinct, successful-status outcome that needs deliberate handling.\nE is right because tracking refusal rate by version lets you notice when a change starts causing declines.\nC fails because rewording to defeat a safety decision is inappropriate and unpredictable.\nA fails because repeating the same request tends to repeat the same refusal at more cost.\nB fails because mislabeling it as an infrastructure error corrupts your reliability metrics and hides a policy or prompt problem.\n\n**Practice takeaway**\n\nClassify refusal outcomes separately from service failures and surface an appropriate user message. Track the refusal rate by release and use reported categories where available, while keeping sensitive request content out of telemetry."
   },
   {
     "id": "40",
@@ -569,7 +569,7 @@
       "B",
       "D"
     ],
-    "explanation": "B is right because a deterministic output control catches leaks regardless of the model's behavior.\nD is right because defined fallback behavior keeps the product safe and predictable.\nA fails because rewording until a filter passes defeats the filter.\nE fails because the data does not become less sensitive for any customer tier.\nC fails because a prompt instruction is not a guarantee."
+    "explanation": "B is right because a deterministic output control catches leaks regardless of the model's behavior.\nD is right because defined fallback behavior keeps the product safe and predictable.\nA fails because rewording until a filter passes defeats the filter.\nE fails because the data does not become less sensitive for any customer tier.\nC fails because a prompt instruction is not a guarantee.\n\n**Practice takeaway**\n\nChoose a control at the point where the risk materializes. Output redaction limits accidental disclosure, and a defined escalation route lets the system handle blocked responses predictably."
   },
   {
     "id": "41",
@@ -583,7 +583,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because the learning loop turns the incident into a test, a detector and a gate, which prevent recurrence and speed detection.\nC fails because reminders do not change the system.\nD fails because the policy was already stated, and a prompt change is the kind of risk the regression suite should check.\nA fails because it relies on one person and does not add automated coverage."
+    "explanation": "B is right because the learning loop turns the incident into a test, a detector and a gate, which prevent recurrence and speed detection.\nC fails because reminders do not change the system.\nD fails because the policy was already stated, and a prompt change is the kind of risk the regression suite should check.\nA fails because it relies on one person and does not add automated coverage.\n\n**Practice takeaway**\n\nConnect the incident to a repeatable test, a production signal, and an action threshold. Together they help identify the same error before release and catch the cases that still escape the test suite."
   },
   {
     "id": "42",
@@ -597,7 +597,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because memory is a cache of past observations, and live facts that change must be checked against the authoritative source, with age visible for judgment.\nA fails because storing both addresses creates ambiguity without telling the agent which is current.\nB fails because without persisted memory a new session has no recall at all.\nC fails because more detail about an outdated fact does not make it current."
+    "explanation": "D is right because memory is a cache of past observations, and live facts that change must be checked against the authoritative source, with age visible for judgment.\nA fails because storing both addresses creates ambiguity without telling the agent which is current.\nB fails because without persisted memory a new session has no recall at all.\nC fails because more detail about an outdated fact does not make it current.\n\n**Practice takeaway**\n\nUse the authoritative record when a stored fact can change and the decision has consequences. Provenance and freshness tell the agent when stored context is suitable for hints and when it must fetch again."
   },
   {
     "id": "43",
@@ -611,7 +611,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because costs follow token volumes, and pilot-measured distributions with ranges and tracking give an explainable and updateable forecast.\nD fails because agents make many calls per task with different sizes, so one typical request misrepresents them.\nC fails because a different feature has a different token profile.\nA fails because an unmeasured assumption is not a forecast."
+    "explanation": "B is right because costs follow token volumes, and pilot-measured distributions with ranges and tracking give an explainable and updateable forecast.\nD fails because agents make many calls per task with different sizes, so one typical request misrepresents them.\nC fails because a different feature has a different token profile.\nA fails because an unmeasured assumption is not a forecast.\n\n**Practice takeaway**\n\nForecast by workload and token category, including cache reads and writes when they matter. Compare scenarios using adoption and cache-rate ranges, then revise the assumptions when measured traffic arrives."
   },
   {
     "id": "44",
@@ -625,7 +625,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because the model did what the evidence said, and the stale value came from the tool's data.\nB fails because the model cannot know the discount is outdated and a larger one would still trust the tool.\nD fails because the model has no independent source to check against.\nC fails because the output was deterministic and wrong, so variability is not the cause."
+    "explanation": "A is right because the model did what the evidence said, and the stale value came from the tool's data.\nB fails because the model cannot know the discount is outdated and a larger one would still trust the tool.\nD fails because the model has no independent source to check against.\nC fails because the output was deterministic and wrong, so variability is not the cause.\n\n**Practice takeaway**\n\nA correct response about stale tool output can still give the user the wrong price. Test tool freshness and provenance directly so the system can disclose the effective date or refuse to quote an obsolete value."
   },
   {
     "id": "45",
@@ -639,7 +639,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because it spends agentic flexibility only where the workflow demonstrably fails and keeps the predictable, cheap path intact, with data to judge the change.\nA fails because the rule count is already the maintenance problem, and long-tail inputs are exactly what rules cover poorly.\nD fails because it moves well-handled traffic into a costlier and less predictable pattern without evidence.\nB fails because it routes more claims into the failing default instead of handling them."
+    "explanation": "C is right because it spends agentic flexibility only where the workflow demonstrably fails and keeps the predictable, cheap path intact, with data to judge the change.\nA fails because the rule count is already the maintenance problem, and long-tail inputs are exactly what rules cover poorly.\nD fails because it moves well-handled traffic into a costlier and less predictable pattern without evidence.\nB fails because it routes more claims into the failing default instead of handling them.\n\n**Practice takeaway**\n\nKeep the agent's authority constrained to hard cases and define when a human should take over. Compare it against the current exception handler on the same inputs before expanding its scope."
   },
   {
     "id": "46",
@@ -655,7 +655,7 @@
       "A",
       "D"
     ],
-    "explanation": "A is right because file checkpointing restores local file state but cannot reach into other systems.\nD is right because the durable answer for external effects is gating, idempotency and compensating actions.\nC fails because the conversation record and the outside world are separate.\nB fails because checkpoints are recovery, not prevention.\nE fails because resuming continues the session and does not roll back effects."
+    "explanation": "A is right because file checkpointing restores local file state but cannot reach into other systems.\nD is right because the durable answer for external effects is gating, idempotency and compensating actions.\nC fails because the conversation record and the outside world are separate.\nB fails because checkpoints are recovery, not prevention.\nE fails because resuming continues the session and does not roll back effects.\n\n**Practice takeaway**\n\nTreat file rewind and external rollback as different recovery operations. Record stable operation IDs and available compensation steps before side effects so a file reset does not lead to duplicate external actions."
   },
   {
     "id": "47",
@@ -671,7 +671,7 @@
       "D",
       "E"
     ],
-    "explanation": "D is right because separate identities and least privilege allow attribution and limit damage.\nE is right because a secret in context can be extracted by injection or leaked in logs.\nA fails because prompts can be extracted, and a shared admin credential is still the weakness.\nB fails because wider permissions increase risk.\nC fails because infrequent rotation leaves an exposed secret valid for a long time."
+    "explanation": "D is right because separate identities and least privilege allow attribution and limit damage.\nE is right because a secret in context can be extracted by injection or leaked in logs.\nA fails because prompts can be extracted, and a shared admin credential is still the weakness.\nB fails because wider permissions increase risk.\nC fails because infrequent rotation leaves an exposed secret valid for a long time.\n\n**Practice takeaway**\n\nScope each runtime identity to its purpose and keep credentials in the service boundary. Review the tool interface and logs to ensure a permission change cannot accidentally put credential material into the model context."
   },
   {
     "id": "48",
@@ -687,7 +687,7 @@
       "A",
       "C"
     ],
-    "explanation": "A is right because enforcement sits in code outside the model, so a manipulated worker cannot bypass it.\nC is right because an approval tied to exact parameters, with the evidence shown and an expiry, cannot be reused for a different action.\nE fails because self-assessed confidence is exactly what an injected or mistaken agent gets wrong.\nD fails because a blanket approval authorizes actions the approver never saw.\nB fails because agent-to-agent approval removes the human the policy requires."
+    "explanation": "A is right because enforcement sits in code outside the model, so a manipulated worker cannot bypass it.\nC is right because an approval tied to exact parameters, with the evidence shown and an expiry, cannot be reused for a different action.\nE fails because self-assessed confidence is exactly what an injected or mistaken agent gets wrong.\nD fails because a blanket approval authorizes actions the approver never saw.\nB fails because agent-to-agent approval removes the human the policy requires.\n\n**Practice takeaway**\n\nEnforce approval at the executor so the control also applies if model instructions are ignored. Bind approval to the exact action and expiry, and reject replay or material changes to the approved parameters."
   },
   {
     "id": "49",
@@ -701,7 +701,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because the candidate saw test items in its prompt, so the score no longer measures generalization.\nA fails because the issue is leakage, not that scores are too high for a legitimate reason, and easier cases would not help.\nB fails because ordering has nothing to do with leakage.\nD fails because more similar items do not remove the leaked ones."
+    "explanation": "C is right because the candidate saw test items in its prompt, so the score no longer measures generalization.\nA fails because the issue is leakage, not that scores are too high for a legitimate reason, and easier cases would not help.\nB fails because ordering has nothing to do with leakage.\nD fails because more similar items do not remove the leaked ones.\n\n**Practice takeaway**\n\nKeep prompt-development examples separate from the held-out decision set. Check for near-duplicates and refresh compromised items before interpreting a reported uplift."
   },
   {
     "id": "50",
@@ -715,7 +715,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because streaming reduces the wait for the first visible output without needing less total generation.\nD fails because a larger output allowance does not speed anything up.\nB fails because batch adds delay.\nA fails because an animation does not reduce waiting."
+    "explanation": "C is right because streaming reduces the wait for the first visible output without needing less total generation.\nD fails because a larger output allowance does not speed anything up.\nB fails because batch adds delay.\nA fails because an animation does not reduce waiting.\n\n**Practice takeaway**\n\nMeasure the delay to the first useful visible output as well as total completion time. Streaming improves perceived latency, while the UI still needs to handle interruptions and partial content clearly."
   },
   {
     "id": "51",
@@ -729,7 +729,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because the time correlation points to the change, and restoring known-good service is the priority, with investigation afterwards from retained evidence.\nA fails because delaying mitigation prolongs the customer impact.\nB fails because shutting the feature off for a week is disproportionate when a rollback is available.\nC fails because nothing indicates a provider fault and waiting delays the response."
+    "explanation": "D is right because the time correlation points to the change, and restoring known-good service is the priority, with investigation afterwards from retained evidence.\nA fails because delaying mitigation prolongs the customer impact.\nB fails because shutting the feature off for a week is disproportionate when a rollback is available.\nC fails because nothing indicates a provider fault and waiting delays the response.\n\n**Practice takeaway**\n\nCapture enough deployment and trace evidence to preserve the trail, then apply the established rollback and communication runbook. Analysis can proceed against preserved traces after user impact is reduced."
   },
   {
     "id": "52",
@@ -745,7 +745,7 @@
       "D",
       "E"
     ],
-    "explanation": "D is right because cohort comparison reveals what failing traces share.\nE is right because impact sizing turns observations into a priority order.\nC fails because a handful of long traces is a biased anecdote, not a systemic view.\nB fails because customers report only some of the failures, late.\nA fails because averages hide concentrated problems."
+    "explanation": "D is right because cohort comparison reveals what failing traces share.\nE is right because impact sizing turns observations into a priority order.\nC fails because a handful of long traces is a biased anecdote, not a systemic view.\nB fails because customers report only some of the failures, late.\nA fails because averages hide concentrated problems.\n\n**Practice takeaway**\n\nA healthy comparison cohort helps distinguish a systemic pattern from a common attribute present on every request. Weight each pattern by affected tasks and users so rare dramatic traces do not dominate priorities."
   },
   {
     "id": "53",
@@ -759,7 +759,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because a reviewer with low precision and recall gaps is not ready to block, and narrowing to high-signal categories builds trust.\nB fails because a 60% false-positive rate would block work and train people to ignore it.\nC fails because more comments lower precision further.\nA fails because relying on its approvals ignores its documented misses."
+    "explanation": "D is right because a reviewer with low precision and recall gaps is not ready to block, and narrowing to high-signal categories builds trust.\nB fails because a 60% false-positive rate would block work and train people to ignore it.\nC fails because more comments lower precision further.\nA fails because relying on its approvals ignores its documented misses.\n\n**Practice takeaway**\n\nEstimate false positives and missed defects separately for each category and severity. Keep uncertain categories advisory until evaluation and human oversight support using them as a merge gate."
   },
   {
     "id": "54",
@@ -773,7 +773,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because failing fast stops blocked threads from accumulating and gives users a degraded answer, which contains the failure to the Claude feature.\nD fails because a larger pool only delays exhaustion and wastes resources on waiting.\nC fails because immediate retries amplify load on an overloaded service.\nB fails because longer waits hold threads even longer, so it worsens the exhaustion."
+    "explanation": "A is right because failing fast stops blocked threads from accumulating and gives users a degraded answer, which contains the failure to the Claude feature.\nD fails because a larger pool only delays exhaustion and wastes resources on waiting.\nC fails because immediate retries amplify load on an overloaded service.\nB fails because longer waits hold threads even longer, so it worsens the exhaustion.\n\n**Practice takeaway**\n\nA circuit breaker limits repeated work against a failing dependency. Pair it with a bounded timeout and verify that the degraded route can handle load without starting its own overload cascade."
   },
   {
     "id": "55",
@@ -787,7 +787,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because isolation requires enforced per-tenant limits and fair scheduling, which cap what any one tenant takes.\nB fails because retries make the contention worse and increase latency for everyone.\nC fails because a shared FIFO queue lets the large tenant's backlog block others.\nD fails because an unenforced agreement depends on cooperation and does not protect other tenants from accidents."
+    "explanation": "A is right because isolation requires enforced per-tenant limits and fair scheduling, which cap what any one tenant takes.\nB fails because retries make the contention worse and increase latency for everyone.\nC fails because a shared FIFO queue lets the large tenant's backlog block others.\nD fails because an unenforced agreement depends on cooperation and does not protect other tenants from accidents.\n\n**Practice takeaway**\n\nEnforce fairness at admission and scheduling so a large tenant's burst cannot monopolize a shared worker pool. Monitor queue delay and token consumption per tenant to validate the isolation."
   },
   {
     "id": "56",
@@ -801,7 +801,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because persisted state outlives the model that wrote it, and the only safe way to know whether resumed sessions still behave is to test them on the new model before full cutover, keeping the raw transcripts to regenerate lossy summaries.\nD fails because deleting state throws away legitimate customer context and breaks continuity.\nB fails because pinning forever defers the problem and blocks future migrations.\nA fails because the trial already shows that interpretation differs between models."
+    "explanation": "C is right because persisted state outlives the model that wrote it, and the only safe way to know whether resumed sessions still behave is to test them on the new model before full cutover, keeping the raw transcripts to regenerate lossy summaries.\nD fails because deleting state throws away legitimate customer context and breaks continuity.\nB fails because pinning forever defers the problem and blocks future migrations.\nA fails because the trial already shows that interpretation differs between models.\n\n**Practice takeaway**\n\nTreat summaries as derived data with a version and source. In a migration canary, replay resumed sessions with the new model and compare business-critical facts against the source transcript before trusting the old summary."
   },
   {
     "id": "57",
@@ -815,7 +815,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because the bloat is stale tool output, so removing exactly that content costs little accuracy, and externalizing key facts preserves what is needed later.\nB fails because repeated whole-conversation summaries lose detail and can drop the original instructions.\nC fails because the oldest messages include the task definition.\nD fails because it does not address cost or the accuracy loss that comes from filling the window with irrelevant output."
+    "explanation": "A is right because the bloat is stale tool output, so removing exactly that content costs little accuracy, and externalizing key facts preserves what is needed later.\nB fails because repeated whole-conversation summaries lose detail and can drop the original instructions.\nC fails because the oldest messages include the task definition.\nD fails because it does not address cost or the accuracy loss that comes from filling the window with irrelevant output.\n\n**Practice takeaway**\n\nKeep instructions and recent context needed for the current step. Remove stale results selectively and store durable findings with provenance so context trimming does not discard the only copy of critical facts."
   },
   {
     "id": "58",
@@ -829,7 +829,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because durable execution needs persisted progress to resume from and idempotent side effects so that any replay is harmless.\nD fails because a prompt instruction relies on the model reconstructing state it no longer has after the restart.\nC fails because crashes and restarts also come from infrastructure failures, so avoiding deploys does not make runs durable.\nB fails because fewer steps still replay side effects; it shrinks the damage but keeps the flaw."
+    "explanation": "A is right because durable execution needs persisted progress to resume from and idempotent side effects so that any replay is harmless.\nD fails because a prompt instruction relies on the model reconstructing state it no longer has after the restart.\nC fails because crashes and restarts also come from infrastructure failures, so avoiding deploys does not make runs durable.\nB fails because fewer steps still replay side effects; it shrinks the damage but keeps the flaw.\n\n**Practice takeaway**\n\nMake the business action recoverable even if a process stops after sending but before recording success. Reuse the same idempotency key on retry and reconcile persisted state with the external service."
   },
   {
     "id": "59",
@@ -843,7 +843,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because the evaluator changed while the system did not, so the instrument must be controlled and rechecked against humans.\nC fails because other evidence shows no real improvement.\nA fails because humans are the reference that exposes the problem.\nD fails because deleting cases would not explain a shift in the judge's behavior."
+    "explanation": "B is right because the evaluator changed while the system did not, so the instrument must be controlled and rechecked against humans.\nC fails because other evidence shows no real improvement.\nA fails because humans are the reference that exposes the problem.\nD fails because deleting cases would not explain a shift in the judge's behavior.\n\n**Practice takeaway**\n\nAn unpinned evaluator can change the measurement while the product behavior stays stable. Keep a fixed anchor set and compare human agreement before and after an evaluator version change."
   },
   {
     "id": "60",
@@ -857,7 +857,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because the work is asynchronous and high-volume, which is what batch economics and separate capacity are for, and per-item ids make partial failures recoverable.\nC fails because more concurrency intensifies the contention with interactive traffic.\nB fails because a smaller model may reduce tokens' cost but the job still competes for real-time capacity and quality is untested.\nA fails because running during business hours puts the load where it hurts."
+    "explanation": "D is right because the work is asynchronous and high-volume, which is what batch economics and separate capacity are for, and per-item ids make partial failures recoverable.\nC fails because more concurrency intensifies the contention with interactive traffic.\nB fails because a smaller model may reduce tokens' cost but the job still competes for real-time capacity and quality is untested.\nA fails because running during business hours puts the load where it hurts.\n\n**Practice takeaway**\n\nTrack each request by its custom ID since a batch result need not be delivered in input order. Reconcile successes first and review each failure class before retrying to avoid duplicating completed work."
   },
   {
     "id": "61",
@@ -871,7 +871,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because the interesting failures are rare, so retention must be biased toward them while the baseline supports comparison.\nB fails because a larger uniform sample still drops most rare events and costs more.\nC fails because it excludes the small tenants where failures may occur and loses the baseline.\nA fails because most failures never produce feedback."
+    "explanation": "D is right because the interesting failures are rare, so retention must be biased toward them while the baseline supports comparison.\nB fails because a larger uniform sample still drops most rare events and costs more.\nC fails because it excludes the small tenants where failures may occur and loses the baseline.\nA fails because most failures never produce feedback.\n\n**Practice takeaway**\n\nTail sampling can retain complete anomalous traces after their outcome is known. Keep a normal baseline for comparison and plan for collector capacity, since delayed decisions require buffering."
   },
   {
     "id": "62",
@@ -885,7 +885,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because shared artifacts run with many people's access, so they need ownership, review and versioned distribution.\nB fails because informal sharing leaves unreviewed code running with real credentials.\nD fails because it removes the benefits of reuse and does not reduce the risk of each developer's own code.\nC fails because screenshots impede review and still encourage retyped, unreviewed copies."
+    "explanation": "A is right because shared artifacts run with many people's access, so they need ownership, review and versioned distribution.\nB fails because informal sharing leaves unreviewed code running with real credentials.\nD fails because it removes the benefits of reuse and does not reduce the risk of each developer's own code.\nC fails because screenshots impede review and still encourage retyped, unreviewed copies.\n\n**Practice takeaway**\n\nTreat shared extensions as reviewed software with an accountable owner and a release history. Managed distribution lets the organization revoke an unsafe version and identify which environments received it."
   },
   {
     "id": "63",
@@ -901,7 +901,7 @@
       "C",
       "D"
     ],
-    "explanation": "C is right because low path variance means the model is not adding decisions the code could make.\nD is right because equal accuracy at several times the cost shows that agentic flexibility is not buying value on that path.\nA fails because a release is not evidence about architecture.\nB fails because preference is not a production metric.\nE fails because tool count alone says nothing about whether the path varies."
+    "explanation": "C is right because low path variance means the model is not adding decisions the code could make.\nD is right because equal accuracy at several times the cost shows that agentic flexibility is not buying value on that path.\nA fails because a release is not evidence about architecture.\nB fails because preference is not a production metric.\nE fails because tool count alone says nothing about whether the path varies.\n\n**Practice takeaway**\n\nCompare repeated trajectories and business outcomes before simplifying the architecture. A common path with equivalent quality and better cost per success is a strong candidate for a deterministic workflow."
   },
   {
     "id": "64",
@@ -915,7 +915,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because enforcement needs timely per-tenant measurement and an automatic response.\nD fails because earlier invoice review still reacts after the spend has happened.\nB fails because lower prices do not constrain use.\nC fails because estimates cannot enforce anything and are often wrong."
+    "explanation": "A is right because enforcement needs timely per-tenant measurement and an automatic response.\nD fails because earlier invoice review still reacts after the spend has happened.\nB fails because lower prices do not constrain use.\nC fails because estimates cannot enforce anything and are often wrong.\n\n**Practice takeaway**\n\nSeparate alerts from enforcement so a missed notification cannot cause unlimited spend. Translate usage into per-tenant budgets and define what service degradation looks like before a limit is reached."
   },
   {
     "id": "65",
@@ -929,7 +929,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because tool descriptions are an injection channel, and vetting, pinning, change detection and least privilege each reduce the exposure.\nA fails because popularity and automatic updates are how a poisoned update spreads.\nC fails because model judgment is not an enforceable control.\nB fails because removing logs removes the ability to detect misuse."
+    "explanation": "D is right because tool descriptions are an injection channel, and vetting, pinning, change detection and least privilege each reduce the exposure.\nA fails because popularity and automatic updates are how a poisoned update spreads.\nC fails because model judgment is not an enforceable control.\nB fails because removing logs removes the ability to detect misuse.\n\n**Practice takeaway**\n\nTreat tool descriptions and updates as untrusted until reviewed. Approval, narrowly scoped permissions, and egress controls reduce the impact if an approved integration changes unexpectedly."
   },
   {
     "id": "66",
@@ -945,7 +945,7 @@
       "B",
       "C"
     ],
-    "explanation": "B is right because pre-registered criteria prevent the goalposts moving.\nC is right because paired runs with repetition control for variability and show a real change.\nE fails because a ten percent tolerance can accept real regressions.\nD fails because post-hoc thresholds defeat the gate.\nA fails because ten cherry-picked cases cannot represent traffic."
+    "explanation": "B is right because pre-registered criteria prevent the goalposts moving.\nC is right because paired runs with repetition control for variability and show a real change.\nE fails because a ten percent tolerance can accept real regressions.\nD fails because post-hoc thresholds defeat the gate.\nA fails because ten cherry-picked cases cannot represent traffic.\n\n**Practice takeaway**\n\nAgree on thresholds and critical slices before evaluating either candidate. Compare on the same inputs, repeat stochastic cases, and use paired results to reduce noise around rollout decisions."
   },
   {
     "id": "67",
@@ -959,7 +959,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because when generation outpaces review, verification must be scaled with automation and humans focused where risk is greatest.\nC fails because passing tests do not establish safety for high-risk changes.\nD fails because an agent verifying its own work shares its blind spots.\nA fails because it gives up the throughput that motivated the fleet without improving verification."
+    "explanation": "B is right because when generation outpaces review, verification must be scaled with automation and humans focused where risk is greatest.\nC fails because passing tests do not establish safety for high-risk changes.\nD fails because an agent verifying its own work shares its blind spots.\nA fails because it gives up the throughput that motivated the fleet without improving verification.\n\n**Practice takeaway**\n\nMake every generated change pass fast automated checks and direct scarce reviewer time where the consequences are greatest. Use calibration results to decide which findings are informative enough for reviewers to act on."
   },
   {
     "id": "68",
@@ -973,7 +973,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because isolation, minimal data and constrained egress let the agent work freely while limiting what a mistake or injection can reach.\nC fails because read-only credentials still expose production data and the server to arbitrary code.\nD fails because personal tokens carry broad privileges.\nA fails because a time limit does not stop access to production resources on the shared network."
+    "explanation": "B is right because isolation, minimal data and constrained egress let the agent work freely while limiting what a mistake or injection can reach.\nC fails because read-only credentials still expose production data and the server to arbitrary code.\nD fails because personal tokens carry broad privileges.\nA fails because a time limit does not stop access to production resources on the shared network.\n\n**Practice takeaway**\n\nA sandbox should isolate execution, data, and network reachability. Supply only task-scoped inputs and approved outbound destinations, then verify the access boundaries from within the test environment."
   },
   {
     "id": "69",
@@ -987,7 +987,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because routing by difficulty captures savings on the easy majority while preserving quality on hard cases, and evals verify each tier.\nC fails because it violates the quality requirement.\nB fails because random assignment sends hard tickets to weak models and easy ones to costly models.\nA fails because plan tier is not a measure of difficulty."
+    "explanation": "D is right because routing by difficulty captures savings on the easy majority while preserving quality on hard cases, and evals verify each tier.\nC fails because it violates the quality requirement.\nB fails because random assignment sends hard tickets to weak models and easy ones to costly models.\nA fails because plan tier is not a measure of difficulty.\n\n**Practice takeaway**\n\nChoose escalation signals that predict task failure and measure their precision with labeled cases. Include escalations and retries in cost per successful task so a cascade cannot appear cheap by silently dropping quality."
   },
   {
     "id": "70",
@@ -1001,7 +1001,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because random sampling removes the self-selection in feedback, a calibrated judge scales review, and failures improve the offline suite.\nA fails because the sample is small and biased toward unhappy users.\nD fails because waiting leaves quality unmeasured.\nC fails because an uncalibrated self-report is not independent evidence."
+    "explanation": "B is right because random sampling removes the self-selection in feedback, a calibrated judge scales review, and failures improve the offline suite.\nA fails because the sample is small and biased toward unhappy users.\nD fails because waiting leaves quality unmeasured.\nC fails because an uncalibrated self-report is not independent evidence.\n\n**Practice takeaway**\n\nUse a representative random sample for a baseline and analyze flagged cases as a separate high-risk slice. Periodic human review helps catch changes in both product quality and evaluator accuracy."
   },
   {
     "id": "71",
@@ -1015,7 +1015,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because recall is good but ranking is poor, which is the problem a reranker addresses.\nA fails because the candidate pool already contains the answer, so a bigger embedding does not target ordering.\nC fails because it adds cost, latency and distractors, and may degrade accuracy.\nB fails because if the right passage is not among the top 5, a prompt cannot use it."
+    "explanation": "D is right because recall is good but ranking is poor, which is the problem a reranker addresses.\nA fails because the candidate pool already contains the answer, so a bigger embedding does not target ordering.\nC fails because it adds cost, latency and distractors, and may degrade accuracy.\nB fails because if the right passage is not among the top 5, a prompt cannot use it.\n\n**Practice takeaway**\n\nWhen the relevant item often appears in the candidate set but rarely reaches the prompt, ranking is the immediate bottleneck. Measure the effect on top-k relevance and grounded answers after reranking."
   },
   {
     "id": "72",
@@ -1029,7 +1029,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because tuning needs measured error rates on representative data and a decision about which error costs more.\nC fails because maximal strictness drives false positives up and hurts the product.\nB fails because removing the layer without evidence removes protection.\nD fails because tuning for silence ignores the evasions, and the prompt is not an enforceable control."
+    "explanation": "A is right because tuning needs measured error rates on representative data and a decision about which error costs more.\nC fails because maximal strictness drives false positives up and hurts the product.\nB fails because removing the layer without evidence removes protection.\nD fails because tuning for silence ignores the evasions, and the prompt is not an enforceable control.\n\n**Practice takeaway**\n\nUse labeled, representative inputs for benign and adversarial cases so thresholds reflect the use case. Evaluate lower false-negative rates alongside any burden added by false positives or human review."
   },
   {
     "id": "73",
@@ -1043,7 +1043,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because tools are an API contract consumed by other systems, so breaking changes need versioning, an overlap period, and automated checks.\nC fails because announcements do not prevent breakage or give a safe migration window.\nA fails because a clearer description does not make an old client send a field that did not exist.\nB fails because freezing servers is impractical and proliferates versions without a migration policy."
+    "explanation": "D is right because tools are an API contract consumed by other systems, so breaking changes need versioning, an overlap period, and automated checks.\nC fails because announcements do not prevent breakage or give a safe migration window.\nA fails because a clearer description does not make an old client send a field that did not exist.\nB fails because freezing servers is impractical and proliferates versions without a migration policy.\n\n**Practice takeaway**\n\nAdditive fields can preserve existing consumers when defaults and validation allow them. Deploy a separate contract version for breaking changes and prove compatibility before removing the old one."
   },
   {
     "id": "74",
@@ -1057,7 +1057,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because the attack combines private data, untrusted input and an outbound channel, and a deterministic egress control removes the channel whatever the page says.\nD fails because a warning is advisory and the injected text can still win.\nB fails because weekly review detects exfiltration after it occurs.\nA fails because context size is unrelated to the attack."
+    "explanation": "C is right because the attack combines private data, untrusted input and an outbound channel, and a deterministic egress control removes the channel whatever the page says.\nD fails because a warning is advisory and the injected text can still win.\nB fails because weekly review detects exfiltration after it occurs.\nA fails because context size is unrelated to the attack.\n\n**Practice takeaway**\n\nA network allowlist is useful only when it covers every outbound path involved, including resource loads by a renderer. Limit access to confidential inputs and verify the restriction with harmless test data."
   },
   {
     "id": "75",
@@ -1073,7 +1073,7 @@
       "A",
       "B"
     ],
-    "explanation": "A is right because citations that are mechanically verified make unsupported claims detectable.\nB is right because uncertainty declaration and confidence signals let users and systems treat weak evidence differently.\nC fails because low temperature reduces variation but does not make claims true.\nE fails because forbidding uncertainty encourages fabrication.\nD fails because whole-document chunks add noise and cost and still do not force grounding."
+    "explanation": "A is right because citations that are mechanically verified make unsupported claims detectable.\nB is right because uncertainty declaration and confidence signals let users and systems treat weak evidence differently.\nC fails because low temperature reduces variation but does not make claims true.\nE fails because forbidding uncertainty encourages fabrication.\nD fails because whole-document chunks add noise and cost and still do not force grounding.\n\n**Practice takeaway**\n\nCitation checks should verify that a passage exists and supports the claim being made. If retrieval is too weak to justify an answer, expose the uncertainty and offer a grounded next step."
   },
   {
     "id": "76",
@@ -1087,7 +1087,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because an underspecified delegation produces unfocused work, and a clear contract makes the result usable and bounded.\nD fails because dumping the full history adds noise and breaks context isolation.\nB fails because more delegation compounds the ambiguity.\nA fails because reasoning style does not define scope or output format."
+    "explanation": "C is right because an underspecified delegation produces unfocused work, and a clear contract makes the result usable and bounded.\nD fails because dumping the full history adds noise and breaks context isolation.\nB fails because more delegation compounds the ambiguity.\nA fails because reasoning style does not define scope or output format.\n\n**Practice takeaway**\n\nSpecific delegation names the goal, permitted scope, output shape, and stopping rule. This lets the supervisor check completion and compare results without inferring what each worker chose to do."
   },
   {
     "id": "77",
@@ -1101,7 +1101,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because caching works on the exact prefix, so the shared content must come first and the variable content last.\nA fails because the cache misses regardless of length when the beginning of the prompt differs for every request.\nD fails because duplicating content adds tokens without making the prefix match.\nB fails because it breaks the personalization the feature needs."
+    "explanation": "C is right because caching works on the exact prefix, so the shared content must come first and the variable content last.\nA fails because the cache misses regardless of length when the beginning of the prompt differs for every request.\nD fails because duplicating content adds tokens without making the prefix match.\nB fails because it breaks the personalization the feature needs.\n\n**Practice takeaway**\n\nCache hits require a matching prefix and an applicable lifetime. Keep per-user values after the static content and check read and write counters to distinguish prefix churn from expiry."
   },
   {
     "id": "78",
@@ -1115,7 +1115,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because the defect is in the harness, which hid truncation from the model, so the model was reasoning on incomplete evidence.\nD fails because caution cannot recover information the model never saw.\nB fails because no model can read text that was dropped.\nA fails because randomness does not supply the missing log lines."
+    "explanation": "C is right because the defect is in the harness, which hid truncation from the model, so the model was reasoning on incomplete evidence.\nD fails because caution cannot recover information the model never saw.\nB fails because no model can read text that was dropped.\nA fails because randomness does not supply the missing log lines.\n\n**Practice takeaway**\n\nTreat truncation as an explicit result state that a caller can act on. Provide cursor-based retrieval or a safe summary so the reasoning step can request omitted evidence before making a decision."
   },
   {
     "id": "79",
@@ -1129,7 +1129,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because attributing a regression needs the variables separated, and a rollback restores service while the experiments run.\nD fails because self-assessment is an unvalidated judge and the cause remains unknown.\nA fails because it assumes the cause rather than testing it.\nC fails because patching the prompt without knowing the cause adds a third change to an unattributed regression."
+    "explanation": "B is right because attributing a regression needs the variables separated, and a rollback restores service while the experiments run.\nD fails because self-assessment is an unvalidated judge and the cause remains unknown.\nA fails because it assumes the cause rather than testing it.\nC fails because patching the prompt without knowing the cause adds a third change to an unattributed regression.\n\n**Practice takeaway**\n\nA simultaneous model and prompt rollout creates a confounder. Compare each variable against the known configuration and retain version tags so any interaction can be tested separately."
   },
   {
     "id": "80",
@@ -1143,7 +1143,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because non-deterministic failures are properties of rates, and controlled replays with single-variable changes let you test hypotheses.\nD fails because a couple of passes cannot rule out a 3% failure.\nC fails because it changes many variables without evidence.\nB fails because it assumes a cause and gives up throughput."
+    "explanation": "A is right because non-deterministic failures are properties of rates, and controlled replays with single-variable changes let you test hypotheses.\nD fails because a couple of passes cannot rule out a 3% failure.\nC fails because it changes many variables without evidence.\nB fails because it assumes a cause and gives up throughput.\n\n**Practice takeaway**\n\nEstimate a baseline failure frequency before changing a variable. Repeat under comparable versions and fixtures, then compare the distribution rather than treating one clean run as resolution."
   },
   {
     "id": "81",
@@ -1159,7 +1159,7 @@
       "C",
       "D"
     ],
-    "explanation": "C is right because a bounded queue with load shedding keeps memory and latency under control and tells callers the truth.\nD is right because tokens are the usual binding resource for large prompts.\nA fails because an unbounded queue turns a spike into unbounded latency and memory growth.\nB fails because immediate retries multiply load.\nE fails because long timeouts hold resources and hide the overload."
+    "explanation": "C is right because a bounded queue with load shedding keeps memory and latency under control and tells callers the truth.\nD is right because tokens are the usual binding resource for large prompts.\nA fails because an unbounded queue turns a spike into unbounded latency and memory growth.\nB fails because immediate retries multiply load.\nE fails because long timeouts hold resources and hide the overload.\n\n**Practice takeaway**\n\nBound the queue and admit work against the capacity that is scarce. Give clients clear retry guidance and use backpressure so overload does not multiply into a retry storm."
   },
   {
     "id": "82",
@@ -1173,7 +1173,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because the team saw the results before choosing a metric or sample size. Use this run to plan a new test with a decision rule fixed before the team sees the results.\nD fails because the difference is not established and cost rose notably.\nB fails because A/B tests work for language model changes.\nA fails because it ignores quality entirely."
+    "explanation": "C is right because the team saw the results before choosing a metric or sample size. Use this run to plan a new test with a decision rule fixed before the team sees the results.\nD fails because the difference is not established and cost rose notably.\nB fails because A/B tests work for language model changes.\nA fails because it ignores quality entirely.\n\n**Practice takeaway**\n\nUse the exploratory result to choose a worthwhile effect size and estimate a fresh sample. Specify the decision rule and guardrails before the confirmatory run so observed data cannot shape the test that judges it."
   },
   {
     "id": "83",
@@ -1187,7 +1187,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because organization policy must be enforced at a level users cannot override, and managed settings are designed for that.\nA fails because documentation is not enforcement.\nB fails because project settings can be changed or overridden by the developer.\nD fails because personal instructions are voluntary and not a control."
+    "explanation": "C is right because organization policy must be enforced at a level users cannot override, and managed settings are designed for that.\nA fails because documentation is not enforcement.\nB fails because project settings can be changed or overridden by the developer.\nD fails because personal instructions are voluntary and not a control.\n\n**Practice takeaway**\n\nManaged settings are a distribution and precedence mechanism. Verify the effective settings on representative clients and monitor telemetry delivery and allowed-server behavior as separate operational checks."
   },
   {
     "id": "84",
@@ -1201,7 +1201,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because the constraint is token throughput, so admission has to be shaped by tokens, with deferrable work moved elsewhere.\nA fails because the request rate is not the limiter, so capping it would reduce throughput without addressing token use.\nD fails because retries add load to a saturated resource.\nB fails because splitting increases overhead and repeated context, and total tokens still hit the limit."
+    "explanation": "C is right because the constraint is token throughput, so admission has to be shaped by tokens, with deferrable work moved elsewhere.\nA fails because the request rate is not the limiter, so capping it would reduce throughput without addressing token use.\nD fails because retries add load to a saturated resource.\nB fails because splitting increases overhead and repeated context, and total tokens still hit the limit.\n\n**Practice takeaway**\n\nA request-count budget can look healthy while a few large calls exhaust token capacity. Estimate per-request demand, reconcile it with observed usage, and defer work that does not require a real-time response."
   },
   {
     "id": "85",
@@ -1215,7 +1215,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because the cost today is fragmentation of operational tooling, and a standard harness with shared telemetry and patterns lets fixes and evals be reused while still allowing evidence-based exceptions.\nA fails because it preserves the fragmentation that slows incident response.\nB fails because popularity is not a selection criterion and a forced migration ignores existing eval and operational data.\nC fails because custom harnesses multiply maintenance and reduce sharing further."
+    "explanation": "D is right because the cost today is fragmentation of operational tooling, and a standard harness with shared telemetry and patterns lets fixes and evals be reused while still allowing evidence-based exceptions.\nA fails because it preserves the fragmentation that slows incident response.\nB fails because popularity is not a selection criterion and a forced migration ignores existing eval and operational data.\nC fails because custom harnesses multiply maintenance and reduce sharing further.\n\n**Practice takeaway**\n\nStandardize shared interfaces so teams can compare traces and reuse controls. Provide an exception path with evidence and an owner so unusual workloads can justify a different harness."
   },
   {
     "id": "86",
@@ -1231,7 +1231,7 @@
       "A",
       "B"
     ],
-    "explanation": "A is right because source ids and citation links give grounding traceability using identifiers, not user text.\nB is right because version and model tags let you tie a behavior change to a deployment.\nD fails because it stores sensitive content broadly and violates the constraint.\nE fails because ungrounded answers appear on successful requests.\nC fails because temperature alone cannot explain provenance."
+    "explanation": "A is right because source ids and citation links give grounding traceability using identifiers, not user text.\nB is right because version and model tags let you tie a behavior change to a deployment.\nD fails because it stores sensitive content broadly and violates the constraint.\nE fails because ungrounded answers appear on successful requests.\nC fails because temperature alone cannot explain provenance.\n\n**Practice takeaway**\n\nRecord stable retrieval references, scores, and released configuration IDs in the trace. Keep access and retention controls on the telemetry because document identifiers may themselves carry sensitivity."
   },
   {
     "id": "87",
@@ -1247,7 +1247,7 @@
       "B",
       "E"
     ],
-    "explanation": "B is right because human agreement is the ceiling for the task and shows whether the rubric is clear.\nE is right because kappa corrects for chance in a skewed class distribution.\nA fails because a rater who always says acceptable already achieves 95%.\nC fails because one annotator gives no reliability estimate.\nD fails because it defeats the purpose of validating the judge."
+    "explanation": "B is right because human agreement is the ceiling for the task and shows whether the rubric is clear.\nE is right because kappa corrects for chance in a skewed class distribution.\nA fails because a rater who always says acceptable already achieves 95%.\nC fails because one annotator gives no reliability estimate.\nD fails because it defeats the purpose of validating the judge.\n\n**Practice takeaway**\n\nHigh observed agreement can result from both raters choosing the majority label. Inspect the confusion matrix and class-specific performance alongside a chance-corrected agreement measure."
   },
   {
     "id": "88",
@@ -1261,7 +1261,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because accountability requires attributable, trustworthy records of actions and decisions, designed to avoid capturing secrets.\nB fails because transcripts may lack authoritative records of actions and can hold sensitive content.\nA fails because successful actions, such as data reads, are what an incident review needs.\nD fails because a self-report can be wrong or manipulated."
+    "explanation": "C is right because accountability requires attributable, trustworthy records of actions and decisions, designed to avoid capturing secrets.\nB fails because transcripts may lack authoritative records of actions and can hold sensitive content.\nA fails because successful actions, such as data reads, are what an incident review needs.\nD fails because a self-report can be wrong or manipulated.\n\n**Practice takeaway**\n\nAn audit trail needs actors, permitted actions, and outcomes that can be correlated across tools. Apply tamper resistance and minimize sensitive parameters so accountability does not create a new data exposure."
   },
   {
     "id": "89",
@@ -1277,7 +1277,7 @@
       "A",
       "E"
     ],
-    "explanation": "A is right because triage by impact and a reversible mitigation restore service quickly with clear ownership.\nE is right because regular honest updates build trust while investigation continues.\nD fails because silence leaves customers uninformed during impact.\nC fails because sharing raw traces risks leaking other users' data.\nB fails because a quarter-long freeze is disproportionate and does not address the cause."
+    "explanation": "A is right because triage by impact and a reversible mitigation restore service quickly with clear ownership.\nE is right because regular honest updates build trust while investigation continues.\nD fails because silence leaves customers uninformed during impact.\nC fails because sharing raw traces risks leaking other users' data.\nB fails because a quarter-long freeze is disproportionate and does not address the cause.\n\n**Practice takeaway**\n\nAssign a single incident owner and state what is known about affected users. Keep a predictable update cadence while the team evaluates the mitigation and confirms that recovery signals improve."
   },
   {
     "id": "90",
@@ -1291,7 +1291,7 @@
     "answer": [
       "A"
     ],
-    "explanation": "A is right because the data points to overlapping ownership in the decomposition, which should be fixed at the design level.\nD fails because more agents increase the number of conflicting edits.\nB fails because newest-wins silently discards work and can break the build.\nC fails because telemetry is what identified the systemic cause."
+    "explanation": "A is right because the data points to overlapping ownership in the decomposition, which should be fixed at the design level.\nD fails because more agents increase the number of conflicting edits.\nB fails because newest-wins silently discards work and can break the build.\nC fails because telemetry is what identified the systemic cause.\n\n**Practice takeaway**\n\nA shared configuration file is an integration dependency. Give it an explicit owner or land the common change first so parallel work can reference a stable contract."
   },
   {
     "id": "91",
@@ -1307,7 +1307,7 @@
       "A",
       "B"
     ],
-    "explanation": "A is right because versioned, configuration-driven prompts make change attributable and reversible.\nB is right because a progressive rollout with guardrail metrics catches live regressions on a small slice.\nE fails because in-place edits lose history and can hit everyone at once.\nC fails because offline suites miss live distribution and need online confirmation.\nD fails because a quiet hour reduces exposure only slightly and offers no way back."
+    "explanation": "A is right because versioned, configuration-driven prompts make change attributable and reversible.\nB is right because a progressive rollout with guardrail metrics catches live regressions on a small slice.\nE fails because in-place edits lose history and can hit everyone at once.\nC fails because offline suites miss live distribution and need online confirmation.\nD fails because a quiet hour reduces exposure only slightly and offers no way back.\n\n**Practice takeaway**\n\nVersion prompts with the deployment configuration and keep a tested rollback target. A canary should have predefined quality and cost thresholds so an apparently healthy service can still stop a poor rollout."
   },
   {
     "id": "92",
@@ -1321,7 +1321,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because per-user, scoped, audience-checked tokens make actions attributable and limit what a stolen token can do.\nD fails because a shared token still cannot identify users and a leaked one grants everything until rotation.\nA fails because it spreads the service credentials to every laptop and does not authorize per user.\nC fails because a tool description is a prompt, not an access control."
+    "explanation": "B is right because per-user, scoped, audience-checked tokens make actions attributable and limit what a stolen token can do.\nD fails because a shared token still cannot identify users and a leaked one grants everything until rotation.\nA fails because it spreads the service credentials to every laptop and does not authorize per user.\nC fails because a tool description is a prompt, not an access control.\n\n**Practice takeaway**\n\nValidate issuer, audience, expiration, and effective scope at the remote server, and enforce tool-level authorization where the action runs. A distinct identity also makes audit and revocation practical."
   },
   {
     "id": "93",
@@ -1335,7 +1335,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because forwarding a token issued for one audience to another service breaks audience binding and creates confused-deputy risks, so the server should use credentials issued for the downstream API.\nA fails because logging detects misuse rather than preventing it.\nD fails because network location does not fix the token's wrong audience.\nB fails because transport encryption protects the wire, not the design flaw."
+    "explanation": "C is right because forwarding a token issued for one audience to another service breaks audience binding and creates confused-deputy risks, so the server should use credentials issued for the downstream API.\nA fails because logging detects misuse rather than preventing it.\nD fails because network location does not fix the token's wrong audience.\nB fails because transport encryption protects the wire, not the design flaw.\n\n**Practice takeaway**\n\nEach service should validate credentials issued for its own audience. Keep the user's authorization context separate and explicit when the MCP server requests access to a downstream system."
   },
   {
     "id": "94",
@@ -1349,7 +1349,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because the harness and tool gave the model nothing to learn from and no brake, so improving the error contract and adding a guard addresses both.\nB fails because more attempts with the same uninformative feedback burn more tokens.\nC fails because guessing against an opaque error remains unreliable.\nA fails because withholding error information removes the only signal the model has."
+    "explanation": "D is right because the harness and tool gave the model nothing to learn from and no brake, so improving the error contract and adding a guard addresses both.\nB fails because more attempts with the same uninformative feedback burn more tokens.\nC fails because guessing against an opaque error remains unreliable.\nA fails because withholding error information removes the only signal the model has.\n\n**Practice takeaway**\n\nReturn structured validation failures with a recoverable reason when appropriate. A loop guard can stop repeated identical failures and escalate with enough information for the owner to fix the input."
   },
   {
     "id": "95",
@@ -1363,7 +1363,7 @@
     "answer": [
       "C"
     ],
-    "explanation": "C is right because the response filled the model's context window; the input and output together do not fit, so the fix is to shrink what is in context and continue.\nB fails because the condition is deterministic for that input, not transient.\nD fails because this is not a refusal; a refusal has its own stop reason.\nA fails because raising the output allowance cannot create room in a window that is already full."
+    "explanation": "C is right because the response filled the model's context window; the input and output together do not fit, so the fix is to shrink what is in context and continue.\nB fails because the condition is deterministic for that input, not transient.\nD fails because this is not a refusal; a refusal has its own stop reason.\nA fails because raising the output allowance cannot create room in a window that is already full.\n\n**Practice takeaway**\n\nCarry forward any useful partial answer and trim or compact material that the continuation no longer needs. Check the new context size before continuing, and cap retries if the request still exceeds the usable window."
   },
   {
     "id": "96",
@@ -1377,7 +1377,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because pinning removes silent behavior changes, the identifier makes cohorts comparable, and a canary reveals drift on a small slice first.\nC fails because a prompt patch leaves the cause unaddressed and may mask a real policy behavior.\nA fails because it multiplies migration work.\nD fails because it removes the signal that detected the problem."
+    "explanation": "B is right because pinning removes silent behavior changes, the identifier makes cohorts comparable, and a canary reveals drift on a small slice first.\nC fails because a prompt patch leaves the cause unaddressed and may mask a real policy behavior.\nA fails because it multiplies migration work.\nD fails because it removes the signal that detected the problem.\n\n**Practice takeaway**\n\nAn explicit snapshot gives the team a reproducible input to evaluation. Record the actual served version and canary upgrades so a quality change can be tied to a deliberate release."
   },
   {
     "id": "97",
@@ -1391,7 +1391,7 @@
     "answer": [
       "D"
     ],
-    "explanation": "D is right because a deterministic check runs before the action and does not depend on the model complying.\nB fails because emphasis does not make an instruction enforceable.\nA fails because logging helps recovery, not prevention.\nC fails because lower effort does not remove the capability."
+    "explanation": "D is right because a deterministic check runs before the action and does not depend on the model complying.\nB fails because emphasis does not make an instruction enforceable.\nA fails because logging helps recovery, not prevention.\nC fails because lower effort does not remove the capability.\n\n**Practice takeaway**\n\nEnforce destructive-action policy at the tool boundary and test it against harmless fixtures. Approved exceptions should be scoped, attributable, and short-lived."
   },
   {
     "id": "98",
@@ -1405,7 +1405,7 @@
     "answer": [
       "B"
     ],
-    "explanation": "B is right because cache reads, cache writes and prefix hashes show whether the stable prefix is actually matching, and a prefix that changes between requests, for example because of an embedded timestamp, shows up as constant cache creation and no reads.\nC fails because success counts say nothing about token mix.\nD fails because reading prompts by hand is slow and a privacy risk, and it does not quantify cache behavior.\nA fails because output length affects cost but would not explain a doubling with caching in play."
+    "explanation": "B is right because cache reads, cache writes and prefix hashes show whether the stable prefix is actually matching, and a prefix that changes between requests, for example because of an embedded timestamp, shows up as constant cache creation and no reads.\nC fails because success counts say nothing about token mix.\nD fails because reading prompts by hand is slow and a privacy risk, and it does not quantify cache behavior.\nA fails because output length affects cost but would not explain a doubling with caching in play.\n\n**Practice takeaway**\n\nCompare cache counters across requests with the same approved prefix fingerprint. A changing prefix points to content drift, while stable fingerprints with low reads suggest investigating expiry, request parameters, or eligibility."
   },
   {
     "id": "99",
@@ -1421,7 +1421,7 @@
       "A",
       "B"
     ],
-    "explanation": "A is right because clear boundaries reduce conflicts at the source.\nB is right because branches that pass alone can still break when combined, so integration testing is needed.\nE fails because per-branch tests do not cover interactions.\nC fails because ad hoc rebasing creates tangled dependencies.\nD fails because redundant attempts multiply cost and merging them produces conflicts."
+    "explanation": "A is right because clear boundaries reduce conflicts at the source.\nB is right because branches that pass alone can still break when combined, so integration testing is needed.\nE fails because per-branch tests do not cover interactions.\nC fails because ad hoc rebasing creates tangled dependencies.\nD fails because redundant attempts multiply cost and merging them produces conflicts.\n\n**Practice takeaway**\n\nParallelism saves time when changes have stable ownership and compatible interfaces. Plan integration checkpoints so test failures can be attributed to a small set of changes."
   },
   {
     "id": "100",
@@ -1437,6 +1437,6 @@
       "C",
       "D"
     ],
-    "explanation": "C is right because durability and bounds keep a long unattended run recoverable and affordable.\nD is right because escalation turns a blocked or risky situation into a human decision.\nB fails because broad credentials turn a mistake into damage.\nE fails because silence on failures hides problems.\nA fails because unbounded runs can loop and spend without control."
+    "explanation": "C is right because durability and bounds keep a long unattended run recoverable and affordable.\nD is right because escalation turns a blocked or risky situation into a human decision.\nB fails because broad credentials turn a mistake into damage.\nE fails because silence on failures hides problems.\nA fails because unbounded runs can loop and spend without control.\n\n**Practice takeaway**\n\nA long-running task should persist enough state to resume within its original scope and avoid duplicate effects. Define stop, notification, and escalation behavior before triggering an unattended run."
   }
 ]

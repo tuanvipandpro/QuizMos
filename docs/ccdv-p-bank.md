@@ -14,4 +14,6 @@ Three options were clarified while retaining their answer keys.
 - `60` specifies size-limited Message Batches and distinguishes transient failures from invalid items that need correction before resubmission. [Batch processing](https://platform.claude.com/docs/en/build-with-claude/batch-processing)
 - `82` treats the first A/B run as exploratory and calls for a fresh confirmatory test with the metric, sample size, and guardrails set in advance.
 
-QuizMos loads the bank through the normal Anthropic catalog and practice routes. Verify discovery, single- and multiple-answer grading, and included explanations during rollout. Revert the bank, catalog entry, and certification profile together if rollback is required.
+Each question preserves its per-option rationale and adds an English practice takeaway tied to the scenario. The English Quick Summary follows the eight exam domains and maps each question ID to its domain in the reviewed source export. The guide fingerprint records that reviewed bank.
+
+QuizMos loads the bank through the Anthropic catalog, practice, and Quick Summary routes. Verify discovery, single- and multiple-answer grading, included explanations, and guide-to-practice links during rollout. Revert the bank, catalog entry, certification profile, and Quick Summary together if rollback is required.
