@@ -7,6 +7,8 @@ export const CERTIFICATION_SOURCES = Object.freeze({
     'https://anthropic-partners.skilljar.com/claude-certified-architect-foundations-certification',
   ccaof:
     'https://anthropic-partners.skilljar.com/claude-certified-associate-foundations-certification',
+  ccdvp:
+    'https://cc.sj-cdn.net/instructor/6nizmqk8tpzpfjvt6qmmav7rh/public/1794947325/Claude_Certified_Developer-Professional_Exam_Guide.pdf',
   program: 'https://www.pearsonvue.com/us/en/anthropic.html',
   ace: 'https://cloud.google.com/learn/certification/cloud-engineer',
   paa: 'https://cloud.google.com/learn/certification/agentic-architect',
@@ -88,6 +90,10 @@ export const certificationProfiles = Object.freeze([
   profile('anthropic-ccar-p', 'CCAR-P', null, null, 120, scaled(720), ['program', 'anthropic']),
   profile('anthropic-ccao-f', 'CCAO-F', 60, 60, 120, scaled(720), ['ccaof', 'anthropic']),
   profile('anthropic-ccdv-f', 'CCDV-F', null, null, 120, scaled(720), ['program', 'anthropic']),
+  profile('anthropic-ccdv-p', 'CCDV-P', 70, 70, 120, scaled(720), ['ccdvp'], {
+    revision: '2026-11-22',
+    reviewedAt: '2026-11-22',
+  }),
   profile('gcp-ace', 'ACE', 50, 60, 120, unknownScore('undisclosed'), ['ace', 'googleScore']),
   profile('gcp-paa', 'PAA', 50, 60, 120, unknownScore('undisclosed'), ['paa', 'googleScore'], {
     notes: Object.freeze(['PAA certification also requires a separate hands-on lab stage.']),

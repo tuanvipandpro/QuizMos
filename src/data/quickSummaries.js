@@ -15,6 +15,10 @@ const quickSummaries = {
     status: 'published',
     metadataPath: 'summaries/anthropic-ccdv-f/meta.json',
   },
+  'anthropic-ccdv-p': {
+    status: 'published',
+    metadataPath: 'summaries/anthropic-ccdv-p/meta.json',
+  },
   'aws-aip-c01': {
     status: 'published',
     metadataPath: 'summaries/aws-aip-c01/meta.json',
