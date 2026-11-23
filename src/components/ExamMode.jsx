@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Alert, Button, Empty, Modal, Radio, Space, Typography } from 'antd';
+import { Alert, Button, Empty, Modal, Space, Typography } from 'antd';
 import { ArrowLeftOutlined, FlagFilled, FlagOutlined, ReloadOutlined } from '@ant-design/icons';
 import Question from './Question';
 import QuestionNavigator from './QuestionNavigator';
@@ -22,7 +22,9 @@ import { EXAM_HISTORY_ENABLED } from '../config/examHistoryConfig';
 import { useExamArchive } from '../hooks/useExamArchive';
 import CertificationProfileInfo from './CertificationProfileInfo';
 import ExamArchiveStatus from './ExamArchiveStatus';
+import ExamReviewFilters from './ExamReviewFilters';
 import { isAnswerComplete, isAnswerCorrect } from '../utils/questionModel';
+import { matchesExamReviewFilter } from '../utils/examReviewFilters.js';
 import { scrollToTop } from '../utils/scroll';
 import { getExamFeedbackMode } from '../data/examModes';
 import { STUDY_NOTEBOOK_ENABLED } from '../config/studyNotebookConfig';
@@ -121,16 +123,9 @@ export default function ExamMode({
     return () => clearInterval(timer);
   }, [session.deadline, session.submitted, setSession]);
   const matches = (index, type) => {
-    const answered = isAnswerComplete(session.questions[index], session.answers[index]);
+    const complete = isAnswerComplete(session.questions[index], session.answers[index]);
     const correct = isAnswerCorrect(session.questions[index], session.answers[index]);
-    return (
-      type === 'all' ||
-      (type === 'missed' && !correct) ||
-      (type === 'correct' && correct) ||
-      (type === 'incorrect' && answered && !correct) ||
-      (type === 'unanswered' && !answered) ||
-      (type === 'flagged' && session.flags.includes(index))
-    );
+    return matchesExamReviewFilter(type, { complete, correct }, session.flags.includes(index));
   };
   const indexes = session.questions
     .map((_, index) => index)
@@ -227,26 +222,7 @@ export default function ExamMode({
               </Button>
             </Space>
           </section>
-          <Radio.Group
-            role="radiogroup"
-            className="review-filters"
-            value={filter}
-            onChange={(event) => selectFilter(event.target.value)}
-            aria-label={t('Exam results')}
-          >
-            {[
-              ['all', 'All questions'],
-              ['missed', 'Missed questions'],
-              ['correct', 'Correct'],
-              ['incorrect', 'Incorrect'],
-              ['unanswered', 'Unanswered'],
-              ['flagged', 'Flagged'],
-            ].map(([value, label]) => (
-              <Radio.Button key={value} value={value}>
-                {t(label)}
-              </Radio.Button>
-            ))}
-          </Radio.Group>
+          <ExamReviewFilters label="Exam results" value={filter} onChange={selectFilter} />
         </>
       )}
       <div className="study-workspace">
