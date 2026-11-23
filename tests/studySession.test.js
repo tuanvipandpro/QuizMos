@@ -13,6 +13,9 @@ import {
   clearStudySessions,
 } from '../src/utils/studySession.js';
 import { emptyAnswer } from '../src/utils/questionModel.js';
+import { PCA_PRACTICE_REVIEW } from '../src/data/pcaPracticeReview.js';
+import { createHistoryAttempt, examHistorySource } from '../src/utils/examHistory.js';
+import { projectQuizPdf, quizPdfAccess } from '../src/utils/quizPdf.js';
 
 const questions = [
   { id: 'one', question: 'Pick one', options: { A: 'First', B: 'Second' }, answer: ['A'] },
@@ -61,6 +64,9 @@ test('known additive PCA and GAL updates preserve compatible account-scoped draf
       readFileSync(new URL(`../public/quiz/Google/GCP-${file}.json`, import.meta.url))
     )
       .slice(0, oldCount)
+      .map((question) =>
+        id === 'gcp-pca' ? PCA_PRACTICE_REVIEW.originals[question.id] || question : question
+      )
       .map(({ retired: _retired, ...question }) => question);
     const updated = [{ ...bank[0], retired: true }, ...bank.slice(1), questions[0]];
     const store = storage();
@@ -110,6 +116,92 @@ test('known additive PCA and GAL updates preserve compatible account-scoped draf
       JSON.stringify({ ...draft, signature: `${(hash >>> 0).toString(36)}:${bank.length}` })
     );
     assert.equal(readStudySession(store, key, updated, 'practice').answers.length, bank.length + 1);
+  }
+});
+
+const pcaAfterReview = JSON.parse(
+  readFileSync(new URL('../public/quiz/Google/GCP-PCA.json', import.meta.url))
+);
+const pcaBeforeReview = pcaAfterReview.map(
+  (question) => PCA_PRACTICE_REVIEW.originals[question.id] || question
+);
+const pcaBeforeExpansion = pcaBeforeReview
+  .slice(0, 279)
+  .map(({ retired: _retired, ...question }) => question);
+
+test('PCA corrections appear in Practice and PDF and reset only the altered responses', () => {
+  const revised = pcaAfterReview.filter((question) =>
+    Object.hasOwn(PCA_PRACTICE_REVIEW.originals, question.id)
+  );
+  assert.deepEqual(
+    revised.map((question) => question.id),
+    ['55', '102']
+  );
+  assert.ok(revised.every((question) => question.retired && question.explanation));
+  assert.ok(examEligibleQuestions(pcaAfterReview).every((question) => !revised.includes(question)));
+  const quiz = { kind: 'bank', id: 'gcp-pca', questions: revised };
+  const pdf = projectQuizPdf(quiz, null, quizPdfAccess(quiz, null));
+  assert.match(pdf.questions[0].answers[0], /Import the externally generated key material/);
+  assert.match(pdf.questions[1].answers[0], /metric\.labels\.state = "used"/);
+  const key = sessionKey('alice', 'gcp-pca', 'practice');
+  for (const oldBank of [pcaBeforeExpansion, pcaBeforeReview]) {
+    const answers = oldBank.map((question) => question.answer);
+    const index = oldBank.findIndex((question) => question.id === '55');
+    const store = storage();
+    store.setItem(key, JSON.stringify({ index, answers, signature: questionFingerprint(oldBank) }));
+    const draft = readStudySession(store, key, pcaAfterReview, 'practice');
+    assert.equal(draft.index, index);
+    assert.equal(draft.answers.length, pcaAfterReview.length);
+    pcaAfterReview.forEach((question, i) => {
+      assert.deepEqual(
+        draft.answers[i],
+        i >= oldBank.length || revised.includes(question) ? emptyAnswer(question) : answers[i]
+      );
+    });
+  }
+});
+
+test('PCA archive retries keep the same historical questions, flags and frozen envelope across the correction', async () => {
+  assert.equal(questionFingerprint(pcaAfterReview), PCA_PRACTICE_REVIEW.correctedSignature);
+  assert.equal(questionFingerprint(pcaBeforeReview), PCA_PRACTICE_REVIEW.signature);
+  const uid = 'alice';
+  const key = sessionKey(uid, 'gcp-pca', 'exam');
+  for (const oldBank of [pcaBeforeExpansion, pcaBeforeReview]) {
+    const plan = createExamSession(oldBank, 2, 60, {
+      now: 1000,
+      random: () => 0.99,
+      selectionQuestions:
+        oldBank === pcaBeforeExpansion
+          ? oldBank.filter((question) => ['55', '102'].includes(question.id))
+          : null,
+      historyOwner: uid,
+      historySource: examHistorySource({ kind: 'bank', id: 'gcp-pca' }, uid),
+      captureHistory: true,
+    });
+    plan.answers = plan.questions.map((question) => question.answer);
+    plan.flags = [1];
+    plan.index = 1;
+    const store = storage();
+    store.setItem(key, JSON.stringify(plan));
+    const resumed = readStudySession(store, key, pcaAfterReview, 'exam');
+    assert.deepEqual(resumed.questions, plan.questions);
+    assert.deepEqual(resumed.answers, plan.answers);
+    assert.deepEqual(resumed.flags, [1]);
+    assert.equal(resumed.index, 1);
+    assert.equal(resumed.deadline, plan.deadline);
+    assert.equal(resumed.attemptId, plan.attemptId);
+    const original = await createHistoryAttempt(finishExam(plan, 2000, true), uid, oldBank);
+    const replacement = await createHistoryAttempt(
+      finishExam(resumed, 2000, true),
+      uid,
+      pcaAfterReview
+    );
+    assert.deepEqual(replacement, original);
+    const unrelatedEdit = [
+      { ...pcaAfterReview[0], question: 'Unsupported edit' },
+      ...pcaAfterReview.slice(1),
+    ];
+    assert.equal(readStudySession(store, key, unrelatedEdit, 'exam'), null);
   }
 });
 
