@@ -1,7 +1,7 @@
 import { findQuiz } from '../data/quizzes.js';
 import { canonicalQuizId } from '../data/quizAliases.js';
 import { parseCloudQuizId } from './customQuizModel.js';
-import { questionFingerprint } from './studySession.js';
+import { examArchiveSourceQuestions, questionFingerprint } from './studySession.js';
 import { fingerprintQuestions } from './questionFingerprint.js';
 import { encodeHistorySnapshot } from './examHistorySnapshot.js';
 import { historyError } from './examHistoryErrors.js';
@@ -57,17 +57,19 @@ export async function createHistoryAttempt(session, uid, sourceQuestions) {
     !Number.isSafeInteger(session.endedAt)
   )
     throw historyError('INVALID');
+  const archiveSource = examArchiveSourceQuestions(session, sourceQuestions);
+  if (!archiveSource) throw historyError('INVALID');
   const selectedIds = new Set(session.questions.map((question) => String(question.id)));
   if (
     (await fingerprintQuestions(session.questions)) !==
     (await fingerprintQuestions(
-      sourceQuestions.filter((question) => selectedIds.has(String(question.id)))
+      archiveSource.filter((question) => selectedIds.has(String(question.id)))
     ))
   )
     throw historyError('INVALID');
   const source = {
     ...session.historySource,
-    fingerprint: await fingerprintQuestions(sourceQuestions),
+    fingerprint: await fingerprintQuestions(archiveSource),
   };
   // Build source fields in a fixed order; option order remains meaningful in payloads.
   const canonicalSource = Object.fromEntries(

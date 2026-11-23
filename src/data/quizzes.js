@@ -50,6 +50,7 @@ export const quizzes = [
     difficulty: 'Professional',
     totalQuestions: 100,
     code: 'CCDV-P',
+    beta: true,
   },
   {
     id: 'gcp-ace',
