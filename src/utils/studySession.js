@@ -14,6 +14,7 @@ import { orderObjectKeys } from './questionFingerprint.js';
 import { parseCloudQuizId } from './customQuizModel.js';
 import { sampleStudyPool } from './studySettings.js';
 import { sessionSettingsError } from './certificationProfile.js';
+import { PCA_PRACTICE_REVIEW } from '../data/pcaPracticeReview.js';
 
 export const SESSION_PREFIX = 'quiz-study-v1:';
 
@@ -80,6 +81,75 @@ function migratePublicBankDraft(key, saved, questions, mode) {
   )
     return null;
   return { ...saved, signature: questionFingerprint(questions) };
+}
+
+function restorePreReviewPcaQuestions(questions) {
+  return questions.map((question) =>
+    Object.hasOwn(PCA_PRACTICE_REVIEW.originals, question.id)
+      ? PCA_PRACTICE_REVIEW.originals[question.id]
+      : question
+  );
+}
+
+function migratePcaPracticeReviewDraft(key, saved, questions, mode, signature) {
+  if (
+    !key.startsWith(SESSION_PREFIX) ||
+    !key.endsWith(`:gcp-pca:${mode}`) ||
+    signature !== PCA_PRACTICE_REVIEW.correctedSignature
+  )
+    return null;
+  const previous = restorePreReviewPcaQuestions(questions);
+  const beforeReview = [PCA_PRACTICE_REVIEW.signature, PCA_PRACTICE_REVIEW.legacy].includes(
+    saved.signature
+  );
+  const candidate = beforeReview ? saved : migratePublicBankDraft(key, saved, previous, mode);
+  if (!candidate) return null;
+  if (mode === 'practice') {
+    if (!Array.isArray(candidate.answers) || candidate.answers.length !== questions.length)
+      return null;
+    // Responses to corrected wording must be selected again. Other positions and answers survive.
+    return {
+      ...candidate,
+      signature,
+      answers: candidate.answers.map((answer, index) =>
+        Object.hasOwn(PCA_PRACTICE_REVIEW.originals, questions[index].id)
+          ? emptyAnswer(questions[index])
+          : answer
+      ),
+    };
+  }
+  if (!Array.isArray(candidate.questions)) return null;
+  const originals = new Map(previous.map((question) => [String(question.id), question]));
+  const contentSignature = ({ retired: _retired, ...question }) => questionFingerprint([question]);
+  if (
+    !candidate.questions.every((question) => {
+      const original = originals.get(String(question.id));
+      return original && contentSignature(question) === contentSignature(original);
+    })
+  )
+    return null;
+  return {
+    ...candidate,
+    signature,
+    pcaArchiveRevision: beforeReview ? 'before-practice-review' : 'before-expansion',
+  };
+}
+
+export function examArchiveSourceQuestions(session, questions) {
+  if (session.pcaArchiveRevision === undefined) return questions;
+  if (
+    session.historySource?.kind !== 'bank' ||
+    session.historySource.id !== 'gcp-pca' ||
+    session.signature !== PCA_PRACTICE_REVIEW.correctedSignature
+  )
+    return null;
+  const previous = restorePreReviewPcaQuestions(questions);
+  if (session.pcaArchiveRevision === 'before-practice-review') return previous;
+  if (session.pcaArchiveRevision === 'before-expansion')
+    return previous
+      .slice(0, PUBLIC_BANK_DRAFTS['gcp-pca'].count)
+      .map(({ retired: _retired, ...question }) => question);
+  return null;
 }
 
 function compatibleLegacyCloudDraft(key, saved, questions, mode) {
@@ -287,7 +357,9 @@ function readStoredStudySession(storage, key, questions, mode) {
     if (!saved || !Number.isInteger(saved.index) || saved.index < 0) return null;
     const signature = questionFingerprint(questions);
     if (saved.signature !== signature) {
-      const migrated = migratePublicBankDraft(key, saved, questions, mode);
+      const migrated =
+        migratePcaPracticeReviewDraft(key, saved, questions, mode, signature) ||
+        migratePublicBankDraft(key, saved, questions, mode);
       if (migrated) saved = migrated;
       if (
         !migrated &&
