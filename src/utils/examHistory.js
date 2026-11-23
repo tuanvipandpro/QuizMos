@@ -89,7 +89,8 @@ export async function createHistoryAttempt(session, uid, sourceQuestions) {
       endReason: session.endReason,
     },
     session.questions,
-    session.answers
+    session.answers,
+    session.flags
   );
 }
 export function retainedHistoryStats(summaries) {

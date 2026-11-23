@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Alert, Button, Card, Select, Space, Tag, Typography } from 'antd';
+import { Alert, Button, Card, Empty, Select, Space, Tag, Typography } from 'antd';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getExamFeedbackMode } from '../data/examModes.js';
 import { formatAnswerLines, isStructuredQuestion } from '../utils/questionModel.js';
+import { matchesExamReviewFilter } from '../utils/examReviewFilters.js';
 import { scrollToTop } from '../utils/scroll';
 import Question from './Question';
 import QuestionImage from './QuestionImage';
 import StudyNavigation from './StudyNavigation';
+import ExamReviewFilters from './ExamReviewFilters';
 
 const { Title, Text, Paragraph } = Typography;
 const sourceLabels = {
@@ -37,13 +39,20 @@ export default function ArchivedExamReview({
   dateLabel,
 }) {
   const { t } = useLanguage();
-  const [index, setIndex] = useState(0);
+  const [filter, setFilter] = useState('all');
+  const [selectedIndex, setSelectedIndex] = useState(null);
   const { summary, payload } = record,
+    flags = new Set(payload.flags),
+    indexes = payload.outcomes.flatMap((outcome, index) =>
+      matchesExamReviewFilter(filter, outcome, flags.has(index)) ? [index] : []
+    ),
+    index = indexes.includes(selectedIndex) ? selectedIndex : indexes[0],
+    position = indexes.indexOf(index),
     question = payload.questions[index],
     answer = payload.answers[index],
     outcome = payload.outcomes[index];
   const change = (value) => {
-    setIndex(value);
+    setSelectedIndex(value);
     scrollToTop();
   };
   const score = ((summary.correct / summary.questionCount) * 100).toFixed(1);
@@ -110,74 +119,100 @@ export default function ArchivedExamReview({
           )
         }
       />
-      <label className="archive-question-picker">
-        <Text strong>{t('Question')}</Text>
-        <Select
-          aria-label={t('Archived question')}
-          value={index}
-          onChange={change}
-          showSearch={false}
-          virtual={false}
-          options={payload.questions.map((q, i) => ({
-            value: i,
-            label: t('Question {number} of {total}', {
-              number: i + 1,
-              total: payload.questions.length,
-            }),
-          }))}
+      <div className="history-review-filters">
+        <Text strong>{t('Filter questions')}</Text>
+        <ExamReviewFilters
+          label="Filter questions"
+          value={filter}
+          onChange={(value) => {
+            setFilter(value);
+            setSelectedIndex(null);
+          }}
         />
-      </label>
-      <div className="history-question-outcome">
-        <Text strong>
-          {t('Question {number} of {total}', {
-            number: index + 1,
-            total: payload.questions.length,
-          })}
-        </Text>
-        <Tag color={outcome.correct ? 'success' : outcome.complete ? 'error' : 'default'}>
-          {t(outcome.correct ? 'Correct' : outcome.complete ? 'Incorrect' : 'Unanswered')}
-        </Tag>
       </div>
-      {question.imageUrl?.trim() && (
-        <ArchiveImage key={question.id + question.imageUrl} url={question.imageUrl} />
+      {index === undefined ? (
+        <Empty
+          description={t(
+            filter === 'flagged' && payload.flags === undefined
+              ? 'This saved exam has no flag data.'
+              : 'No questions match this filter.'
+          )}
+        />
+      ) : (
+        <>
+          <label className="archive-question-picker">
+            <Text strong>{t('Question')}</Text>
+            <Select
+              aria-label={t('Archived question')}
+              value={index}
+              onChange={change}
+              showSearch={false}
+              virtual={false}
+              options={indexes.map((i) => ({
+                value: i,
+                label: t('Question {number} of {total}', {
+                  number: i + 1,
+                  total: payload.questions.length,
+                }),
+              }))}
+            />
+          </label>
+          <div className="history-question-outcome">
+            <Text strong>
+              {t('Question {number} of {total}', {
+                number: index + 1,
+                total: payload.questions.length,
+              })}
+            </Text>
+            <Space wrap>
+              <Tag color={outcome.correct ? 'success' : outcome.complete ? 'error' : 'default'}>
+                {t(outcome.correct ? 'Correct' : outcome.complete ? 'Incorrect' : 'Unanswered')}
+              </Tag>
+              {flags.has(index) && <Tag color="warning">{t('Flagged')}</Tag>}
+            </Space>
+          </div>
+          {question.imageUrl?.trim() && (
+            <ArchiveImage key={question.id + question.imageUrl} url={question.imageUrl} />
+          )}
+          <Question
+            data={{ ...question, imageUrl: '' }}
+            question={question.question}
+            imageUrl=""
+            options={question.options}
+            selectedAnswer={
+              !isStructuredQuestion(question) && question.answer.length === 1
+                ? (answer[0] ?? null)
+                : answer
+            }
+            correctOptions={question.answer}
+            showFeedback={false}
+            readOnly
+            onSelectAnswer={() => {}}
+            sortOptions={false}
+          />
+          <Card className="archive-answer-context">
+            <Title level={3}>{t('Your saved answer')}</Title>
+            {formatAnswerLines(question, answer, { showKeys: true }).length ? (
+              formatAnswerLines(question, answer, { showKeys: true }).map((line, i) => (
+                <Paragraph key={i}>{line}</Paragraph>
+              ))
+            ) : (
+              <Paragraph>{t('Not answered')}</Paragraph>
+            )}
+            <Title level={3}>{t('Correct answer in this snapshot')}</Title>
+            {formatAnswerLines(question, question.answer, { showKeys: true }).map((line, i) => (
+              <Paragraph key={i}>{line}</Paragraph>
+            ))}
+          </Card>
+          <StudyNavigation
+            label={t('Archived question navigation')}
+            previousDisabled={position === 0}
+            nextDisabled={position === indexes.length - 1}
+            onPrevious={() => change(indexes[position - 1])}
+            onNext={() => change(indexes[position + 1])}
+          />
+        </>
       )}
-      <Question
-        data={{ ...question, imageUrl: '' }}
-        question={question.question}
-        imageUrl=""
-        options={question.options}
-        selectedAnswer={
-          !isStructuredQuestion(question) && question.answer.length === 1
-            ? (answer[0] ?? null)
-            : answer
-        }
-        correctOptions={question.answer}
-        showFeedback={false}
-        readOnly
-        onSelectAnswer={() => {}}
-        sortOptions={false}
-      />
-      <Card className="archive-answer-context">
-        <Title level={3}>{t('Your saved answer')}</Title>
-        {formatAnswerLines(question, answer, { showKeys: true }).length ? (
-          formatAnswerLines(question, answer, { showKeys: true }).map((line, i) => (
-            <Paragraph key={i}>{line}</Paragraph>
-          ))
-        ) : (
-          <Paragraph>{t('Not answered')}</Paragraph>
-        )}
-        <Title level={3}>{t('Correct answer in this snapshot')}</Title>
-        {formatAnswerLines(question, question.answer, { showKeys: true }).map((line, i) => (
-          <Paragraph key={i}>{line}</Paragraph>
-        ))}
-      </Card>
-      <StudyNavigation
-        label={t('Archived question navigation')}
-        previousDisabled={index === 0}
-        nextDisabled={index === payload.questions.length - 1}
-        onPrevious={() => change(index - 1)}
-        onNext={() => change(index + 1)}
-      />
       <Space wrap className="history-review-footer">
         <Text type="secondary">
           {t('Personal learning history, not an official exam credential.')}
