@@ -769,9 +769,10 @@
       "A": "Generate a new key in Cloud Key Management Service (Cloud KMS). Store all data in Cloud Storage using the customer-managed key option and select the created key. Set up a Dataflow pipeline to decrypt the data and to store it in a new BigQuery dataset.",
       "B": "Generate a new key in Cloud KMS. Create a dataset in BigQuery using the customer-managed key option and select the created key.",
       "C": "Import a key in Cloud KMS. Store all data in Cloud Storage using the customer-managed key option and select the created key. Set up a Dataflow pipeline to decrypt the data and to store it in a new BigQuery dataset.",
-      "D": "Import a key in Cloud KMS. Create a dataset in BigQuery using the customer-supplied key option and select the created key."
+      "D": "Import the externally generated key material into a Cloud KMS key in the dataset location. Grant the BigQuery service account permission to use the key, then set it as the dataset default customer-managed encryption key (CMEK)."
     },
-    "question": "You are designing a Data Warehouse on Google Cloud and want to store sensitive data in BigQuery. Your company requires you to generate the encryption keys outside of Google Cloud. You need to implement a solution. What should you do?"
+    "question": "You are creating a BigQuery dataset for sensitive data. Your company requires you to generate the encryption key material outside Google Cloud. New tables should use that material by default. What should you do?",
+    "explanation": "Cloud KMS key import lets you use externally generated material. The BigQuery service account needs encryption and decryption permission on the imported key. Set it as the dataset default CMEK so newly created tables inherit it. A key used only for Cloud Storage does not set BigQuery encryption. See [Cloud KMS key import](https://docs.cloud.google.com/kms/docs/key-import) and [BigQuery customer-managed keys](https://docs.cloud.google.com/bigquery/docs/customer-managed-encryption)."
   },
   {
     "answer": [
@@ -1438,10 +1439,11 @@
     "options": {
       "A": "Change the Target type to DELTA_PER_MINUTE.",
       "B": "Change the Metric identifier to agent.googleapis.com/memory/bytes_used.",
-      "C": "Change the filter to metric.label.state = 'used' AND metric.label.state = 'buffered' AND metric.label.state = 'cached' AND metric.label.state = 'slab'.",
+      "C": "Set the metric filter to metric.labels.state = \"used\". Keep the utilization target at 80 and the target type at GAUGE.",
       "D": "Change the filter to metric.label.state = 'free' and the Target utilization to 20."
     },
-    "question": "You have a Compute Engine application that you want to autoscale when total memory usage exceeds 80%. You have installed the Cloud Monitoring agent and configured the autoscaling policy as follows:\n✑ Metric identifier: agent.googleapis.com/memory/percent_used\n✑ Filter: metric.label.state = 'used'\n✑ Target utilization level: 80\n✑ Target type: GAUGE\nYou observe that the application does not scale under high load. You want to resolve this. What should you do?"
+    "question": "A Compute Engine managed instance group runs the Ops Agent. Its autoscaling signal uses agent.googleapis.com/memory/percent_used, a utilization target of 80, and target type GAUGE. The signal has no state filter. You want the policy to use only the percentage of memory in the used state. What should you change?",
+    "explanation": "The metric provides a separate percentage for each memory state. Without a filter the autoscaler sums those time series. Selecting only the used state gives the intended signal. The signal is a current percentage, so keep the gauge target. See [Compute Engine autoscaling based on memory usage](https://docs.cloud.google.com/compute/docs/autoscaler/scaling-cloud-monitoring-metrics#autoscale_based_on_memory_usage)."
   },
   {
     "answer": [
