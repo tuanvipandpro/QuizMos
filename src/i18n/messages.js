@@ -933,6 +933,8 @@ export const vi = {
   'Recorded scoring policy': 'Quy tắc chấm điểm đã lưu',
   'Open current quiz': 'Mở quiz hiện tại',
   'Archived question': 'Câu hỏi đã lưu',
+  'Filter questions': 'Lọc câu hỏi',
+  'This saved exam has no flag data.': 'Bài thi đã lưu này không có dữ liệu cờ.',
   'Your saved answer': 'Câu trả lời đã lưu của bạn',
   'Correct answer in this snapshot': 'Đáp án đúng trong bản lưu này',
   'Archived question navigation': 'Điều hướng câu hỏi đã lưu',

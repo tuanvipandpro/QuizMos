@@ -17,6 +17,8 @@ export async function historyAttempt({
   source = examHistorySource({ kind: 'bank', id: 'gcp-ace' }, uid),
   now = 1000,
   feedbackMode = 'standard',
+  flags = [],
+  captureFlags = true,
 } = {}) {
   const session = createExamSession(questions, questions.length, 60, {
     now,
@@ -32,5 +34,9 @@ export async function historyAttempt({
       ? question.answer[0]
       : structuredClone(question.answer)
   );
-  return createHistoryAttempt(finishExam(session, now + 1000, true), uid, questions);
+  return createHistoryAttempt(
+    { ...finishExam(session, now + 1000, true), flags: captureFlags ? flags : undefined },
+    uid,
+    questions
+  );
 }

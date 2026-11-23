@@ -14,6 +14,7 @@ import {
 import { EXAM_HISTORY_LIMIT, EXAM_HISTORY_PAGE_SIZE } from '../data/examHistoryLimits.js';
 import {
   decodeHistorySnapshot,
+  equivalentLegacyHistoryPayloads,
   HISTORY_SUMMARY_FIELDS,
   validateHistorySummary,
 } from '../utils/examHistorySnapshot.js';
@@ -160,7 +161,7 @@ export function createExamHistoryRepository(db, { transact = runTransaction } = 
     }),
     save: safe(async (uid, attempt) => {
       validateHistorySummary(attempt.summary);
-      await decodeHistorySnapshot(attempt.summary, attempt.snapshot);
+      const incomingPayload = await decodeHistorySnapshot(attempt.summary, attempt.snapshot);
       const id = attempt.summary.attemptId,
         target = refs(uid, id);
       return mutate(target, async (tx, { receipt, summary, snapshot, current }) => {
@@ -170,12 +171,12 @@ export function createExamHistoryRepository(db, { transact = runTransaction } = 
             throw historyError('INVALID');
           const existing = readSummary(summary),
             envelope = readPayload(snapshot);
-          await decodeHistorySnapshot(existing, envelope);
-          if (
-            existing.payloadHash !== attempt.summary.payloadHash ||
-            envelope.payload !== attempt.snapshot.payload ||
-            receipt.data().payloadHash !== existing.payloadHash
-          )
+          const storedPayload = await decodeHistorySnapshot(existing, envelope);
+          const sameSnapshot =
+            (existing.payloadHash === attempt.summary.payloadHash &&
+              envelope.payload === attempt.snapshot.payload) ||
+            equivalentLegacyHistoryPayloads(storedPayload, incomingPayload);
+          if (!sameSnapshot || receipt.data().payloadHash !== existing.payloadHash)
             throw historyError('CONFLICT');
           return existing;
         }

@@ -9,6 +9,7 @@ import { contrastRatio } from './uiContrast.js';
 import { createExamSession, finishExam } from '../../src/utils/studySession.js';
 import { createHistoryAttempt, examHistorySource } from '../../src/utils/examHistory.js';
 import { contentHash } from '../../src/utils/contentHash.js';
+import { translate } from '../../src/i18n/messages.js';
 import { questionFormats } from '../../src/data/questionFormats.js';
 import {
   questionType,
@@ -119,6 +120,118 @@ async function confirmDelete(page) {
   await clickAfterUiMotion(modal.getByRole('button', { name: 'Delete archive', exact: true }));
   await expect(modal).toBeHidden();
 }
+
+test('saved review filters frozen outcomes and flags in original question order', async ({
+  page,
+  context,
+}, testInfo) => {
+  const phone = testInfo.project.name === 'phone';
+  const language = phone ? 'vi' : 'en';
+  const t = (key, params) => translate(language, key, params);
+  if (phone) await page.setViewportSize({ width: 320, height: 844 });
+  const [dropdown] = JSON.parse(
+    fs.readFileSync(
+      new URL('../../public/examples/quiz-dropdown-rows.json', import.meta.url),
+      'utf8'
+    )
+  );
+  const questions = Array.from({ length: 5 }, (_, i) => ({
+    ...(i === 2
+      ? dropdown
+      : { options: { A: 'Correct choice', B: 'Other choice' }, answer: ['A'] }),
+    id: 'review-filter-' + (i + 1),
+    question: 'Archive filter question ' + (i + 1),
+  }));
+  const exam = createExamSession(questions, questions.length, 60, {
+    random: () => 0.99,
+    now: 1000,
+    historyOwner: uid,
+    captureHistory: true,
+    historySource: examHistorySource({ kind: 'bank', id: 'gcp-ace' }, uid),
+  });
+  exam.answers = [
+    'A',
+    'B',
+    Object.fromEntries(Object.entries(dropdown.answer).slice(0, 1)),
+    'A',
+    'B',
+  ];
+  exam.flags = [0, 4];
+  const flagged = await createHistoryAttempt(finishExam(exam, 2000, true), uid, questions);
+  const legacy = await historyAttempt({ uid, captureFlags: false });
+  const unflagged = await historyAttempt({ uid });
+  const seed = {
+    attempts: Object.fromEntries(
+      [flagged, legacy, unflagged].map((item) => [item.summary.attemptId, item])
+    ),
+    receipts: {},
+    revision: 3,
+  };
+  await init(context, { seed, language, theme: phone ? 'dark' : 'light' });
+  await page.goto('./#/history/' + flagged.summary.attemptId);
+  const group = page.getByRole('radiogroup', { name: t('Filter questions') });
+  const choice = (key) => group.getByRole('radio', { name: t(key), exact: true });
+  const choose = (key) => group.getByText(t(key), { exact: true }).click();
+  const question = (number) => t('Question {number} of {total}', { number, total: 5 });
+  const position = page.locator('.history-question-outcome');
+  const nav = page.getByRole('group', { name: t('Archived question navigation') });
+  const next = nav.getByRole('button', { name: t('Next question'), exact: true });
+  const previous = nav.getByRole('button', { name: t('Previous'), exact: true });
+  await expect(choice('All questions')).toBeChecked();
+  await choice('All questions').focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(choice('Missed questions')).toBeChecked();
+  await expect(position).toContainText(question(2));
+  await choose('Correct');
+  await expect(position).toContainText(question(1));
+  await expect(previous).toBeDisabled();
+  await next.click();
+  await expect(position).toContainText(question(4));
+  await expect(next).toBeDisabled();
+  await previous.click();
+  await expect(position).toContainText(question(1));
+  await choose('Incorrect');
+  await expect(position).toContainText(question(2));
+  await choose('Unanswered');
+  await expect(position).toContainText(question(3));
+  await expect(next).toBeDisabled();
+  await choose('Flagged');
+  const picker = page.getByRole('combobox', { name: t('Archived question') });
+  await picker.press('Enter');
+  await expect(page.getByRole('option')).toHaveCount(2);
+  await page.getByRole('option', { name: question(5), exact: true }).click();
+  await expect(position).toContainText(question(5));
+  await expect(position).toContainText(t('Flagged'));
+  await expect(next).toBeDisabled();
+  const controls = group.locator('.ant-radio-button-wrapper');
+  for (const control of await controls.all()) {
+    expect((await control.boundingBox()).height).toBeGreaterThanOrEqual(44);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+    page.viewportSize().width
+  );
+  await group.screenshot({ path: testInfo.outputPath('archive-question-filters.png') });
+  if (phone) {
+    await page.setViewportSize({ width: 844, height: 390 });
+    await expect(group).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      844
+    );
+  }
+  await page.goto('./#/history/' + unflagged.summary.attemptId);
+  await choose('Flagged');
+  await expect(page.getByText(t('No questions match this filter.'), { exact: true })).toBeVisible();
+  await expect(picker).toHaveCount(0);
+  await expect(nav).toHaveCount(0);
+  await choose('All questions');
+  await expect(picker).toBeVisible();
+  await page.goto('./#/history/' + legacy.summary.attemptId);
+  await choose('Flagged');
+  await expect(
+    page.getByText(t('This saved exam has no flag data.'), { exact: true })
+  ).toBeVisible();
+  expect(await records(page)).toEqual(seed);
+});
 
 test('HTTP LAN crypto capabilities keep new exam identity and archive fingerprints compatible', async ({
   page,
@@ -410,6 +523,7 @@ test('Learning expiry uses the absolute deadline and an actual StrictMode root c
   await page.goto('./#/quiz/aws-aip-c01/exam?feedback=learning');
   await expect(page.locator('html')).toHaveAttribute('data-e2e-history-strict', 'true');
   await expect(page.locator('.question-title')).toBeVisible();
+  await page.getByRole('button', { name: 'Flag', exact: true }).click();
   const before = await draft(page);
   await page.clock.fastForward(before.deadline - before.startedAt + 5000);
   await saved(page);
@@ -420,6 +534,7 @@ test('Learning expiry uses the absolute deadline and an actual StrictMode root c
   expect(attempt.summary.endedAt).toBe(before.deadline);
   expect(attempt.summary.endReason).toBe('expired');
   expect(attempt.summary.feedbackMode).toBe('learning');
+  expect(JSON.parse(attempt.snapshot.payload).flags).toEqual([0]);
   await page.reload();
   await saved(page);
   expect(Object.keys((await records(page)).attempts)).toHaveLength(1);
