@@ -4,6 +4,9 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useNotebookRevision } from '../hooks/useNotebookSources';
 import { notebookMessage, NOTEBOOK_SOURCE_LABELS } from '../data/studyNotebookMessages.js';
 import StudyNotebookPage from './StudyNotebookPage';
+import SpacedRevisionQueue from './SpacedRevisionQueue';
+import { spacedRevisionUrl } from '../utils/spacedRevision.js';
+import { SPACED_REVISION_ENABLED } from '../config/spacedRevisionConfig';
 import PracticeMode from './PracticeMode';
 import QuickPracticeMode from './QuickPracticeMode';
 import PracticeSizeSelect from './PracticeSizeSelect';
@@ -13,7 +16,12 @@ import { eligibleStudyPool, practiceSize } from '../utils/studySettings';
 function Revision({ notebook, selectionId, params, onNavigate, progressState, onSignIn }) {
   const { t } = useLanguage();
   const state = useNotebookRevision(notebook.uid, selectionId, notebook.enabled);
-  const back = () => onNavigate('#/notebook');
+  const spaced = SPACED_REVISION_ENABLED && params.get('review') === 'spaced';
+  const returnUrl = spaced
+    ? spacedRevisionUrl(params.get('bank'), params.get('zone'))
+    : '#/notebook';
+  const exitLabel = spaced ? 'Back to spaced review' : 'Back to notebook';
+  const back = () => onNavigate(returnUrl);
   if (state.loading)
     return (
       <div className="load-state" role="status">
@@ -27,15 +35,15 @@ function Revision({ notebook, selectionId, params, onNavigate, progressState, on
         <Alert type="error" showIcon message={t(notebookMessage(state.error))} />
         <Space wrap>
           <Button onClick={state.reload}>{t('Retry')}</Button>
-          <Button onClick={back}>{t('Back to notebook')}</Button>
+          <Button onClick={back}>{t(exitLabel)}</Button>
         </Space>
       </div>
     );
   let size;
   try {
-    size = practiceSize(params.get('size'));
+    size = spaced ? 'all' : practiceSize(params.get('size'));
   } catch (error) {
-    return <StudySetupError error={error} onExit={back} exitLabel="Back to notebook" />;
+    return <StudySetupError error={error} onExit={back} exitLabel={exitLabel} />;
   }
   const identities = state.pool.current.map((item) => item.entryKey);
   const eligible = eligibleStudyPool(state.pool.questions, { identities }).items.length;
@@ -45,22 +53,24 @@ function Revision({ notebook, selectionId, params, onNavigate, progressState, on
   const Practice = size === 'all' ? PracticeMode : QuickPracticeMode;
   return (
     <>
-      <div className="practice-size-picker">
-        <PracticeSizeSelect
-          id="notebook-practice-size"
-          value={size}
-          onChange={(value) => onNavigate(studyUrl(value))}
-        />
-        <Typography.Paragraph type="secondary">
-          {t(
-            '{count} questions available for short Practice. Notes and full-bank sessions are kept.',
-            { count: eligible }
-          )}
-        </Typography.Paragraph>
-        <Typography.Paragraph type="secondary">
-          {t('Notebook revision is untimed Practice. Each question keeps its original source.')}
-        </Typography.Paragraph>
-      </div>
+      {!spaced && (
+        <div className="practice-size-picker">
+          <PracticeSizeSelect
+            id="notebook-practice-size"
+            value={size}
+            onChange={(value) => onNavigate(studyUrl(value))}
+          />
+          <Typography.Paragraph type="secondary">
+            {t(
+              '{count} questions available for short Practice. Notes and full-bank sessions are kept.',
+              { count: eligible }
+            )}
+          </Typography.Paragraph>
+          <Typography.Paragraph type="secondary">
+            {t('Notebook revision is untimed Practice. Each question keeps its original source.')}
+          </Typography.Paragraph>
+        </div>
+      )}
       {!!state.pool.excluded.length && (
         <Alert
           type="warning"
@@ -86,29 +96,32 @@ function Revision({ notebook, selectionId, params, onNavigate, progressState, on
           key={`${notebook.uid}:${selectionId}:${size}:${params.get('fresh') || ''}`}
           size={size}
           questionIdentities={identities}
-          fresh={size === 'all' ? null : params.get('fresh')}
+          fresh={size === 'all' && !spaced ? null : params.get('fresh')}
           onRestart={() => onNavigate(studyUrl(size, String(Date.now())))}
           questions={state.pool.questions}
           quizId={null}
-          sessionId={state.selection.sessionId}
-          quizName={t('Notebook revision')}
+          sessionId={state.selection.sessionId + (spaced ? ':spaced' : '')}
+          quizName={t(spaced ? 'Spaced review' : 'Notebook revision')}
           sourceQuizzes={state.pool.sources}
           notebook={notebook}
           progressState={progressState}
           revision
+          spacedRevision={spaced}
           entryToken={`#/notebook/study/${selectionId}`}
           onSignIn={onSignIn}
           onExit={back}
         />
       ) : (
         <section className="notebook-page">
-          <Typography.Title level={1}>{t('Notebook revision')}</Typography.Title>
+          <Typography.Title level={1}>
+            {t(spaced ? 'Spaced review' : 'Notebook revision')}
+          </Typography.Title>
           <Empty
             description={t(
               'No current questions are available in this selection. Your notes are kept.'
             )}
           />
-          <Button onClick={back}>{t('Back to notebook')}</Button>
+          <Button onClick={back}>{t(exitLabel)}</Button>
         </section>
       )}
     </>
@@ -147,6 +160,25 @@ export default function StudyNotebookWorkspace({
         <Spin />
         {t('Loading notebook…')}
       </div>
+    );
+  if (
+    !SPACED_REVISION_ENABLED &&
+    (params.get('review') === 'spaced' || params.get('view') === 'revision')
+  )
+    return (
+      <Alert
+        type="info"
+        showIcon
+        message={t('Spaced review is not enabled yet.')}
+        action={<Button onClick={() => onNavigate('#/notebook')}>{t('Back to notebook')}</Button>}
+      />
+    );
+  if (!selectionId && params.get('view') === 'revision')
+    return (
+      <SpacedRevisionQueue
+        key={`${notebook.uid}:${params.get('bank') || 'all'}:${params.get('zone') || ''}`}
+        {...{ notebook, params, onNavigate }}
+      />
     );
   return selectionId ? (
     <Revision {...{ notebook, selectionId, params, onNavigate, onSignIn, progressState }} />

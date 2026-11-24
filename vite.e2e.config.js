@@ -22,6 +22,12 @@ export default defineConfig(({ command }) => {
     resolve: {
       alias: [
         {
+          find: /^(?:.*\/)?spacedRevisionConfig(?:\.js)?$/,
+          replacement: fileURLToPath(
+            new URL('./tests/fixtures/spacedRevisionConfig.js', import.meta.url)
+          ),
+        },
+        {
           find: /^(?:.*\/)?studyRoadmapService(?:\.js)?$/,
           replacement: fileURLToPath(
             new URL('./tests/fixtures/studyRoadmapService.js', import.meta.url)

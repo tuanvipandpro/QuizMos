@@ -163,10 +163,30 @@ service cloud.firestore {
           || (get(/databases/$(database)/documents/users/$(userId)/customQuizzes/$(r.slotId)).data.instanceId == r.instanceId
             && get(/databases/$(database)/documents/users/$(userId)/customQuizzes/$(r.slotId)).data.contentVersion == r.contentVersion);
       }
+      function notebookReview(d) {
+        return !('reviewSchedule' in d)
+          || (d.mistake && d.reviewSchedule is map
+            && d.reviewSchedule.keys().hasAll(['level','anchor'])
+            && d.reviewSchedule.keys().hasOnly(['level','anchor'])
+            && d.reviewSchedule.level is int && d.reviewSchedule.level >= -1 && d.reviewSchedule.level <= 5
+            && d.reviewSchedule.anchor is timestamp && d.reviewSchedule.anchor <= request.time);
+      }
+      function notebookReviewAdvance(old, level) {
+        let previous = old.get('reviewSchedule', {'level':1,'anchor':old.lastReviewedAt});
+        let interval = [0,1,3,7,14,30];
+        return previous.level >= 1 && previous.level <= 5 && previous.anchor is timestamp
+          && level == (previous.level == 5 ? 5 : previous.level+1)
+          && request.time >= previous.anchor + duration.value(interval[previous.level], 'd');
+      }
+      function notebookReviewUpdate(d, old) {
+        return d.get('reviewSchedule', null) == old.get('reviewSchedule', null)
+          || ('reviewSchedule' in d && d.reviewSchedule.anchor == request.time
+            && (d.reviewSchedule.level <= 1 || notebookReviewAdvance(old, d.reviewSchedule.level)));
+      }
       function notebookEntry(d,id) {
         return historyHash(id)
           && d.keys().hasAll(['schemaVersion','entryKey','ref','sourceGroup','bookmarked','note','mistake','reviewed','lastWrongAt','lastReviewedAt','revision','lastOperationId','lastOperationFingerprint','createdAt','updatedAt'])
-          && d.keys().hasOnly(['schemaVersion','entryKey','ref','sourceGroup','bookmarked','note','mistake','reviewed','lastWrongAt','lastReviewedAt','revision','lastOperationId','lastOperationFingerprint','createdAt','updatedAt'])
+          && d.keys().hasOnly(['schemaVersion','entryKey','ref','sourceGroup','bookmarked','note','mistake','reviewed','lastWrongAt','lastReviewedAt','revision','lastOperationId','lastOperationFingerprint','createdAt','updatedAt','reviewSchedule'])
           && d.schemaVersion == 1 && d.entryKey == id && notebookRef(d.ref)
           && d.sourceGroup == (d.ref.kind == 'bank' ? 'bank:'+d.ref.quizId : 'custom:'+d.ref.instanceId+':v'+string(d.ref.contentVersion))
           && d.bookmarked is bool && d.mistake is bool && d.reviewed is bool
@@ -176,7 +196,8 @@ service cloud.firestore {
           && (d.lastReviewedAt == null || (d.lastReviewedAt is timestamp && d.lastReviewedAt <= request.time))
           && (!d.reviewed || (d.mistake && d.lastReviewedAt is timestamp))
           && d.revision is int && d.revision > 0 && historyId(d.lastOperationId) && historyHash(d.lastOperationFingerprint)
-          && d.createdAt is timestamp && d.createdAt <= request.time && d.updatedAt == request.time;
+          && d.createdAt is timestamp && d.createdAt <= request.time && d.updatedAt == request.time
+          && notebookReview(d);
       }
       function notebookQuotaTransition(id) {
         let old = exists(notebookQuotaPath()) ? get(notebookQuotaPath()).data : {'count':0,'revision':0,'generation':0};
@@ -201,17 +222,19 @@ service cloud.firestore {
         allow get: if notebookOwner();
         allow list: if notebookOwner() && request.query.limit > 0 && request.query.limit <= 20;
         allow create: if notebookOwner() && notebookEntry(request.resource.data,entryKey)
+          && !('reviewSchedule' in request.resource.data)
           && request.resource.data.revision == 1 && request.resource.data.createdAt == request.time
           && (request.resource.data.lastWrongAt == null || request.resource.data.lastWrongAt == request.time)
           && (request.resource.data.lastReviewedAt == null || request.resource.data.lastReviewedAt == request.time)
           && notebookSourceCurrent(request.resource.data.ref) && notebookQuotaTransition(entryKey);
         allow update: if notebookOwner() && notebookEntry(request.resource.data,entryKey)
+          && notebookReviewUpdate(request.resource.data, resource.data)
           && request.resource.data.ref == resource.data.ref
           && request.resource.data.createdAt == resource.data.createdAt
           && request.resource.data.revision == resource.data.revision+1
           && (request.resource.data.lastWrongAt == resource.data.lastWrongAt || request.resource.data.lastWrongAt == request.time)
           && (request.resource.data.lastReviewedAt == resource.data.lastReviewedAt || request.resource.data.lastReviewedAt == request.time)
-          && ((request.resource.data.diff(resource.data).affectedKeys().hasOnly(['bookmarked','note','revision','lastOperationId','lastOperationFingerprint','updatedAt']))
+          && ((request.resource.data.diff(resource.data).affectedKeys().hasOnly(['bookmarked','note','reviewSchedule','revision','lastOperationId','lastOperationFingerprint','updatedAt']))
             || notebookSourceCurrent(request.resource.data.ref))
           && notebookQuotaTransition(entryKey);
         allow delete: if notebookOwner() && notebookQuotaTransition(entryKey);

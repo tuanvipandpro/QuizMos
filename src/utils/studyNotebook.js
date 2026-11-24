@@ -11,6 +11,7 @@ import {
   validateQuizQuestions,
 } from './questionModel.js';
 import { UUID_PATTERN } from './secureId.js';
+import { nextRevisionSchedule, validRevisionSchedule } from './spacedRevision.js';
 import {
   NOTEBOOK_SCHEMA,
   MAX_NOTEBOOK_NOTE_CHARACTERS,
@@ -193,14 +194,23 @@ export const emptyNotebookState = () => ({
   lastWrongAt: null,
   lastReviewedAt: null,
 });
-export const notebookStateFromEntry = (entry) =>
-  Object.fromEntries(NOTEBOOK_STATE_FIELDS.map((key) => [key, entry[key]]));
+export const notebookStateFromEntry = (entry) => ({
+  ...Object.fromEntries(NOTEBOOK_STATE_FIELDS.map((key) => [key, entry[key]])),
+  ...(Object.hasOwn(entry, 'reviewSchedule') ? { reviewSchedule: entry.reviewSchedule } : {}),
+});
 
 export function validateNotebookState(state) {
   if (
-    !exact(state, NOTEBOOK_STATE_FIELDS) ||
+    !exact(
+      state,
+      Object.hasOwn(state || {}, 'reviewSchedule')
+        ? [...NOTEBOOK_STATE_FIELDS, 'reviewSchedule']
+        : NOTEBOOK_STATE_FIELDS
+    ) ||
     ['bookmarked', 'mistake', 'reviewed'].some((key) => typeof state[key] !== 'boolean') ||
-    (state.reviewed && !state.mistake)
+    (state.reviewed && !state.mistake) ||
+    (Object.hasOwn(state, 'reviewSchedule') &&
+      (!state.mistake || !validRevisionSchedule(state.reviewSchedule)))
   )
     invalid();
   notebookNote(state.note);
@@ -239,8 +249,17 @@ export function transitionNotebookState(current, change, now = Date.now()) {
       if (!exact(change, ['kind', 'value'])) invalid();
       state.note = notebookNote(change.value);
       break;
-    case 'outcome':
-      if (!exact(change, ['kind', 'correct']) || typeof change.correct !== 'boolean') invalid();
+    case 'outcome': {
+      const spaced = Object.hasOwn(change, 'spaced');
+      if (
+        !exact(change, spaced ? ['kind', 'correct', 'spaced'] : ['kind', 'correct']) ||
+        typeof change.correct !== 'boolean' ||
+        (spaced && change.spaced !== true)
+      )
+        invalid();
+      const nextSchedule = nextRevisionSchedule(state, change.correct, spaced, now);
+      if (spaced && !nextSchedule) return current;
+      if (nextSchedule) state.reviewSchedule = nextSchedule;
       if (!change.correct) {
         state.mistake = true;
         state.reviewed = false;
@@ -249,6 +268,14 @@ export function transitionNotebookState(current, change, now = Date.now()) {
         state.reviewed = true;
         state.lastReviewedAt = now;
       }
+      break;
+    }
+    case 'reviewSchedule':
+      if (!exact(change, ['kind', 'action']) || !['reset', 'pause'].includes(change.action))
+        invalid();
+      if (!state.mistake || (change.action === 'pause' && state.reviewSchedule?.level === -1))
+        return current;
+      state.reviewSchedule = { level: change.action === 'pause' ? -1 : 0, anchor: now };
       break;
     case 'remove':
       if (!exact(change, ['kind'])) invalid();
@@ -263,7 +290,12 @@ export function transitionNotebookState(current, change, now = Date.now()) {
 
 export async function validateNotebookEntry(entry) {
   if (
-    !exact(entry, NOTEBOOK_ENTRY_FIELDS) ||
+    !exact(
+      entry,
+      Object.hasOwn(entry || {}, 'reviewSchedule')
+        ? [...NOTEBOOK_ENTRY_FIELDS, 'reviewSchedule']
+        : NOTEBOOK_ENTRY_FIELDS
+    ) ||
     entry.schemaVersion !== NOTEBOOK_SCHEMA ||
     !digest(entry.entryKey) ||
     !whole(entry.revision) ||
@@ -277,8 +309,8 @@ export async function validateNotebookEntry(entry) {
   if (!whole(entry.createdAt) || !whole(entry.updatedAt) || entry.updatedAt < entry.createdAt)
     invalid();
   if (
-    [entry.lastWrongAt, entry.lastReviewedAt].some(
-      (time) => time !== null && time > entry.updatedAt
+    [entry.lastWrongAt, entry.lastReviewedAt, entry.reviewSchedule?.anchor].some(
+      (time) => time != null && time > entry.updatedAt
     )
   )
     invalid();

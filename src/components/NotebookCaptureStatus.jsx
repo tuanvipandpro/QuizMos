@@ -4,7 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import NotebookConfirmDialog from './NotebookConfirmDialog';
 import { notebookMessage } from '../data/studyNotebookMessages.js';
 
-export default function NotebookCaptureStatus({ capture }) {
+export default function NotebookCaptureStatus({ capture, spacedRevision }) {
   const { t } = useLanguage();
   const [confirmation, setConfirmation] = useState(null);
   if (!capture.enabled || !capture.eligible || capture.status === 'idle') return null;
@@ -47,7 +47,9 @@ export default function NotebookCaptureStatus({ capture }) {
                   setConfirmation({
                     title: t('Refresh failed notebook updates?'),
                     content: t(
-                      'This reads the latest state and may recreate entries you removed. Successful updates are kept.'
+                      spacedRevision
+                        ? 'This reads the latest review schedule before retrying.'
+                        : 'This reads the latest state and may recreate entries you removed. Successful updates are kept.'
                     ),
                     okText: t('Refresh and retry'),
                     cancelText: t('Cancel'),

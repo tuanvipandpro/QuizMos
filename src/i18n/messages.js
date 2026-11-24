@@ -1,6 +1,8 @@
 import { STUDY_ROADMAP_MESSAGES } from './studyRoadmapMessages.js';
+import { SPACED_REVISION_MESSAGES } from './spacedRevisionMessages.js';
 
 export const vi = {
+  ...SPACED_REVISION_MESSAGES,
   ...STUDY_ROADMAP_MESSAGES,
   '{count} questions available for short Practice. Notes and full-bank sessions are kept.':
     'Có {count} câu cho luyện tập ngắn. Ghi chú và các lượt luyện toàn bộ bank được giữ nguyên.',
@@ -989,6 +991,7 @@ export const vi = {
 
 export function translate(language, key, params = {}) {
   const singular = {
+    '{count} reviews this week': '{count} review this week',
     '{count} active filters': '{count} active filter',
     '{count} questions selected': '{count} question selected',
     '{count} selected questions are unavailable and excluded.':
