@@ -3,6 +3,7 @@ import { Layout } from 'antd';
 import { GithubOutlined } from '@ant-design/icons';
 import { appBrand } from '../data/appBrand';
 import { useLanguage } from '../contexts/LanguageContext';
+import { CERT_OUTCOME_SHARING_ENABLED } from '../config/certOutcomeConfig';
 
 export default function AppFooter({ onNavigate, page, embedded = false }) {
   const { t } = useLanguage();
@@ -12,6 +13,11 @@ export default function AppFooter({ onNavigate, page, embedded = false }) {
         {appBrand.name} · {t('Learn at your own pace.')}
       </span>
       <div className="footer-links">
+        {CERT_OUTCOME_SHARING_ENABLED && (
+          <button className="public-text-link" onClick={() => onNavigate('#/outcomes?view=public')}>
+            {t('Community outcomes')}
+          </button>
+        )}
         <button
           className="public-text-link"
           onClick={() => onNavigate('#/updates')}

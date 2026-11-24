@@ -286,11 +286,11 @@ function RoadmapWeek({
   );
 }
 
-function RoadmapWorkspace({ uid, onNavigate }) {
+function RoadmapWorkspace({ uid, initialPlanId, onNavigate }) {
   const { t, language } = useLanguage();
   const state = useStudyRoadmap(uid);
   const { plans, loading, readError, saving, writeError } = state;
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState(initialPlanId);
   const [editor, setEditor] = useState(null);
   const [deleting, setDeleting] = useState(null);
   const [localError, setLocalError] = useState(null);
@@ -523,7 +523,13 @@ function RoadmapWorkspace({ uid, onNavigate }) {
   );
 }
 
-export default function StudyRoadmapPage({ user, authLoading, onSignIn, onNavigate }) {
+export default function StudyRoadmapPage({
+  user,
+  authLoading,
+  initialPlanId,
+  onSignIn,
+  onNavigate,
+}) {
   const { t } = useLanguage();
   return (
     <section className="study-roadmap-page">
@@ -557,7 +563,12 @@ export default function StudyRoadmapPage({ user, authLoading, onSignIn, onNaviga
           </Button>
         </Card>
       ) : (
-        <RoadmapWorkspace key={user.uid} uid={user.uid} onNavigate={onNavigate} />
+        <RoadmapWorkspace
+          key={user.uid}
+          uid={user.uid}
+          initialPlanId={initialPlanId}
+          onNavigate={onNavigate}
+        />
       )}
     </section>
   );

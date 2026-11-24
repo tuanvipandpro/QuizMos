@@ -1,0 +1,100 @@
+.certification-outcomes,
+.outcome-list,
+.outcome-form,
+.outcome-score-group {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.certification-outcomes .page-heading {
+  margin-block-end: 0;
+}
+.outcome-actions,
+.outcome-card-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+.outcome-card-heading {
+  justify-content: space-between;
+}
+.outcome-card-heading h2.ant-typography {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.certification-outcomes .ant-btn,
+.outcome-dialog .ant-btn,
+.outcome-dialog .ant-checkbox-wrapper {
+  min-height: 44px;
+  height: auto;
+  max-width: 100%;
+  white-space: normal;
+}
+.outcome-form,
+.outcome-score-group {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+.outcome-form-wide {
+  grid-column: 1 / -1;
+}
+.outcome-form label,
+.outcome-dialog label:not(.ant-checkbox-wrapper) {
+  display: block;
+  margin-block-end: 4px;
+  font-weight: 600;
+}
+.outcome-form :is(select, .ant-input) {
+  width: 100%;
+  min-height: 44px;
+  min-width: 0;
+  font-size: 1rem;
+}
+.outcome-form select {
+  padding-inline: 10px;
+  color: var(--app-text);
+  background: var(--app-surface);
+  border: 1px solid var(--app-control-border);
+  border-radius: 8px;
+}
+.outcome-form select:focus-visible {
+  outline: 2px solid var(--app-primary);
+  outline-offset: 2px;
+}
+.outcome-details {
+  display: grid;
+  grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+  gap: 6px 12px;
+}
+.outcome-details dt {
+  font-weight: 600;
+}
+.outcome-details dd {
+  margin: 0;
+  min-width: 0;
+}
+.outcome-note {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.outcome-dialog :is(.ant-input, .ant-card, .ant-alert) {
+  margin-block-end: 12px;
+}
+.outcome-dialog .ant-checkbox-wrapper {
+  align-items: center;
+}
+@media (max-width: 580px) {
+  .outcome-form,
+  .outcome-score-group,
+  .outcome-details {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .outcome-details dd {
+    margin-block-end: 6px;
+  }
+  .certification-outcomes .ant-card-body {
+    padding: 14px;
+  }
+}

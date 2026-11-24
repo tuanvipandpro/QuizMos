@@ -1,7 +1,9 @@
 import { STUDY_ROADMAP_MESSAGES } from './studyRoadmapMessages.js';
 import { SPACED_REVISION_MESSAGES } from './spacedRevisionMessages.js';
+import { CERTIFICATION_OUTCOME_MESSAGES } from './certificationOutcomeMessages.js';
 
 export const vi = {
+  ...CERTIFICATION_OUTCOME_MESSAGES,
   ...SPACED_REVISION_MESSAGES,
   ...STUDY_ROADMAP_MESSAGES,
   '{count} questions available for short Practice. Notes and full-bank sessions are kept.':

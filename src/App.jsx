@@ -75,6 +75,7 @@ const LandingPage = lazy(() => import('./components/LandingPage'));
 const DonatePage = lazy(() => import('./components/DonatePage'));
 const ProfilePage = lazy(() => import('./components/ProfilePage'));
 const StudyRoadmapPage = lazy(() => import('./components/StudyRoadmapPage'));
+const CertificationOutcomesPage = lazy(() => import('./components/CertificationOutcomesPage'));
 const QuizUpdatesPage = lazy(() => import('./components/QuizUpdatesPage'));
 const StudyNotebookWorkspace = lazy(() => import('./components/StudyNotebookWorkspace'));
 
@@ -432,7 +433,9 @@ export default function App() {
                       ? t('Profile')
                       : route.page === 'updates'
                         ? t('Quiz updates')
-                        : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
+                        : route.page === 'outcomes'
+                          ? t('Certification outcomes')
+                          : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
   }, [route.page, active?.name, t]);
   let examDraft = null;
   if (active && ['overview', 'exam'].includes(route.mode)) {
@@ -593,8 +596,19 @@ export default function App() {
   else if (route.page === 'roadmap')
     screen = (
       <StudyRoadmapPage
+        initialPlanId={route.params.get('plan')}
         user={authLoading ? null : user}
         authLoading={authLoading}
+        onNavigate={go}
+        onSignIn={openLogin}
+      />
+    );
+  else if (route.page === 'outcomes')
+    screen = (
+      <CertificationOutcomesPage
+        user={authLoading ? null : user}
+        authLoading={authLoading}
+        params={route.params}
         onNavigate={go}
         onSignIn={openLogin}
       />

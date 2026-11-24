@@ -57,6 +57,7 @@ for (const marker of [
   'quiz-e2e-notebook-enabled',
   'quiz-e2e-roadmap-enabled',
   'quiz-e2e-spaced-revision',
+  'quiz-e2e-outcomes',
   'quiz-e2e-native-drag',
 ]) {
   test(`the custom-domain build rejects the E2E test boundary ${marker}`, async (t) => {
