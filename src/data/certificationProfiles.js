@@ -83,6 +83,23 @@ const profile = (quizId, code, min, max, minutes, score, sources, extra = {}) =>
     ...extra,
   });
 
+// Microsoft Learn certification requirements as of 2026-11-24.
+export const AB_100_ASSOCIATE_CERTIFICATIONS = Object.freeze([
+  'AI-103 — Azure AI Apps and Agents Developer',
+  'AB-620 — AI Agent Builder',
+  'AI-300 — Machine Learning Operations Engineer',
+  'AB-410 — Intelligent Applications Builder',
+  'PL-400 — Power Platform Developer',
+  'AB-210 — Dynamics 365 Sales AI Consultant',
+  'AB-250 — Dynamics 365 Contact Center AI Engineer',
+  'MB-330 — Supply Chain Management Functional Consultant',
+  'MB-310 — Finance Functional Consultant',
+  'MB-230 — Customer Service Functional Consultant',
+  'MB-500 — Finance and Operations Apps Developer',
+  'MB-800 — Business Central Functional Consultant',
+  'MB-820 — Business Central Developer',
+]);
+
 export const certificationProfiles = Object.freeze([
   profile('anthropic-cca-f', 'CCAR-F', 60, 60, 120, scaled(720), ['ccarf', 'anthropic'], {
     seatMinutes: 135,

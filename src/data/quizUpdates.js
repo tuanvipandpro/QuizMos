@@ -2,6 +2,15 @@
 // Review the referenced bank diff before adding or revising an entry.
 export const quizUpdates = [
   {
+    id: 'ab-100-2026-11-24',
+    bankId: 'ab-100',
+    kind: 'updated',
+    date: '2026-11-24',
+    summary:
+      'Added 6 AB-100 practice questions on agent governance, deployment, evaluation and operating cost.',
+    sourceRevision: 'aebb112f71848d969b15aa19f4cbc42ee42abb8e',
+  },
+  {
     id: 'gcp-paa-2026-11-10',
     bankId: 'gcp-paa',
     kind: 'added',

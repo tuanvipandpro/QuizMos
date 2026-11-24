@@ -263,7 +263,12 @@ export const vi = {
     'Các bổ sung và thay đổi đã được rà soát trong thư viện quiz công khai. Ngày hiển thị là ngày thay đổi nội dung bộ câu hỏi.',
   'No reviewed quiz updates yet. Explore the Quiz Bank while new changes are reviewed.':
     'Chưa có cập nhật quiz đã được rà soát. Hãy khám phá thư viện quiz trong khi các thay đổi mới được kiểm tra.',
+  'Added 6 AB-100 practice questions on agent governance, deployment, evaluation and operating cost.':
+    'Bổ sung 6 câu AB-100 về quản trị agent, triển khai, đánh giá và chi phí vận hành.',
   Added: 'Đã thêm',
+  'AB-100 certification prerequisite': 'Điều kiện nhận chứng chỉ AB-100',
+  'To earn the Expert certification, pass AB-100 and earn at least one of these Associate certifications.':
+    'Để nhận chứng chỉ Expert, cần đỗ kỳ thi AB-100 và có ít nhất một chứng chỉ Associate trong danh sách sau.',
   Updated: 'Đã cập nhật',
   'Reviewed source': 'Nguồn đã rà soát',
   'Open quiz': 'Mở quiz',
