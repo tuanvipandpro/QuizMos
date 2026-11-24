@@ -50,8 +50,11 @@ export const vi = {
     'Chỉ mô phỏng hình thức. Chọn câu ngẫu nhiên không tái hiện các lĩnh vực, lab, case study hay câu không tính điểm chính thức. Không tự thêm giờ dựa vào ngôn ngữ.',
   'Choose {min}–{max} questions within the published range. Answering time is fixed.':
     'Chọn {min}–{max} câu trong phạm vi công bố. Thời gian làm bài cố định.',
-  'Training limits: 1–{count} questions and 1–{minutes} minutes.':
-    'Giới hạn bài luyện: 1–{count} câu và 1–{minutes} phút.',
+  'All {count} eligible questions': 'Tất cả {count} câu hợp lệ',
+  'No eligible questions': 'Không có câu hợp lệ',
+  'This quiz uses all eligible questions because presets start at {count}.':
+    'Quiz này dùng toàn bộ câu hợp lệ vì các mốc chọn sẵn bắt đầu từ {count} câu.',
+  'Larger presets require more eligible questions.': 'Mốc lớn hơn cần thêm câu hỏi hợp lệ.',
   '{count} eligible; {excluded} excluded because answers or certification formats are incompatible.':
     '{count} câu hợp lệ; loại {excluded} câu do đáp án hoặc dạng câu không tương thích.',
   '{count} eligible; {excluded} excluded because questions are retired or incompatible.':
@@ -993,6 +996,7 @@ export const vi = {
 
 export function translate(language, key, params = {}) {
   const singular = {
+    'All {count} eligible questions': 'The only eligible question',
     '{count} reviews this week': '{count} review this week',
     '{count} active filters': '{count} active filter',
     '{count} questions selected': '{count} question selected',
