@@ -9,14 +9,17 @@ const deleted = Symbol('deleteField');
 const writes = [];
 let denyWrites = false;
 let denyReads = false;
+const readDocument = async (path) => {
+  if (denyReads) throw new Error('Permission denied');
+  return { exists: () => documents.has(path), data: () => documents.get(path) };
+};
 globalThis.__quizFirestore = {
   getFirestore: () => ({}),
   doc: (_, collection, uid) => `${collection}/${uid}`,
-  getDoc: async (path) => {
-    if (denyReads) throw new Error('Permission denied');
-    return { exists: () => documents.has(path), data: () => documents.get(path) };
-  },
-  setDoc: async (path, data) => documents.set(path, data),
+  getDoc: readDocument,
+  getDocFromServer: readDocument,
+  runTransaction: (_, task) =>
+    task({ get: readDocument, set: (path, data) => documents.set(path, data) }),
   updateDoc: async (path, fields) => {
     if (denyWrites) throw new Error('Permission denied');
     writes.push({ path, fields });
@@ -59,6 +62,32 @@ test('new profiles use the multi-provider schema', async () => {
   assert.deepEqual(keysFromProfile(result.user), { gemini: '', groq: '' });
   assert.deepEqual(result.user.llmProviders, { gemini: { apiKey: null }, groq: { apiKey: null } });
   assert.equal(result.user.geminiApiKey, undefined);
+});
+
+test('a failed profile read on return cannot replace the existing profile or checkpoint', async () => {
+  const profile = {
+    llmProviders: { groq: { apiKey: 'test-key' } },
+    quizProgress: { bank: { questionIndex: 13 } },
+  };
+  documents.set('users/returning', structuredClone(profile));
+  denyReads = true;
+  const originalError = console.error;
+  console.error = () => {};
+  try {
+    assert.equal((await service.initializeUser({ uid: 'returning' })).success, false);
+    assert.deepEqual(documents.get('users/returning'), profile);
+  } finally {
+    denyReads = false;
+    console.error = originalError;
+  }
+});
+
+test('profile creation leaves data intact if another tab has already created the profile', async () => {
+  const profile = { uid: 'concurrent', quizProgress: { bank: { questionIndex: 13 } } };
+  documents.set('users/concurrent', structuredClone(profile));
+  const result = await service.createUser({ uid: 'concurrent' });
+  assert.deepEqual(result, { success: true, user: profile });
+  assert.deepEqual(documents.get('users/concurrent'), profile);
 });
 
 test('saving a legacy Gemini key migrates atomically and preserves Groq and quiz progress', async () => {

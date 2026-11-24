@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { translate } from '../../src/i18n/messages.js';
-import { headerControl } from './headerControls.js';
+import { expectHeaderAccount, headerControl } from './headerControls.js';
 import { clickAfterUiMotion } from './uiMotion.js';
 
 const id = 'aws-aip-c01';
@@ -111,6 +111,49 @@ test('Practice survives popup cancellation, failure and observer-before-result s
   await expect(title(page)).toHaveText('Guest study question 1');
   expect(await read(page, key('test-alice', 'practice'))).toBeNull();
   await expect.poll(() => read(page, key('test-bob', 'practice'))).toMatchObject({ index: 0 });
+});
+
+test('a reloaded signed-in Practice tab keeps its draft while cloud reads wait', async ({
+  page,
+  context,
+}) => {
+  await setup(page, context);
+  await page.goto('./#/quiz/' + id);
+  await google(await openSignIn(page));
+  await expectHeaderAccount(page, 'Test account');
+  await page.goto('./#/quiz/' + id + '/practice?resume=1&entry=saved-tab');
+  await expect(title(page)).toHaveText('Guest study question 1');
+  await choose(page);
+  await next(page);
+  await page.getByRole('button', { name: 'Save position', exact: true }).click();
+  const save = page.getByRole('dialog', { name: 'Save position?' });
+  await clickAfterUiMotion(save.getByRole('button', { name: 'Save', exact: true }));
+  await expect(page.getByRole('button', { name: 'Position saved', exact: true })).toBeVisible();
+  await next(page);
+  await choose(page);
+  const draftKey = key('test-alice', 'practice');
+  const draft = await read(page, draftKey);
+  expect(draft).toMatchObject({ index: 2 });
+  expect(draft.answers[2]).toBe('A');
+
+  await page.evaluate(() => {
+    sessionStorage.setItem('quiz-e2e-defer-user-profile', '1');
+    sessionStorage.setItem('quiz-e2e-defer-quiz-progress', '1');
+  });
+  await page.reload();
+  await expect(title(page)).toHaveText('Guest study question 3');
+  await expect(page.locator('.question-options input').first()).toBeChecked();
+  expect(await read(page, draftKey)).toMatchObject({ index: draft.index, answers: draft.answers });
+
+  await page.evaluate(() => {
+    for (const name of ['user-profile', 'quiz-progress']) {
+      sessionStorage.removeItem('quiz-e2e-defer-' + name);
+      window.dispatchEvent(new Event('quiz-e2e-resolve-' + name));
+    }
+  });
+  await expect(title(page)).toHaveText('Guest study question 3');
+  await page.getByRole('button', { name: 'Previous', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Position saved', exact: true })).toBeVisible();
 });
 
 test('a timed guest exam keeps its original settings, answers, flags and expiry after sign-in', async ({
