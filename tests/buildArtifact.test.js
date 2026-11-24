@@ -55,9 +55,10 @@ for (const marker of [
   'quiz-e2e-app-ai-disabled',
   'quiz-e2e-history-enabled',
   'quiz-e2e-notebook-enabled',
+  'quiz-e2e-roadmap-enabled',
   'quiz-e2e-native-drag',
 ]) {
-  test(`the custom-domain build rejects the App AI test boundary ${marker}`, async (t) => {
+  test(`the custom-domain build rejects the E2E test boundary ${marker}`, async (t) => {
     const directory = await fixture(t);
     await fs.writeFile(
       new URL('assets/app.js', directory),

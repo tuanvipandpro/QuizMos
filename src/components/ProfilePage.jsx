@@ -2,6 +2,7 @@ import React from 'react';
 import { Avatar, Button, Card, Radio, Spin, Typography } from 'antd';
 import { ArrowLeftOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { useLanguage } from '../contexts/LanguageContext';
+import { STUDY_ROADMAP_ENABLED } from '../config/studyRoadmapConfig';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -62,6 +63,9 @@ export default function ProfilePage({
               <dd>{user.email || t('Not provided')}</dd>
             </dl>
             <div className="account-page-actions">
+              {STUDY_ROADMAP_ENABLED && (
+                <Button onClick={() => onNavigate('#/roadmap')}>{t('Study roadmap')}</Button>
+              )}
               <Button onClick={() => onNavigate('#/my-quizzes')}>{t('Manage quizzes')}</Button>
               <Button icon={<SettingOutlined aria-hidden="true" />} onClick={onSettings}>
                 {t('AI Settings')}

@@ -1,4 +1,7 @@
+import { STUDY_ROADMAP_MESSAGES } from './studyRoadmapMessages.js';
+
 export const vi = {
+  ...STUDY_ROADMAP_MESSAGES,
   '{count} questions available for short Practice. Notes and full-bank sessions are kept.':
     'Có {count} câu cho luyện tập ngắn. Ghi chú và các lượt luyện toàn bộ bank được giữ nguyên.',
   'Notebook revision is untimed Practice. Each question keeps its original source.':

@@ -74,6 +74,7 @@ const ExamHistoryPage = lazy(() => import('./components/ExamHistoryPage'));
 const LandingPage = lazy(() => import('./components/LandingPage'));
 const DonatePage = lazy(() => import('./components/DonatePage'));
 const ProfilePage = lazy(() => import('./components/ProfilePage'));
+const StudyRoadmapPage = lazy(() => import('./components/StudyRoadmapPage'));
 const QuizUpdatesPage = lazy(() => import('./components/QuizUpdatesPage'));
 const StudyNotebookWorkspace = lazy(() => import('./components/StudyNotebookWorkspace'));
 
@@ -413,23 +414,25 @@ export default function App() {
   const guide = getQuickSummary(route.quizId);
   useEffect(() => {
     document.title =
-      (route.page === 'notebook'
-        ? t('Study notebook')
-        : route.page === 'history'
-          ? t('Exam history')
-          : route.page === 'home'
-            ? t('Small quizzes. Big confidence.')
-            : route.page === 'donate'
-              ? t('Support QuizMos')
-              : route.page === 'library'
-                ? t('Quiz Bank')
-                : route.page === 'my-quizzes'
-                  ? t('My quizzes')
-                  : route.page === 'profile'
-                    ? t('Profile')
-                    : route.page === 'updates'
-                      ? t('Quiz updates')
-                      : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
+      (route.page === 'roadmap'
+        ? t('Study roadmap')
+        : route.page === 'notebook'
+          ? t('Study notebook')
+          : route.page === 'history'
+            ? t('Exam history')
+            : route.page === 'home'
+              ? t('Small quizzes. Big confidence.')
+              : route.page === 'donate'
+                ? t('Support QuizMos')
+                : route.page === 'library'
+                  ? t('Quiz Bank')
+                  : route.page === 'my-quizzes'
+                    ? t('My quizzes')
+                    : route.page === 'profile'
+                      ? t('Profile')
+                      : route.page === 'updates'
+                        ? t('Quiz updates')
+                        : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
   }, [route.page, active?.name, t]);
   let examDraft = null;
   if (active && ['overview', 'exam'].includes(route.mode)) {
@@ -583,6 +586,15 @@ export default function App() {
         isDarkMode={isDarkMode}
         onThemeChange={(value) => setIsDarkMode(value === 'dark')}
         onSettings={() => setSettingsStatus('open')}
+        onNavigate={go}
+        onSignIn={openLogin}
+      />
+    );
+  else if (route.page === 'roadmap')
+    screen = (
+      <StudyRoadmapPage
+        user={authLoading ? null : user}
+        authLoading={authLoading}
         onNavigate={go}
         onSignIn={openLogin}
       />

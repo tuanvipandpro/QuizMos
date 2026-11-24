@@ -6,6 +6,37 @@ service cloud.firestore {
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
 
+      function roadmapOwner() {
+        return request.auth != null && request.auth.uid == userId
+          && request.auth.token.firebase.sign_in_provider != 'anonymous';
+      }
+      function roadmapDay(value) {
+        return value is string && value.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}');
+      }
+      function roadmapPlan(d) {
+        return d.keys().hasAll(['schemaVersion','instanceId','revision','bankId','startDate','targetDate','timezone','weeklyGoal','archived','overrides'])
+          && d.keys().hasOnly(['schemaVersion','instanceId','revision','bankId','startDate','targetDate','timezone','weeklyGoal','archived','overrides'])
+          && d.schemaVersion == 1 && historyId(d.instanceId)
+          && d.revision is int && d.revision > 0 && d.revision <= 9007199254740991
+          && d.bankId is string && d.bankId.matches('[a-z0-9-]{1,120}')
+          && roadmapDay(d.startDate) && roadmapDay(d.targetDate) && d.targetDate > d.startDate
+          && d.timezone is string && d.timezone.matches('[A-Za-z0-9_+/-]{1,64}')
+          && d.weeklyGoal is int && d.weeklyGoal >= 0 && d.weeklyGoal <= 7
+          && d.archived is bool && d.overrides is string && d.overrides.toUtf8().size() <= 12000;
+      }
+      match /studyPlans/{slotId} {
+        allow get, delete: if roadmapOwner() && slotId in ['slot-1','slot-2','slot-3'];
+        allow list: if roadmapOwner();
+        allow create: if roadmapOwner() && slotId in ['slot-1','slot-2','slot-3']
+          && roadmapPlan(request.resource.data) && request.resource.data.revision == 1;
+        allow update: if roadmapOwner() && slotId in ['slot-1','slot-2','slot-3']
+          && roadmapPlan(request.resource.data)
+          && request.resource.data.revision == resource.data.revision + 1
+          && request.resource.data.instanceId == resource.data.instanceId
+          && request.resource.data.startDate == resource.data.startDate
+          && request.resource.data.bankId == resource.data.bankId;
+      }
+
       function historyOwner() { return request.auth != null && request.auth.uid == userId; }
       function historyId(id) { return id is string && id.matches('[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'); }
       function historyHash(value) { return value is string && value.matches('[0-9a-f]{64}'); }
