@@ -1664,5 +1664,668 @@
     ],
     "explanation": "Phương án phù hợp là : CFO → Use; CTO → Satisfaction. CFO cần biết số lượng tương tác bị bỏ dở so với hội thoại được giải quyết để đánh giá việc sử dụng Copilot Studio credits, nên dùng metric Use. CTO cần theo dõi phản hồi của người dùng về chất lượng câu trả lời của agent, nên dùng metric Satisfaction.",
     "imageUrl": ""
+  },
+  {
+    "id": "ab-100-study-1",
+    "question": "A company has had a Microsoft Copilot Studio agent in production for three months, and it has received positive user feedback.\n\nYou need to identify the number of questions the agent did not answer and the number of sessions between users and the agent that were abandoned.\n\nWhich Copilot Studio insights should you use? Each insight may be used once, more than once, or not at all.",
+    "options": {
+      "slot1": {
+        "A": "Conversation outcomes",
+        "B": "Generated answer rate and quality",
+        "C": "Reactions",
+        "D": "Survey results"
+      },
+      "slot2": {
+        "A": "Conversation outcomes",
+        "B": "Generated answer rate and quality",
+        "C": "Reactions",
+        "D": "Survey results"
+      }
+    },
+    "answer": {
+      "slot1": "B",
+      "slot2": "A"
+    },
+    "explanation": "Generated answer rate and quality tracks answered and unanswered queries. Conversation outcomes records the result of each session, including abandoned sessions.",
+    "type": "drag_drop",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "The number of unanswered questions:"
+      },
+      {
+        "id": "slot2",
+        "label": "The number of abandoned sessions:"
+      }
+    ]
+  },
+  {
+    "id": "ab-100-study-5",
+    "question": "Which tool should be used for the prospect-communication requirements in Dynamics 365 Sales?",
+    "options": {
+      "A": "Azure AI Search",
+      "B": "Copilot email assist",
+      "C": "the Voice template Microsoft Copilot Studio",
+      "D": "Deep Research in Microsoft Foundry Agent Service"
+    },
+    "answer": [
+      "B"
+    ],
+    "explanation": "Copilot email assist helps Dynamics 365 Sales sellers compose customer-specific email content and is supported for lead and opportunity records through Dynamics 365 email, directly enabling faster prospect correspondence."
+  },
+  {
+    "id": "ab-100-study-6",
+    "question": "What should you recommend to help the CEO fulfill their specific responsibilities?",
+    "options": {
+      "A": "the Microsoft Service Trust Portal",
+      "B": "Microsoft Foundry Tools",
+      "C": "Microsoft Purview",
+      "D": "the Responsible AI dashboard",
+      "E": "Compliance Center"
+    },
+    "answer": [
+      "D"
+    ],
+    "explanation": "The Responsible AI dashboard provides a unified assessment of model performance, fairness, interpretability, and error analysis. These capabilities support evaluating reliability, interpretability, fairness, and compliance as part of responsible AI practices."
+  },
+  {
+    "id": "ab-100-study-9",
+    "question": "A company uses Microsoft Dynamics 365 Supply Chain Management. The research and development (R&D) department already maintains a custom Model Context Protocol (MCP) server that contains product specifications and compliance information.\n\nYou are designing a custom AI agent. The agent must answer questions by using existing technologies and must access Dynamics 365 Supply Chain Management business logic that is stored outside the application.\n\nWhat should you include in the custom AI agent design to meet the R&D product specifications and compliance information requirements?",
+    "options": {
+      "slot1": {
+        "A": "an Azure AI Bot Service channel",
+        "B": "a custom connector",
+        "C": "a custom OData entity",
+        "D": "the Semantic Kernel"
+      },
+      "slot2": {
+        "A": "an event trigger",
+        "B": "the MCP server",
+        "C": "a REST API",
+        "D": "a tool"
+      }
+    },
+    "answer": {
+      "slot1": "B",
+      "slot2": "B"
+    },
+    "explanation": "A custom connector establishes the Power Platform connection to the existing MCP server. Adding that MCP server to the Copilot Studio agent makes its published tools and resources available, so the agent can retrieve the R&D product specifications and compliance data.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "To expose the data to the agent, create:"
+      },
+      {
+        "id": "slot2",
+        "label": "Add to the agent:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ab-100-study-13",
+    "question": "A company is building a custom AI agent in Microsoft Copilot Studio. The agent must meet the following requirements:\n\nUse topics that are selected based on their descriptions instead of trigger phrases.\n\nBe conversational, choosing topics based on the purpose of the user's query.\n\nConnect to other agents that are selected based on their descriptions.\n\nUse Microsoft Dynamics 365 Supply Chain Management business logic that is stored outside the application.\n\nAnswer questions by using existing R&D product specifications.\n\nWhat should be configured for the custom AI agent?",
+    "options": {
+      "A": "AI-assisted evaluators",
+      "B": "classic orchestration",
+      "C": "generative orchestration",
+      "D": "Azure OpenAI reasoning models"
+    },
+    "answer": [
+      "C"
+    ],
+    "explanation": "Generative orchestration selects topics, tools, knowledge sources, and other agents using their descriptions and the user’s intent. It supports conversational routing without relying on authored trigger phrases, and can select connected agents based on their descriptions."
+  },
+  {
+    "id": "ab-100-study-14",
+    "question": "Contoso, Ltd. uses Microsoft Dynamics 365 Finance, Dynamics 365 Supply Chain Management, and Dynamics 365 Commerce.\n\nThe chief technology officer (CTO) has not yet selected which prebuilt AI agent to use in Dynamics 365 Supply Chain Management. The CTO wants to view the available prebuilt agent templates and preview their capabilities in discovery meetings with business operations stakeholders.\n\nWhat should be recommended to help the CTO select a prebuilt agent?",
+    "options": {
+      "A": "Agent management",
+      "B": "Copilot Studio",
+      "C": "Lifecycle Services (LCS)",
+      "D": "Immersive Home"
+    },
+    "answer": [
+      "A"
+    ],
+    "explanation": "Agent management provides an Agents page with a Library tab for browsing available agent templates, previewing agent capabilities, and selecting and configuring new agents for deployment. This supports evaluating prebuilt agents and demonstrating them to stakeholders before deployment. Copilot Studio is used to build custom agents, Immersive Home is the navigation hub that links to the agent pages, and Lifecycle Services manages environments and updates."
+  },
+  {
+    "id": "ab-100-study-22",
+    "question": "You need to recommend a Microsoft Power Platform customer-support solution with AI capabilities in Microsoft Power Automate that meets these requirements:\n\nUse a centralized workspace for AI models.\n\nGenerate brief overviews from large volumes of unstructured text, such as case notes or transcripts, without extra training or coding.\n\nWhat should be included in the recommendation for each requirement?",
+    "options": {
+      "slot1": {
+        "A": "An Microsoft Foundry hub",
+        "B": "Azure OpenAI Foundry",
+        "C": "Microsoft Copilot Studio",
+        "D": "Microsoft Dataverse"
+      },
+      "slot2": {
+        "A": "An AI Builder prebuilt model",
+        "B": "An AI Builder prebuilt prompt",
+        "C": "Azure OpenAI",
+        "D": "GitHub Copilot",
+        "E": "Microsoft Copilot in Power Automate"
+      }
+    },
+    "answer": {
+      "slot1": "A",
+      "slot2": "B"
+    },
+    "explanation": "A Microsoft Foundry hub centralizes shared AI resources and projects. AI Builder’s AISummarize prebuilt prompt summarizes supplied text and can be used from Power Automate without creating or training a custom model or writing code.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Use a centralized workspace:"
+      },
+      {
+        "id": "slot2",
+        "label": "Generate short overviews:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ab-100-study-34",
+    "question": "You use Microsoft Copilot Studio analytics to evaluate the performance of a deployed Copilot Studio agent.\n\nIdentify the performance metric to use for each listed requirement.",
+    "options": {
+      "slot1": {
+        "A": "Answer quality",
+        "B": "Customer Satisfaction (CSAT) score",
+        "C": "Engagement rate",
+        "D": "Escalation rate"
+      },
+      "slot2": {
+        "A": "Answer quality",
+        "B": "Engagement rate",
+        "C": "Escalation rate"
+      }
+    },
+    "answer": {
+      "slot1": "D",
+      "slot2": "A"
+    },
+    "explanation": "Escalation rate is the share of engaged sessions that are handed off to a human representative. Answer quality analytics includes knowledge-source answer quality and error information, making it the applicable metric for queries that cause a knowledge-source error.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "The percentage of engaged sessions that are escalated to a representative:"
+      },
+      {
+        "id": "slot2",
+        "label": "The number of agent queries that cause a knowledge source error:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ab-100-study-37",
+    "question": "Which two components of the custom AI agent design should the CFO assess in the quarterly agent analysis? Each correct answer represents part of the solution.\n\nNOTE: Each correct selection is worth one point.",
+    "options": {
+      "A": "the GPT models used for the agent",
+      "B": "the average characters in a chat message",
+      "C": "the agent orchestration method",
+      "D": "the average session time per agent"
+    },
+    "answer": [
+      "C",
+      "D"
+    ],
+    "explanation": "A CFO's quarterly review of a custom agent is a cost/ROI exercise, and the Copilot Studio / Foundry usage analytics center that review on how the agent behaves and how much it is used. The agent orchestration method (C) drives how many model calls, tool invocations, and knowledge-source retrievals occur, which directly shapes consumption and cost, while average session time per agent (D) indicates engagement and whether sessions (and the credits/tokens they consume) are being used efficiently. The specific GPT model list (A) and average characters per message (B) are low-level implementation details rather than the components a CFO assesses for the quarterly cost analysis."
+  },
+  {
+    "id": "ab-100-study-44",
+    "question": "A company plans to implement an AI solution containing a Microsoft Copilot Studio agent and a Microsoft Foundry agent. The solution will be stored in a source-code repository.\n\nRecommend a deployment method for each agent. The solution must meet these requirements:\n\nA test environment is used before deployment to production.\n\nProduction is isolated from development and testing.\n\nDeployment is repeatable and fully automated.\n\nNo manual intervention is required.\n\nWhich deployment method should be recommended for each agent?",
+    "options": {
+      "slot1": {
+        "A": "Export from the source code repository and import to the target environment.",
+        "B": "Use a Bicep file.",
+        "C": "Use a Microsoft Power Platform deployment pipeline."
+      },
+      "slot2": {
+        "A": "Use a Bicep file.",
+        "B": "Use a Microsoft Power Platform deployment pipeline.",
+        "C": "Use an Azure DevOps pipeline."
+      }
+    },
+    "answer": {
+      "slot1": "C",
+      "slot2": "C"
+    },
+    "explanation": "Power Platform deployment pipelines automate Copilot Studio solution promotion across separate environments. Azure DevOps provides CI/CD for Microsoft Foundry agent source code, supporting automated deployments and validation from a repository. Bicep can provision Azure infrastructure but does not by itself provide the required end-to-end agent CI/CD workflow.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Copilot Studio:"
+      },
+      {
+        "id": "slot2",
+        "label": "Microsoft Foundry:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ab-100-study-48",
+    "question": "Contoso, Ltd. is a high-tech manufacturing company that uses Microsoft Dynamics 365 Finance, Dynamics 365 Supply Chain Management, and Dynamics 365 Commerce for North American operations. It designs innovative products with many patents and proprietary technologies. The patents and engineering designs are closely protected secrets.\n\nContoso executives plan to integrate and adopt AI solutions to help scale the company for an anticipated period of rapid growth. The company has multiple legal entities and Azure subscriptions that will be used by the adopted AI solutions.\n\nThe following executives have specific responsibilities for the overall AI adoption:\n\nChief Technology Officer (CTO): Select one prebuilt AI agent for Dynamics 365 Finance, Dynamics 365 Supply Chain Management, or Dynamics 365 Commerce, and one custom Microsoft Copilot Studio AI agent, to prioritize and deploy during the initial adoption phase.\n\nChief Information Officer (CIO): Ensure appropriate security labels are assigned to data used by the AI agents.\n\nChief Financial Officer (CFO): Analyze the return on investment (ROI) for the AI agents being deployed.\n\nChief Information Security Officer (CISO): Discover and inventory AI resources for auditing.\n\nChief Executive Officer (CEO): Ensure all solutions follow industry-standard responsible AI practices.\n\nEvery AI initiative and agent will have a detailed business use case, a defined audience profile, and an estimated ROI that compares cost savings from the current process with estimated costs of the new AI solutions.\n\nThe research and development (R&D) department already has a custom Model Context Protocol (MCP) server containing comprehensive product specifications and compliance data.\n\nThe CTO has not yet chosen a prebuilt agent for Dynamics 365 Supply Chain Management and wants to view available agent templates to determine which agent provides the greatest business value. Depending on the high-priority AI agents identified, their capabilities must be previewed during a discovery meeting with the relevant business-operation stakeholders.\n\nContoso has identified these requirements for a custom AI agent:\n\nIt will use Dynamics 365 Supply Chain Management data to answer manufacturing-team questions as a low-code solution.\n\nIt will be available from within Microsoft Teams.\n\nIt must be designed to eventually connect to other agents selected according to their description.\n\nIts topics will be selected based on a description of the query’s purpose, rather than a trigger phrase, to make interactions more conversational.\n\nIt must answer questions about product specifications by using existing technologies. The R&D department maintains the product specifications.\n\nIt must be integrated with, and accessible from, Dynamics 365 Supply Chain Management.\n\nIt must use Dynamics 365 Supply Chain Management business logic stored outside the application.\n\nContoso has the following analysis, reporting, and troubleshooting requirements:\n\nThe CISO will audit all AI solutions monthly for compliance and security.\n\nThe CFO will analyze all AI solutions quarterly to compare estimated ROI with actual measured efficiencies and adoption. The CFO will use the Copilot Studio agent usage estimator for this analysis.\n\nThe CISO wants to determine how much sensitive data was accessed in a given AI agent run and who accessed it. Excessive sensitive-data access by one user might indicate a high security risk.\n\nThe CTO wants to track user feedback on the quality of AI agent responses during interactions. Consistently poor feedback will initiate an escalated reengineering discussion.\n\nThe CEO wants a quarterly assessment of every required metric for the executives’ specific responsibilities. The assessment tools must be Microsoft-recommended and verify reliability, interpretability, fairness, and compliance.\n\nThe CFO wants to determine how many daily AI-agent interactions are abandoned compared with resolved conversations. Too many abandoned sessions might mean Copilot Studio credits are used inefficiently by end users.\n\nWhich Copilot Studio analytics metrics should you recommend to assist the executives with their specific responsibilities? Each metric may be used once, more than once, or not at all.",
+    "options": {
+      "slot1": {
+        "A": "Effectiveness",
+        "B": "Tool use",
+        "C": "Satisfaction",
+        "D": "Use"
+      },
+      "slot2": {
+        "A": "Effectiveness",
+        "B": "Tool use",
+        "C": "Satisfaction",
+        "D": "Use"
+      }
+    },
+    "answer": {
+      "slot1": "A",
+      "slot2": "C"
+    },
+    "explanation": "Effectiveness analytics track conversation outcomes, including whether conversations are resolved or abandoned; this identifies inefficient credit consumption from abandoned sessions. Satisfaction analytics capture user reactions and feedback on agent responses, which supports monitoring response-quality concerns.",
+    "type": "drag_drop",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "CFO concerns about Copilot Studio credit usage:"
+      },
+      {
+        "id": "slot2",
+        "label": "CTO concerns about poor feedback on AI agent responses:"
+      }
+    ]
+  },
+  {
+    "id": "ab-100-study-57",
+    "question": "You are designing two Microsoft Copilot Studio agents, Agent1 and Agent2. Each agent must meet these requirements:\n\nUse a standard model.\n\nNot use generative orchestration.\n\nAgent1 must support simple, short phrases for a specified topic.\n\nAgent2 must integrate with the Microsoft Dynamics 365 Contact Center voice channel.\n\nRecommend a language model for each agent. Each language model can be used once, more than once, or not at all.",
+    "options": {
+      "slot1": {
+        "A": "Azure Language in Foundry Tools",
+        "B": "Azure OpenAI",
+        "C": "Conversational language understanding (CLU)",
+        "D": "Natural language understanding (NLU)",
+        "E": "Natural language understanding + (NLU+)"
+      },
+      "slot2": {
+        "A": "Azure Language in Foundry Tools",
+        "B": "Azure OpenAI",
+        "C": "Conversational language understanding (CLU)",
+        "D": "Natural language understanding (NLU)",
+        "E": "Natural language understanding + (NLU+)"
+      }
+    },
+    "answer": {
+      "slot1": "D",
+      "slot2": "E"
+    },
+    "explanation": "Classic NLU is designed for simpler orchestration and lets makers quickly add 5 to 20 short phrases per topic. NLU+ provides deterministic classic orchestration and is available with Dynamics 365 Contact Center-managed voice or chat channels; for voice-enabled agents, its training data also optimizes speech recognition.",
+    "type": "drag_drop",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Agent1:"
+      },
+      {
+        "id": "slot2",
+        "label": "Agent2:"
+      }
+    ]
+  },
+  {
+    "id": "ab-100-study-59",
+    "question": "Case study context (Fabrikam, Inc.): Fabrikam is migrating to Microsoft Dynamics 365 Sales and plans to use low-code development to build one AI agent with Microsoft Dataverse as its core component. Sales executives will use hands-free headsets to ask the AI agent questions about internal policies or customer data. The agent must follow Microsoft's recommendations for a conversational user experience, unexpected agent actions must escalate to a live representative, detailed telemetry must be collected, and rapid adoption is a high priority.\n\nWhich template should be used for the AI agent to satisfy the sales executives’ requirements?",
+    "options": {
+      "A": "IT Helpdesk in Microsoft Copilot Studio",
+      "B": "AI agents in Microsoft Foundry",
+      "C": "Voice in Microsoft Copilot Studio",
+      "D": "AI chat in Microsoft Foundry"
+    },
+    "answer": [
+      "C"
+    ],
+    "explanation": "Sales executives will ask the agent questions through hands-free headsets, and the agent must be built with low-code development on Dataverse, so it has to be a voice-enabled Microsoft Copilot Studio agent. A voice-enabled Copilot Studio agent uses the Speech & DTMF modality instead of the Text modality, and voice system topics such as Silence detection, Speech unrecognized and Unknown dial pad press are added to handle speech scenarios. IT Helpdesk is a text-chat template for IT support scenarios, and the Microsoft Foundry options target code-first agent and chat development rather than the low-code approach Fabrikam requires."
+  },
+  {
+    "id": "ab-100-study-61",
+    "question": "A company plans to implement an AI business solution for a consumer goods company.\n\nCreate agents that meet the following requirements:\n\nOrchestrate the sales order fulfillment and shipping of goods to customers.\n\nAnalyze historical data and trends to replenish stock.\n\nWhich type of agent should you use for each requirement? Each agent type may be used once, more than once, or not at all.",
+    "options": {
+      "slot1": {
+        "A": "Autonomous",
+        "B": "Prompt-and-response",
+        "C": "Task"
+      },
+      "slot2": {
+        "A": "Autonomous",
+        "B": "Prompt-and-response",
+        "C": "Task"
+      }
+    },
+    "answer": {
+      "slot1": "A",
+      "slot2": "A"
+    },
+    "explanation": "Both requirements describe work that must run on its own without waiting for a user prompt, which is the defining behavior of an autonomous agent in Copilot Studio: it perceives events, makes decisions, and executes tasks independently by using triggers, instructions, and guardrails, operating continuously in the background to monitor data, react to conditions, and run workflows at scale. Orchestrating sales order fulfillment and shipping is a continuous, trigger-driven, multi-step process that spans several systems, so it needs an autonomous agent. Analyzing historical data and trends to replenish stock is a proactive monitoring process (for example, an inventory-replenishment agent that forecasts demand and places orders when stock levels require it), so it is also handled by an autonomous agent. A prompt-and-response agent is built around answering user prompts in a conversation and does not suit these background processes.",
+    "type": "drag_drop",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Orchestrate the sales order fulfillment and shipping of goods to customers"
+      },
+      {
+        "id": "slot2",
+        "label": "Analyze historical data and trends to replenish stock"
+      }
+    ]
+  },
+  {
+    "id": "ab-100-study-62",
+    "question": "You are creating a testing solution for Microsoft Copilot Studio agents.\n\nYou need to validate prompt-engineering best practices so that the agents produce accurate, contextually relevant responses.\n\nWhich prompt validation techniques and metrics should the solution include?",
+    "options": {
+      "slot1": {
+        "A": "Exclude domain-specific terminology from the prompts.",
+        "B": "Use prompts that have varied phrasing.",
+        "C": "Use only simple, one-word prompts."
+      },
+      "slot2": {
+        "A": "The number of words generated per response",
+        "B": "Response relevance and accuracy",
+        "C": "The response generation time"
+      }
+    },
+    "answer": {
+      "slot1": "B",
+      "slot2": "B"
+    },
+    "explanation": "Varying prompt phrasing tests whether an agent generalizes across realistic ways that users express the same intent. Response relevance and accuracy directly measure whether responses satisfy the required contextual usefulness and correctness; response length and generation time do not assess those qualities.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Prompt validation techniques:"
+      },
+      {
+        "id": "slot2",
+        "label": "Metrics:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ab-100-study-67",
+    "question": "Which tool should be recommended to address concerns about sensitive information in the sales process?",
+    "options": {
+      "A": "the Analytics tab in Microsoft Copilot Studio",
+      "B": "Model Context Protocol (MCP)",
+      "C": "Application Insights",
+      "D": "Microsoft Foundry Tracing UI",
+      "E": "Monitoring in Microsoft Foundry"
+    },
+    "answer": [
+      "E"
+    ],
+    "explanation": "Microsoft Foundry monitoring can continuously evaluate production traffic for safety risks. Its Sensitive Data Leakage evaluator assesses whether an agent exposes sensitive information, including financial data, personal identifiers, and health data, allowing teams to identify and address disclosure risks in a sales workflow."
+  },
+  {
+    "id": "ab-100-study-69",
+    "question": "Which framework is appropriate for the infrastructure migration?",
+    "options": {
+      "A": "Microsoft Cloud Adoption Framework for Azure",
+      "B": "Success by Design",
+      "C": "Microsoft Power Platform Center of Excellence (CoE)",
+      "D": "Microsoft Power Platform Project Setup Wizard"
+    },
+    "answer": [
+      "A"
+    ],
+    "explanation": "Microsoft Cloud Adoption Framework for Azure is Microsoft’s structured methodology for adopting Azure, including planning and preparing an Azure environment, migrating existing workloads, and governing, securing, and managing the resulting cloud estate. It directly meets the requirement to use Azure and follow Microsoft-recommended cloud-migration methodologies. Microsoft’s Cloud Adoption Framework"
+  },
+  {
+    "id": "ab-100-study-71",
+    "question": "Fabrikam, Inc. is a global consumer-goods company undertaking a digital-transformation initiative to migrate all its infrastructure to the Microsoft cloud. As a key part of that migration, it will implement Microsoft Dynamics 365 Sales and move its B2B sales team away from its current proprietary on-premises technologies. Fabrikam will adopt an AI-first approach to its business solutions and implement AI solutions wherever possible to streamline operations.\n\nIts on-premises systems require sales executives to use corporate computers and physical keyboards to access business information during customer interactions. Mobile phones cannot be used because the systems require keyboard input. Consequently, sales executives spend considerable time using keyboards to search multiple separate systems and file servers instead of focusing on customers, which harms the customer experience.\n\nStakeholders are concerned that users might resist adopting AI. Without adoption, the cost savings will not be achieved, and funding for future AI initiatives depends on showing month-over-month growth in AI adoption. Because the sales team's agent will be Fabrikam's first, rapid adoption is a high priority.\n\nFabrikam has prioritized AI-driven projects to improve efficiency, customer engagement, and responsible AI adoption. Its current on-premises application infrastructure must move to the cloud to enable these technologies.\n\nFabrikam plans to move from its on-premises infrastructure to a fully cloud-based topology, including user authentication, the security framework, and especially end-user service adoption. Data from the different systems will be consolidated into one common-data-model data source that uses a Microsoft Dataverse environment as the sales team's single source of truth (SSOT).\n\nTo improve the sales cycle, Fabrikam plans to:\n\nUse low-code development to build one AI agent with Dataverse as its core component.\n\nEnsure sales managers can view unanswered prospect correspondence and intervene when appropriate.\n\nReplace the proprietary software with Dynamics 365 Sales to track sales cycles and customer interactions.\n\nHave sales executives use Dynamics 365 Sales to record interactions for open opportunities and send follow-up communications to prospects.\n\nHave sales executives use hands-free headsets to ask an AI agent questions about internal policies or customer data.\n\nInfrastructure migration requirements are:\n\nAzure must support all future infrastructure workloads.\n\nMicrosoft-recommended cloud-migration methods must be followed.\n\nThe ROI of every created AI agent must be calculated to confirm that it saves money.\n\nSales-cycle-enablement requirements are:\n\nThe final AI agent must follow Microsoft's recommendations for a conversational user experience.\n\nA designated checklist must be reviewed to verify that the AI agent follows Microsoft's deployment recommendations for a compliant solution.\n\nDetailed telemetry must be collected for the first AI agent to support troubleshooting and optimization during the initial adoption process.\n\nUnexpected AI-agent actions must escalate to a live representative. For example, after two unsuccessful attempts to answer a question, the agent must reroute a sales executive to a representative.\n\nStakeholders require ROI for changing from the current process to the future process before sign-off.\n\nThe sales team must use Dynamics 365 Sales to correspond with prospects more quickly and efficiently than it does now.\n\nSales managers must report AI-agent adoption to key Fabrikam stakeholders every month.\n\nSensitive information shared through the AI agent, including user IDs and names, must be tracked for future auditing.\n\nWhich framework should be used to satisfy the AI-agent requirements for sales-cycle enablement?",
+    "options": {
+      "slot1": {
+        "A": "the ALM Accelerator for Microsoft Power Platform",
+        "B": "Microsoft Cloud Adoption Framework for Azure",
+        "C": "Microsoft Power Platform Well-Architected framework",
+        "D": "Success by Design"
+      },
+      "slot2": {
+        "A": "the ALM Accelerator for Microsoft Power Platform",
+        "B": "Microsoft Cloud Adoption Framework for Azure",
+        "C": "Microsoft Power Platform Well-Architected framework",
+        "D": "Success by Design"
+      }
+    },
+    "answer": {
+      "slot1": "C",
+      "slot2": "C"
+    },
+    "explanation": "Microsoft Power Platform Well-Architected provides the best-practice guidance and review framework for Power Platform workloads, including Copilot Studio solutions. Its Experience Optimization pillar specifically includes recommendations for designing conversational user experiences, including natural interactions, clear capabilities, and fallback mechanisms such as escalation after unsuccessful attempts.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "For Microsoft Copilot Studio best practices:"
+      },
+      {
+        "id": "slot2",
+        "label": "For conversational user experiences:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ab-100-study-73",
+    "question": "Contoso needs tools to help the CISO and CIO fulfill their specific responsibilities. Each tool can be used once, more than once, or not at all.",
+    "options": {
+      "slot1": {
+        "A": "Azure Blob Storage",
+        "B": "Azure Resource Graph Explorer",
+        "C": "Copilot Studio",
+        "D": "Microsoft Purview"
+      },
+      "slot2": {
+        "A": "Azure Blob Storage",
+        "B": "Azure Resource Graph Explorer",
+        "C": "Copilot Studio",
+        "D": "Microsoft Purview"
+      }
+    },
+    "answer": {
+      "slot1": "B",
+      "slot2": "D"
+    },
+    "explanation": "Azure Resource Graph Explorer can query Azure resources across subscriptions, supporting discovery and inventory for audit activities. Microsoft Purview sensitivity labels classify and protect organizational data, supporting the assignment of appropriate security labels to data used by AI agents.",
+    "type": "drag_drop",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "CISO:"
+      },
+      {
+        "id": "slot2",
+        "label": "CIO:"
+      }
+    ]
+  },
+  {
+    "id": "ab-100-study-81",
+    "question": "HOTSPOT —\n\nFabrikam, Inc. is a global consumer-goods company undertaking a digital-transformation initiative to move all its infrastructure to the Microsoft cloud. A key part of this migration is implementing Microsoft Dynamics 365 Sales to replace the proprietary on-premises technologies currently used by its business-to-business (B2B) sales team. Fabrikam will take an AI-first approach to its business solutions and implement AI solutions where possible to streamline operations.\n\nIts on-premises systems require sales executives to use corporate computers and physical keyboards to access business information during customer interactions. Mobile phones cannot be used because those systems depend on keyboard input. Consequently, sales executives spend considerable time using keyboards to search disparate systems and file servers instead of focusing on customers, harming the customer experience.\n\nStakeholders are concerned that users may be reluctant to adopt AI. Without adoption, cost savings will not be realized, and funding for future AI initiatives depends on demonstrating month-over-month growth in AI adoption. Because the sales-team agent is Fabrikam’s first AI agent, rapid adoption is a high priority.\n\nFabrikam has prioritized AI-driven projects to improve efficiency, customer engagement, and responsible AI adoption. Its application infrastructure is on-premises and must move to the cloud to enable these technologies. The company will migrate to a fully cloud-based topology, including user authentication, the security framework, and chiefly end-user service adoption. Data from the different systems will be consolidated into one common-data-model data source, using a Microsoft Dataverse environment as the sales team’s single source of truth (SSOT).\n\nTo improve the sales cycle, Fabrikam plans to:\n\nUse low-code development to build one AI agent with Dataverse as its core component.\n\nEnsure sales managers can access unanswered prospect correspondence and intervene when appropriate.\n\nReplace the proprietary software with Dynamics 365 Sales to track sales cycles and customer interactions.\n\nHave sales executives use Dynamics 365 Sales to record interactions for open opportunities and send follow-up communications to prospects.\n\nHave sales executives use hands-free headsets to interact with an AI agent when asking about internal policies or customer data.\n\nInfrastructure-migration requirements include using Azure for all future infrastructure workloads, following Microsoft-recommended cloud-migration methodologies, and calculating the return on investment (ROI) for every created AI agent to confirm it saves money.\n\nSales-cycle-enablement requirements include following Microsoft’s recommendations for a conversational user experience; reviewing a designated checklist for compliant AI-agent deployment recommendations; logging detailed telemetry for the first agent to support troubleshooting and optimization during initial adoption; escalating unexpected agent actions to a live representative, such as routing a sales executive to a representative after two unsuccessful answer attempts; obtaining stakeholder sign-off on the ROI of replacing the current process with the future process; enabling faster and more efficient prospect correspondence through Dynamics 365 Sales; having sales managers report AI-agent adoption monthly to key stakeholders; and tracking sensitive information, including user IDs and names, shared through the AI agent for future auditing.\n\nWhich existing tool and data should be used to collect the metrics required for stakeholder sign-off for the AI agents?",
+    "options": {
+      "slot1": {
+        "A": "Microsoft Foundry",
+        "B": "Azure Resource Monitor (ARM)",
+        "C": "Dynamics 365 Sales",
+        "D": "Microsoft Copilot Studio"
+      },
+      "slot2": {
+        "A": "the cumulative time spent on the task over the past year",
+        "B": "the current cost to complete the tasks per instance",
+        "C": "the current time to complete the task today per instance",
+        "D": "the current cost of the Dynamics 365 Sales licenses"
+      }
+    },
+    "answer": {
+      "slot1": "D",
+      "slot2": "C"
+    },
+    "explanation": "Microsoft Copilot Studio Savings analytics estimates an agent’s business impact and ROI by comparing each agent run or tool execution with the alternative process. For a time-based calculation, the required baseline is the estimated time the current method takes to complete that task per instance. This directly measures the time saved by the future AI-agent process.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Tool:"
+      },
+      {
+        "id": "slot2",
+        "label": "Data required for the tool:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ab-100-study-86",
+    "question": "Which components should be used to meet the sales cycle enablement requirements?",
+    "options": {
+      "slot1": {
+        "A": "Microsoft Foundry",
+        "B": "Dynamics 365 Sales",
+        "C": "Microsoft Copilot Studio",
+        "D": "the Power Platform admin center"
+      },
+      "slot2": {
+        "A": "a custom connector",
+        "B": "an event trigger",
+        "C": "a fallback topic",
+        "D": "a REST API"
+      }
+    },
+    "answer": {
+      "slot1": "C",
+      "slot2": "C"
+    },
+    "explanation": "Microsoft Copilot Studio is Microsoft’s graphical low-code tool for building agents and agent flows, including agents that use organizational data such as Dataverse. A fallback topic handles unrecognized input; after two prompts, the system can escalate the conversation to a live representative.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "For AI agent creation:"
+      },
+      {
+        "id": "slot2",
+        "label": "For unexpected AI agent actions:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ab-100-study-89",
+    "question": "A company has a cloud-based AI solution that uses Azure OpenAI models.\n\nDesign a monitoring solution that meets these requirements:\n\nMonitor performance metrics and operational health for the models.\n\nMonitor AI apps and agents for compliance.\n\nUse Azure-native capabilities.\n\nMinimize development effort.\n\nWhat should be used for each requirement? Each option may be used once, more than once, or not at all.",
+    "options": {
+      "slot1": {
+        "A": "Azure API Management",
+        "B": "Azure Policy",
+        "C": "Microsoft Defender",
+        "D": "Azure Monitor",
+        "E": "Azure Stream Analytics",
+        "F": "Microsoft Purview"
+      },
+      "slot2": {
+        "A": "Azure API Management",
+        "B": "Azure Policy",
+        "C": "Microsoft Defender",
+        "D": "Azure Monitor",
+        "E": "Azure Stream Analytics",
+        "F": "Microsoft Purview"
+      }
+    },
+    "answer": {
+      "slot1": "F",
+      "slot2": "D"
+    },
+    "explanation": "Azure Monitor provides metrics and logs for model deployments, enabling monitoring of availability, performance, usage, and operational health. Microsoft Purview supplies governance, data-security, and compliance capabilities for AI applications and agents, including monitoring AI interactions and applying compliance controls.",
+    "type": "drag_drop",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Monitors AI app and agents for compliance:"
+      },
+      {
+        "id": "slot2",
+        "label": "Monitors performance metrics and operational health:"
+      }
+    ]
+  },
+  {
+    "id": "ab-100-study-108",
+    "question": "You must design an application lifecycle management (ALM) process for a Microsoft Power Platform environment that contains a solution named Solution1.\n\nSolution1 must include a custom connector for Copilot in Microsoft Dynamics 365 Customer Service. Solution1 must satisfy these requirements:\n\nEnsure the custom connector can be deployed consistently across environments as part of the ALM process.\n\nPermit the custom connector to be edited only in the development environment.\n\nWhat should you include in the design?",
+    "options": {
+      "A": "Add the custom connector to GitHub.",
+      "B": "Share the custom connector.",
+      "C": "Create the custom connector in the default solution.",
+      "D": "Add the custom connector to Solution1."
+    },
+    "answer": [
+      "D"
+    ],
+    "explanation": "Solutions can contain custom connectors and are packaged for export and import across environments. Developing the connector in the unmanaged Solution1 and deploying it to nondevelopment environments as a managed solution provides consistent deployment while limiting changes to the development environment."
+  },
+  {
+    "id": "ab-100-study-109",
+    "question": "A company uses Microsoft Dynamics 365 Finance for accounts payable and customer debt recovery.\n\nYou are designing an AI finance process that must meet these requirements:\n\nProvide AI-driven details that help staff identify overdue vendor invoices and outstanding balances.\n\nHelp staff reduce the time needed to review overdue invoices and payment history.\n\nRecommend the Microsoft Copilot feature to include for each requirement.",
+    "options": {
+      "slot1": {
+        "A": "Agent management",
+        "B": "AI Summaries with Copilot",
+        "C": "The Account Reconciliation agent",
+        "D": "The Supplier Communication agent"
+      },
+      "slot2": {
+        "A": "Analyze demand plans with Copilot",
+        "B": "Collections coordinator summary",
+        "C": "The Account Reconciliation agent",
+        "D": "The Supplier Communication agent"
+      }
+    },
+    "answer": {
+      "slot1": "B",
+      "slot2": "B"
+    },
+    "explanation": "AI Summaries with Copilot can provide a vendor summary that includes posted vendor invoices, payment status, and overdue vendor invoices. Collections coordinator summary uses customer collections data to generate a summary of overdue invoices, payment history, and outstanding debt, reducing the time spent reviewing collection details.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Help identify vendor overdue invoices and outstanding balances:"
+      },
+      {
+        "id": "slot2",
+        "label": "Reduce how long it takes to review overdue invoices and payment history:"
+      }
+    ],
+    "instruction": ""
   }
 ]
