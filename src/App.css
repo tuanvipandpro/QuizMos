@@ -9,6 +9,7 @@
 @import './styles/account.css';
 @import './styles/study-notebook.css';
 @import './styles/study-roadmap.css';
+@import './styles/spaced-revision.css';
 
 * {
   box-sizing: border-box;

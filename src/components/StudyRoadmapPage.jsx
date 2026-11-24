@@ -16,6 +16,8 @@ import { ArrowLeftOutlined, CalendarOutlined, PlusOutlined } from '@ant-design/i
 import { useLanguage } from '../contexts/LanguageContext';
 import { STUDY_ROADMAP_ENABLED } from '../config/studyRoadmapConfig';
 import { STUDY_NOTEBOOK_ENABLED } from '../config/studyNotebookConfig';
+import { SPACED_REVISION_ENABLED } from '../config/spacedRevisionConfig';
+import SpacedRevisionSummary from './SpacedRevisionSummary';
 import { useStudyRoadmap } from '../hooks/useStudyRoadmap';
 import { useExamHistory } from '../hooks/useExamHistory';
 import { findQuiz } from '../data/quizzes.js';
@@ -107,6 +109,7 @@ function RoadmapTasks({ tasks, plan, today, modifiable, saving, onMove, onToggle
 }
 
 function RoadmapWeek({
+  uid,
   plan,
   summaries,
   saving,
@@ -184,6 +187,15 @@ function RoadmapWeek({
         <Paragraph type="secondary">
           {t('The target date has passed. You can set a new one.')}
         </Paragraph>
+      )}
+      {SPACED_REVISION_ENABLED && STUDY_NOTEBOOK_ENABLED && !plan.archived && (
+        <SpacedRevisionSummary
+          uid={uid}
+          bankId={plan.bankId}
+          week={week}
+          zone={plan.timezone}
+          onNavigate={onNavigate}
+        />
       )}
       {tasks.length ? (
         <>
@@ -453,6 +465,7 @@ function RoadmapWorkspace({ uid, onNavigate }) {
           {findQuiz(plan.bankId) ? (
             <RoadmapWeek
               key={plan.instanceId}
+              uid={uid}
               plan={plan}
               summaries={history.summaries}
               onMutate={mutate}

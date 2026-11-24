@@ -32,6 +32,10 @@ For the M2 study notebook (#81), `firestore.notebook.indexes.json` is a complete
 
 The #116 candidate adds owner-scoped `users/{uid}/studyPlans` Rules for three fixed plan slots. It requires no new composite indexes or field overrides. Reconcile the candidate against the current published policy and verify owner access before setting the repository build variable `VITE_STUDY_ROADMAP_ENABLED=true`. After the verified frontend release, smoke test create, edit, reload, archive and delete with a designated test account. Disable the variable to hide the planner while retaining stored plans.
 
+## Spaced review candidate (M3)
+
+The #85 candidate adds an optional server-anchored `reviewSchedule` to existing Notebook documents. The existing mistake and source indexes remain sufficient. Verify compatible published Notebook Rules and a client that reads the optional field before setting `VITE_SPACED_REVISION_ENABLED=true`. The Notebook flag is also required for the queue. After release, use a designated account to confirm wrong/correct, retry and remove/restore behavior. Disable the flag to hide the spaced review workflow while retaining saved schedules and Notebook entries.
+
 ## Rollback
 
 Revert/disable the cloud client first while preserving saved documents. Bank and local uploads remain independent. Evaluate old/new client compatibility before reverting Rules; do not make private content public or delete quizzes as rollback. Keep the original baseline/provenance for comparison. No Firebase deployment is performed automatically by this repository's CI.
