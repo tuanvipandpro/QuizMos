@@ -278,24 +278,30 @@ test('Learning exam remains usable and reports unavailable draft storage', async
   expect(await readDraft(page, 'aws-aip-c01')).toBeNull();
 });
 
-test('sign-in during a guest exam returns to setup without creating an account draft', async ({
+test('sign-in preserves the guest Learning exam and its flagged question after reload', async ({
   page,
 }) => {
   await page.goto('./#/quiz/aws-aip-c01/exam?feedback=learning');
   await expect(page.locator('.exam-mode-label')).toContainText('Learning exam');
   await page.getByRole('button', { name: 'Flag', exact: true }).click();
+  await expect.poll(() => readDraft(page, 'aws-aip-c01')).toMatchObject({ flags: [0] });
+  const guest = await readDraft(page, 'aws-aip-c01');
   await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('button', { name: 'Continue with Google', exact: true }));
   await expectHeaderAccount(page, 'Test account');
-  await expect(page.getByRole('radio', { name: 'Standard exam', exact: true })).toBeChecked();
+  await expect(page.locator('.exam-mode-label')).toContainText('Learning exam');
+  await expect(page.getByRole('button', { name: 'Unflag', exact: true })).toBeVisible();
   expect(await readDraft(page, 'aws-aip-c01')).toBeNull();
-  expect(await readDraft(page, 'aws-aip-c01', 'test-alice')).toBeNull();
-  await page.getByRole('button', { name: 'Start mock exam', exact: true }).click();
-  await expect(page.locator('.exam-mode-label')).toContainText('Standard exam');
-  await page.getByRole('button', { name: 'Flag', exact: true }).click();
   const draft = await readDraft(page, 'aws-aip-c01', 'test-alice');
+  expect(draft).toMatchObject({
+    attemptId: guest.attemptId,
+    deadline: guest.deadline,
+    flags: [0],
+    feedbackMode: 'learning',
+  });
   await page.reload();
-  await expect(page.locator('.exam-mode-label')).toContainText('Standard exam');
+  await expect(page.locator('.exam-mode-label')).toContainText('Learning exam');
+  await expect(page.getByRole('button', { name: 'Unflag', exact: true })).toBeVisible();
   expect(await readDraft(page, 'aws-aip-c01', 'test-alice')).toEqual(draft);
 });
 

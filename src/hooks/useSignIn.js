@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuth } from './useAuth';
 
 // All sign-in entry points share the same dialog state and error handling.
-export function useSignIn({ onSuccess } = {}) {
+export function useSignIn({ onSuccess, onStart, onSettled } = {}) {
   const { signInWithGoogle } = useAuth();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -24,18 +24,24 @@ export function useSignIn({ onSuccess } = {}) {
     pending.current = true;
     setBusy(true);
     setError(null);
+    let attempt, account;
     try {
+      attempt = onStart?.();
       const result = await signInWithGoogle();
       if (!mounted.current) return;
       if (result.success) {
+        account = result.user;
         close();
-        onSuccess?.(result.user);
+        onSuccess?.(account);
       } else setError('Could not sign in. Please retry.');
     } catch {
       if (mounted.current) setError('Could not sign in. Please retry.');
     } finally {
       pending.current = false;
-      if (mounted.current) setBusy(false);
+      if (mounted.current) {
+        onSettled?.(attempt, account);
+        setBusy(false);
+      }
     }
   };
   return {
