@@ -1,18 +1,18 @@
 import React from 'react';
 import { Alert, Radio, Typography } from 'antd';
 import { useLanguage } from '../contexts/LanguageContext';
-import {
-  CUSTOM_EXAM_MAX_QUESTIONS,
-  CUSTOM_EXAM_MAX_MINUTES,
-  TRAINING_QUESTION_PRESETS,
-  TRAINING_TIME_PRESETS,
-} from '../data/studySettingsLimits';
+import { TRAINING_QUESTION_PRESETS, TRAINING_TIME_PRESETS } from '../data/studySettingsLimits';
 import CertificationProfileInfo from './CertificationProfileInfo';
 import { studyErrorMessage } from './StudySetupError';
 
 export default function ExamSettingsFields({ state }) {
   const { t } = useLanguage();
-  const { setup, change, changeKind, profile, status, error, eligible } = state;
+  const { setup, changeCount, changeMinutes, changeKind, profile, status, error, eligible } = state;
+  const certification = setup.kind === 'cert';
+  const eligibleCount = eligible.items.length;
+  const minimumPreset = TRAINING_QUESTION_PRESETS[0];
+  const fixedCount = eligibleCount < minimumPreset;
+  const describedBy = 'study-settings-hint study-settings-error';
   return (
     <div className="exam-settings">
       <fieldset className="exam-feedback-picker">
@@ -46,53 +46,84 @@ export default function ExamSettingsFields({ state }) {
       <div className="quiz-exam-fields">
         <label htmlFor="study-count">
           {t('Questions')}
-          <input
-            id="study-count"
-            inputMode="numeric"
-            value={setup.count ?? ''}
-            onChange={(event) => change('count', event.target.value)}
-            readOnly={setup.kind === 'cert' && profile.count.kind === 'exact'}
-            list="study-count-presets"
-            aria-invalid={error?.field === 'count' || undefined}
-            aria-describedby="study-settings-hint study-settings-error"
-          />
+          {certification ? (
+            <input
+              id="study-count"
+              inputMode="numeric"
+              value={setup.count}
+              onChange={(event) => changeCount(event.target.value)}
+              readOnly={profile.count.kind === 'exact'}
+              aria-invalid={error?.field === 'count' || undefined}
+              aria-describedby={describedBy}
+            />
+          ) : (
+            <select
+              id="study-count"
+              value={setup.count ?? ''}
+              onChange={(event) => changeCount(event.target.value)}
+              disabled={fixedCount}
+              aria-invalid={error?.field === 'count' || undefined}
+              aria-describedby={describedBy}
+            >
+              {fixedCount && (
+                <option disabled value={setup.count ?? ''}>
+                  {eligibleCount
+                    ? t('All {count} eligible questions', { count: eligibleCount })
+                    : t('No eligible questions')}
+                </option>
+              )}
+              {TRAINING_QUESTION_PRESETS.map((count) => (
+                <option key={count} value={count} disabled={count > eligibleCount}>
+                  {t('{count} questions', { count })}
+                </option>
+              ))}
+            </select>
+          )}
         </label>
         <label htmlFor="study-time">
           {t('Time limit')}
-          <input
-            id="study-time"
-            inputMode="numeric"
-            value={setup.minutes}
-            onChange={(event) => change('minutes', event.target.value)}
-            readOnly={setup.kind === 'cert'}
-            list="study-time-presets"
-            aria-invalid={error?.field === 'minutes' || undefined}
-            aria-describedby="study-settings-hint study-settings-error"
-          />
+          {certification ? (
+            <input id="study-time" value={setup.minutes} readOnly aria-describedby={describedBy} />
+          ) : (
+            <select
+              id="study-time"
+              value={setup.minutes}
+              onChange={(event) => changeMinutes(event.target.value)}
+              aria-describedby={describedBy}
+            >
+              {TRAINING_TIME_PRESETS.map((count) => (
+                <option key={count} value={count}>
+                  {t('{count} minutes', { count })}
+                </option>
+              ))}
+            </select>
+          )}
         </label>
-        <datalist id="study-count-presets">
-          {TRAINING_QUESTION_PRESETS.map((n) => (
-            <option key={n} value={n} />
-          ))}
-        </datalist>
-        <datalist id="study-time-presets">
-          {TRAINING_TIME_PRESETS.map((n) => (
-            <option key={n} value={n} />
-          ))}
-        </datalist>
       </div>
       <Typography.Paragraph id="study-settings-hint" type="secondary">
-        {setup.kind === 'cert'
-          ? t('Choose {min}–{max} questions within the published range. Answering time is fixed.', {
-              min: profile.count.min,
-              max: profile.count.max,
-            })
-          : t('Training limits: 1–{count} questions and 1–{minutes} minutes.', {
-              count: Math.min(CUSTOM_EXAM_MAX_QUESTIONS, eligible.items.length),
-              minutes: CUSTOM_EXAM_MAX_MINUTES,
-            })}{' '}
+        {certification && (
+          <>
+            {t(
+              'Choose {min}–{max} questions within the published range. Answering time is fixed.',
+              {
+                min: profile.count.min,
+                max: profile.count.max,
+              }
+            )}{' '}
+          </>
+        )}
+        {!certification && eligibleCount > 0 && (
+          <>
+            {fixedCount
+              ? t('This quiz uses all eligible questions because presets start at {count}.', {
+                  count: minimumPreset,
+                })
+              : TRAINING_QUESTION_PRESETS.some((count) => count > eligibleCount) &&
+                t('Larger presets require more eligible questions.')}{' '}
+          </>
+        )}
         {t('{count} eligible; {excluded} excluded because questions are retired or incompatible.', {
-          count: eligible.items.length,
+          count: eligibleCount,
           excluded: eligible.excluded.length,
         })}
       </Typography.Paragraph>

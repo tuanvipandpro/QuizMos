@@ -104,17 +104,36 @@ for (const item of accountCases('phone').concat(accountCases('desktop'))) {
       expect((await input.boundingBox()).height).toBeGreaterThanOrEqual(44);
     }
     await page.getByRole('radio', { name: t('Custom timed training'), exact: true }).check();
-    await page.locator('#study-count').fill('1.5');
-    await expect(page.locator('#study-count')).toHaveValue('1.5');
-    await expect(page.locator('#study-settings-error')).toContainText(
-      t('Enter a valid whole-number question count and time limit.')
+    const count = page.getByRole('combobox', { name: t('Questions'), exact: true });
+    const time = page.getByRole('combobox', { name: t('Time limit'), exact: true });
+    await expect(count.locator('option')).toHaveText(
+      [50, 60, 70, 80].map((count) => t('{count} questions', { count }))
     );
-    await expect(
-      page.getByRole('button', { name: t('Start mock exam'), exact: true })
-    ).toBeDisabled();
-    await page.locator('#study-count').fill('10');
-    await page.locator('#study-time').fill('15');
-    await page.locator('#study-time').focus();
+    await expect(time.locator('option')).toHaveText(
+      [50, 60, 70, 80].map((count) => t('{count} minutes', { count }))
+    );
+    await count.focus();
+    await page.keyboard.press('ArrowDown');
+    await expect(count).toHaveValue('60');
+    await count.selectOption('70');
+    await expect(time).toHaveValue('60');
+    await time.selectOption('80');
+    await expect(count).toHaveValue('70');
+    await page.getByRole('radio', { name: t('Certification format'), exact: true }).check();
+    await expect(page.locator('#study-count')).toHaveValue('75');
+    await expect(page.locator('#study-time')).toHaveValue('180');
+    await page.getByRole('radio', { name: t('Custom timed training'), exact: true }).check();
+    await expect(count).toHaveValue('70');
+    await expect(time).toHaveValue('80');
+    for (const select of [count, time]) {
+      const colors = await select.evaluate((node) => {
+        const s = getComputedStyle(node);
+        return { border: s.borderColor, background: s.backgroundColor };
+      });
+      expect(contrastFromColors(colors.border, [colors.background])).toBeGreaterThanOrEqual(3);
+      expect((await select.boundingBox()).height).toBeGreaterThanOrEqual(44);
+    }
+    await time.focus();
     await page.keyboard.press('Tab');
     await expect(page.getByRole('radio', { name: t('Standard exam'), exact: true })).toBeFocused();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
@@ -125,8 +144,9 @@ for (const item of accountCases('phone').concat(accountCases('desktop'))) {
     await page.getByRole('button', { name: t('Start mock exam'), exact: true }).click();
     await expect(page.locator('.question-title')).toBeVisible();
     const saved = await draft(page, 'quiz-study-v1:guest:aws-aip-c01:exam');
-    expect(saved.questions).toHaveLength(10);
-    expect(saved.sessionSettings.minutes).toBe(15);
+    expect(saved.questions).toHaveLength(70);
+    expect(saved.sessionSettings.minutes).toBe(80);
+    expect(saved.deadline - saved.startedAt).toBe(80 * 60_000);
     expect(saved.sessionSettings.kind).toBe('custom');
     await page.getByRole('button', { name: t('Submit exam'), exact: true }).click();
     await page
@@ -145,24 +165,49 @@ for (const item of accountCases('phone').concat(accountCases('desktop'))) {
 test('ranged, insufficient, unknown and retiring profiles keep training explicit', async ({
   page,
 }) => {
+  const q = example('single');
+  const pool = Array.from({ length: 67 }, (_, index) => ({
+    ...q,
+    id: 'preset-' + index,
+    retired: index >= 65,
+  }));
+  await page.route('**/quiz/Google/GCP-GAL.json*', (route) => route.fulfill({ json: pool }));
   await page.goto('./#/quiz/gcp-gal?mode=exam');
   await expect(page.locator('#study-count')).toHaveValue('50');
   await page.locator('#study-count').fill('60');
   await expect(page.locator('#study-settings-error')).toBeEmpty();
   await page.getByRole('radio', { name: 'Custom timed training', exact: true }).check();
-  await page.locator('#study-count').fill('99');
-  await expect(page.locator('#study-settings-error')).toContainText('Not enough eligible');
-  await expect(page.getByRole('button', { name: 'Start mock exam', exact: true })).toBeDisabled();
+  const countSelect = page.getByRole('combobox', { name: 'Questions', exact: true });
+  await expect(countSelect.locator('option:not([disabled])')).toHaveText([
+    '50 questions',
+    '60 questions',
+  ]);
+  await expect(countSelect.locator('option[disabled]')).toHaveText([
+    '70 questions',
+    '80 questions',
+  ]);
+  await expect(page.locator('#study-settings-hint')).toContainText('65 eligible; 2 excluded');
+  await countSelect.selectOption('60');
+  await expect(page.getByRole('button', { name: 'Start mock exam', exact: true })).toBeEnabled();
+  await page.getByRole('radio', { name: 'Certification format', exact: true }).check();
+  await expect(page.locator('#study-count')).toHaveValue('60');
+  await expect(page.locator('#study-time')).toHaveValue('90');
   await page.goto('./#/quiz/istqb-ctal-ta-v4-0?mode=exam');
   await expect(page.locator('#study-count')).toHaveValue('45');
   await expect(page.locator('#study-settings-hint')).toContainText('42 eligible');
   await expect(page.getByRole('button', { name: 'Start mock exam', exact: true })).toBeDisabled();
+  await page.getByRole('radio', { name: 'Custom timed training', exact: true }).check();
+  await expect(countSelect).toBeDisabled();
+  await expect(countSelect).toHaveValue('42');
+  await expect(countSelect.locator('option:checked')).toHaveText('All 42 eligible questions');
+  await expect(page.locator('#study-settings-hint')).toContainText('presets start at 50');
+  await expect(page.getByRole('button', { name: 'Start mock exam', exact: true })).toBeEnabled();
   await page.goto('./#/quiz/az-900?mode=exam');
   await expect(
     page.getByRole('radio', { name: 'Certification format', exact: true })
   ).toBeDisabled();
   await expect(page.locator('.cert-profile-info')).toContainText('Unverified');
-  await expect(page.locator('#study-time')).toHaveValue('45');
+  await expect(page.locator('#study-time')).toHaveValue('60');
   await page.clock.install({ time: new Date('2026-12-01T12:00:00Z') });
   await page.goto('./#/quiz/aws-dva?mode=exam');
   await expect(
@@ -238,7 +283,7 @@ for (const format of [
   );
 }
 
-test('invalid new URLs fail visibly; a saved run wins over invalid replacements and older links', async ({
+test('a legacy draft wins over invalid URLs, older links and new dropdown choices', async ({
   page,
 }) => {
   await page.goto('./#/quiz/aws-aip-c01/exam?count=10&time=0');
@@ -252,6 +297,15 @@ test('invalid new URLs fail visibly; a saved run wins over invalid replacements 
   page.once('dialog', (dialog) => dialog.accept());
   await page.goto('./#/quiz/aws-aip-c01/exam?count=wrong&time=0&fresh=1000');
   await expect(page.locator('.question-title')).toBeVisible();
+  expect(await draft(page, 'quiz-study-v1:guest:aws-aip-c01:exam')).toEqual(before);
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.goto('./#/quiz/aws-aip-c01?mode=exam');
+  await page.getByRole('radio', { name: 'Custom timed training', exact: true }).check();
+  await page.getByRole('combobox', { name: 'Questions', exact: true }).selectOption('60');
+  await page.getByRole('combobox', { name: 'Time limit', exact: true }).selectOption('80');
+  await page.getByRole('button', { name: 'Resume', exact: true }).click();
+  await expect(page.getByText('Question 1 of 10', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Unflag', exact: true })).toBeVisible();
   expect(await draft(page, 'quiz-study-v1:guest:aws-aip-c01:exam')).toEqual(before);
 });
 
@@ -374,6 +428,10 @@ test('a bank with no gradable answers cannot start a scored or short session', a
   await expect(
     page.getByText('No eligible questions are available for this session.', { exact: true })
   ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Start mock exam', exact: true })).toBeDisabled();
+  await page.getByRole('radio', { name: 'Custom timed training', exact: true }).check();
+  await expect(page.getByRole('combobox', { name: 'Questions', exact: true })).toBeDisabled();
+  await expect(page.getByText('null questions', { exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Start mock exam', exact: true })).toBeDisabled();
   await page.getByText('Practice', { exact: true }).click();
   await page.locator('.practice-size-picker .ant-select-selector').click();

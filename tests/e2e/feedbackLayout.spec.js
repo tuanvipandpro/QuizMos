@@ -47,7 +47,7 @@ for (const mode of ['practice', 'learning']) {
       await page.goto(`./#/quiz/aws-aip-c01${mode === 'learning' ? '?mode=exam' : ''}`);
       if (mode === 'learning') {
         await page.getByRole('radio', { name: t('Custom timed training'), exact: true }).check();
-        await page.locator('#study-count').fill('2');
+        await expect(page.locator('#study-count')).toHaveValue('2');
         await page.getByRole('radio', { name: t('Learning exam'), exact: true }).check();
         await page.getByRole('button', { name: t('Start mock exam'), exact: true }).click();
       } else {
