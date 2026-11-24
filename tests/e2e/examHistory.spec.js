@@ -642,7 +642,7 @@ test('metadata pagination uses retained totals and delete Cancel/failure/focus r
   expect(Object.keys((await records(page)).attempts)).toHaveLength(24);
 });
 
-test('guest, Practice and signed-in unsaved uploads never write history; sign-in does not migrate the guest result', async ({
+test('guest, Practice and signed-in unsaved uploads never write history; sign-in keeps the guest result local', async ({
   page,
   context,
 }) => {
@@ -658,13 +658,21 @@ test('guest, Practice and signed-in unsaved uploads never write history; sign-in
     })
   ).toBeVisible();
   expect(await calls(page)).toHaveLength(0);
+  const filters = page.getByRole('radiogroup', { name: 'Exam results' });
+  await filters.getByText('Unanswered', { exact: true }).click();
   await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   await clickAfterUiMotion(
     page
       .getByRole('dialog', { name: 'Sign in', exact: true })
       .getByRole('button', { name: 'Continue with Google', exact: true })
   );
-  await expect(page.getByRole('button', { name: 'Start mock exam', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Exam results', exact: true })).toBeVisible();
+  await expect(filters.getByRole('radio', { name: 'Unanswered', exact: true })).toBeChecked();
+  await expect(
+    page.getByText('This completed exam stays in this tab. New exams can be archived.', {
+      exact: true,
+    })
+  ).toBeVisible();
   expect((await calls(page)).filter((call) => call.method === 'save')).toHaveLength(0);
   await page.goto('./#/my-quizzes');
   await page

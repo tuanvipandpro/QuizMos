@@ -8,6 +8,9 @@
 @import './styles/history.css';
 @import './styles/account.css';
 @import './styles/study-notebook.css';
+@import './styles/study-roadmap.css';
+@import './styles/spaced-revision.css';
+@import './styles/certification-outcomes.css';
 
 * {
   box-sizing: border-box;

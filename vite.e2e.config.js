@@ -22,6 +22,36 @@ export default defineConfig(({ command }) => {
     resolve: {
       alias: [
         {
+          find: /^(?:.*\/)?certOutcomeService(?:\.js)?$/,
+          replacement: fileURLToPath(
+            new URL('./tests/fixtures/certOutcomeService.js', import.meta.url)
+          ),
+        },
+        {
+          find: /^(?:.*\/)?certOutcomeConfig(?:\.js)?$/,
+          replacement: fileURLToPath(
+            new URL('./tests/fixtures/certOutcomeConfig.js', import.meta.url)
+          ),
+        },
+        {
+          find: /^(?:.*\/)?spacedRevisionConfig(?:\.js)?$/,
+          replacement: fileURLToPath(
+            new URL('./tests/fixtures/spacedRevisionConfig.js', import.meta.url)
+          ),
+        },
+        {
+          find: /^(?:.*\/)?studyRoadmapService(?:\.js)?$/,
+          replacement: fileURLToPath(
+            new URL('./tests/fixtures/studyRoadmapService.js', import.meta.url)
+          ),
+        },
+        {
+          find: /^(?:.*\/)?studyRoadmapConfig(?:\.js)?$/,
+          replacement: fileURLToPath(
+            new URL('./tests/fixtures/studyRoadmapConfig.js', import.meta.url)
+          ),
+        },
+        {
           find: /^(?:.*\/)?studyNotebookSourceService(?:\.js)?$/,
           replacement: fileURLToPath(
             new URL('./tests/fixtures/studyNotebookSourceService.js', import.meta.url)

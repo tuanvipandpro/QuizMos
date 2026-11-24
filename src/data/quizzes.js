@@ -141,7 +141,7 @@ export const quizzes = [
     file: 'quiz/Azure/AB-100.json',
     category: 'Microsoft',
     difficulty: 'Expert',
-    totalQuestions: 111,
+    totalQuestions: 135,
     code: 'AB-100',
   },
   {
@@ -168,7 +168,7 @@ export const quizzes = [
     file: 'quiz/Azure/AI-103.json',
     category: 'Microsoft',
     difficulty: 'Associate',
-    totalQuestions: 117,
+    totalQuestions: 169,
     code: 'AI-103',
   },
   {

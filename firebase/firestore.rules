@@ -2,9 +2,157 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function certSignedIn() {
+      return request.auth != null && request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+    function certOwner(uid) { return certSignedIn() && request.auth.uid == uid; }
+    function certModerator() { return certSignedIn() && request.auth.token.get('certOutcomeModerator', false) == true; }
+    function certId(id) { return id is string && id.matches('[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'); }
+    function certSlot(slot) { return slot in ['slot-1','slot-2','slot-3','slot-4','slot-5','slot-6']; }
+    function certBank(bank) { return bank is string && bank.matches('[a-z0-9-]{1,120}'); }
+    function certResult(value) { return value in ['passed','not-passed']; }
+    function certRecordPath(uid, slot) { return /databases/$(database)/documents/users/$(uid)/certificationOutcomes/$(slot); }
+    function certReportPath(id) { return /databases/$(database)/documents/outcomeSubmissions/$(id); }
+    function certPublicPath(id) { return /databases/$(database)/documents/publishedOutcomes/$(id); }
+    function certScore(d) {
+      return (d.score == null && d.scoreMax == null)
+        || ((d.score is int || d.score is float) && (d.scoreMax is int || d.scoreMax is float)
+          && d.score >= 0 && d.scoreMax > 0 && d.scoreMax <= 1000000 && d.score <= d.scoreMax);
+    }
+    function certRecord(d) {
+      let fields = ['schemaVersion','instanceId','revision','bankId','examDate','result','score','scoreMax','note','planSlot','planId'];
+      return d.keys().hasAll(fields) && d.keys().hasOnly(fields)
+        && d.schemaVersion == 1 && certId(d.instanceId) && d.revision is int && d.revision > 0
+        && certBank(d.bankId) && certResult(d.result) && certScore(d)
+        && d.examDate is string && d.examDate.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}')
+        && d.note is string && d.note.size() <= 1200 && d.note.toUtf8().size() <= 4800
+        && ((d.planSlot == null && d.planId == null)
+          || (d.planSlot in ['slot-1','slot-2','slot-3'] && certId(d.planId)));
+    }
+    function certPlan(uid, d) {
+      return d.planSlot == null || certPlanMatches(uid, d);
+    }
+    function certPlanMatches(uid, d) {
+      let p = get(/databases/$(database)/documents/users/$(uid)/studyPlans/$(d.planSlot)).data;
+      return p.instanceId == d.planId
+        && (p.bankId == d.bankId || (p.bankId == 'aws-ace' && d.bankId == 'gcp-ace'));
+    }
+    function certReport(d, id) {
+      let fields = ['owner','slot','bankId','result','experience','status','revision','updatedAt'];
+      return certId(id) && d.keys().hasAll(fields) && d.keys().hasOnly(fields)
+        && d.owner is string && d.owner.size() > 0 && certSlot(d.slot)
+        && certBank(d.bankId) && certResult(d.result)
+        && d.experience is string && d.experience.size() <= 400 && d.experience.toUtf8().size() <= 1600
+        && d.status in ['pending','published','rejected','removed']
+        && (d.status != 'removed' || d.experience == '')
+        && d.revision is int && d.revision > 0 && d.updatedAt == request.time;
+    }
+    function certMatchRecord(d, id) {
+      let row = getAfter(certRecordPath(d.owner,d.slot)).data;
+      return row.instanceId == id && row.bankId == d.bankId && row.result == d.result;
+    }
+    function certCanKeepSharedClaim(d) {
+      return !existsAfter(certReportPath(d.instanceId))
+        || getAfter(certReportPath(d.instanceId)).data.status == 'removed';
+    }
+    function certProjection(d, source) {
+      let fields = ['bankId','result','experience','publishedAt'];
+      return d.keys().hasAll(fields) && d.keys().hasOnly(fields)
+        && d.bankId == source.bankId && d.result == source.result
+        && d.experience == source.experience && d.publishedAt == request.time;
+    }
+    function certReportEdit(d, old, id) {
+      return d.owner == old.owner && d.slot == old.slot && d.revision == old.revision + 1
+        && ((certOwner(old.owner)
+          && ((d.status == 'pending' && old.status in ['removed','rejected'] && certMatchRecord(d,id))
+            || (d.status == 'removed' && old.status in ['pending','published','rejected']
+              && d.bankId == old.bankId && d.result == old.result)))
+          || (certModerator() && request.auth.uid != old.owner
+            && d.bankId == old.bankId && d.result == old.result
+            && ((old.status == 'pending' && d.status in ['published','rejected']
+              && d.experience == old.experience && certMatchRecord(d,id))
+              || (old.status == 'published' && d.status == 'removed'))));
+    }
+    match /outcomeSubmissions/{id} {
+      allow get: if certSignedIn() && certId(id) && (resource == null || certOwner(resource.data.owner) || certModerator());
+      allow list: if certModerator() && request.query.limit > 0 && request.query.limit <= 20;
+      allow create: if certReport(request.resource.data,id) && certOwner(request.resource.data.owner)
+        && request.resource.data.status == 'pending' && request.resource.data.revision == 1
+        && certMatchRecord(request.resource.data,id) && !existsAfter(certPublicPath(id));
+      allow update: if certReport(request.resource.data,id)
+        && certReportEdit(request.resource.data,resource.data,id)
+        && (request.resource.data.status == 'published'
+          ? certProjection(getAfter(certPublicPath(id)).data,request.resource.data)
+          : !existsAfter(certPublicPath(id)));
+      allow delete: if certOwner(resource.data.owner)
+        && !existsAfter(certRecordPath(resource.data.owner,resource.data.slot))
+        && !existsAfter(certPublicPath(id));
+    }
+    match /publishedOutcomes/{id} {
+      allow get: if true;
+      allow list: if request.query.limit > 0 && request.query.limit <= 20;
+      allow create: if certModerator() && certId(id)
+        && get(certReportPath(id)).data.status == 'pending'
+        && get(certReportPath(id)).data.owner != request.auth.uid
+        && getAfter(certReportPath(id)).data.status == 'published'
+        && certProjection(request.resource.data,getAfter(certReportPath(id)).data);
+      allow update: if false;
+      allow delete: if (certOwner(get(certReportPath(id)).data.owner) || certModerator())
+        && (!existsAfter(certReportPath(id)) || getAfter(certReportPath(id)).data.status == 'removed');
+    }
     // Users collection - mỗi user chỉ có thể đọc/ghi profile của chính mình
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      match /certificationOutcomes/{slot} {
+        allow get, list: if certOwner(userId);
+        allow create: if certOwner(userId) && certSlot(slot) && certRecord(request.resource.data)
+          && request.resource.data.revision == 1 && certPlan(userId,request.resource.data);
+        allow update: if certOwner(userId) && certSlot(slot) && certRecord(request.resource.data)
+          && request.resource.data.instanceId == resource.data.instanceId
+          && request.resource.data.revision == resource.data.revision + 1
+          && ((request.resource.data.planSlot == resource.data.planSlot
+            && request.resource.data.planId == resource.data.planId
+            && request.resource.data.bankId == resource.data.bankId)
+            || certPlan(userId,request.resource.data))
+          && ((request.resource.data.bankId == resource.data.bankId
+            && request.resource.data.result == resource.data.result)
+            || certCanKeepSharedClaim(request.resource.data));
+        allow delete: if certOwner(userId) && certSlot(slot)
+          && !existsAfter(certReportPath(resource.data.instanceId))
+          && !existsAfter(certPublicPath(resource.data.instanceId));
+      }
+
+      function roadmapOwner() {
+        return request.auth != null && request.auth.uid == userId
+          && request.auth.token.firebase.sign_in_provider != 'anonymous';
+      }
+      function roadmapDay(value) {
+        return value is string && value.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}');
+      }
+      function roadmapPlan(d) {
+        return d.keys().hasAll(['schemaVersion','instanceId','revision','bankId','startDate','targetDate','timezone','weeklyGoal','archived','overrides'])
+          && d.keys().hasOnly(['schemaVersion','instanceId','revision','bankId','startDate','targetDate','timezone','weeklyGoal','archived','overrides'])
+          && d.schemaVersion == 1 && historyId(d.instanceId)
+          && d.revision is int && d.revision > 0 && d.revision <= 9007199254740991
+          && d.bankId is string && d.bankId.matches('[a-z0-9-]{1,120}')
+          && roadmapDay(d.startDate) && roadmapDay(d.targetDate) && d.targetDate > d.startDate
+          && d.timezone is string && d.timezone.matches('[A-Za-z0-9_+/-]{1,64}')
+          && d.weeklyGoal is int && d.weeklyGoal >= 0 && d.weeklyGoal <= 7
+          && d.archived is bool && d.overrides is string && d.overrides.toUtf8().size() <= 12000;
+      }
+      match /studyPlans/{slotId} {
+        allow get, delete: if roadmapOwner() && slotId in ['slot-1','slot-2','slot-3'];
+        allow list: if roadmapOwner();
+        allow create: if roadmapOwner() && slotId in ['slot-1','slot-2','slot-3']
+          && roadmapPlan(request.resource.data) && request.resource.data.revision == 1;
+        allow update: if roadmapOwner() && slotId in ['slot-1','slot-2','slot-3']
+          && roadmapPlan(request.resource.data)
+          && request.resource.data.revision == resource.data.revision + 1
+          && request.resource.data.instanceId == resource.data.instanceId
+          && request.resource.data.startDate == resource.data.startDate
+          && request.resource.data.bankId == resource.data.bankId;
+      }
 
       function historyOwner() { return request.auth != null && request.auth.uid == userId; }
       function historyId(id) { return id is string && id.matches('[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'); }
@@ -132,10 +280,30 @@ service cloud.firestore {
           || (get(/databases/$(database)/documents/users/$(userId)/customQuizzes/$(r.slotId)).data.instanceId == r.instanceId
             && get(/databases/$(database)/documents/users/$(userId)/customQuizzes/$(r.slotId)).data.contentVersion == r.contentVersion);
       }
+      function notebookReview(d) {
+        return !('reviewSchedule' in d)
+          || (d.mistake && d.reviewSchedule is map
+            && d.reviewSchedule.keys().hasAll(['level','anchor'])
+            && d.reviewSchedule.keys().hasOnly(['level','anchor'])
+            && d.reviewSchedule.level is int && d.reviewSchedule.level >= -1 && d.reviewSchedule.level <= 5
+            && d.reviewSchedule.anchor is timestamp && d.reviewSchedule.anchor <= request.time);
+      }
+      function notebookReviewAdvance(old, level) {
+        let previous = old.get('reviewSchedule', {'level':1,'anchor':old.lastReviewedAt});
+        let interval = [0,1,3,7,14,30];
+        return previous.level >= 1 && previous.level <= 5 && previous.anchor is timestamp
+          && level == (previous.level == 5 ? 5 : previous.level+1)
+          && request.time >= previous.anchor + duration.value(interval[previous.level], 'd');
+      }
+      function notebookReviewUpdate(d, old) {
+        return d.get('reviewSchedule', null) == old.get('reviewSchedule', null)
+          || ('reviewSchedule' in d && d.reviewSchedule.anchor == request.time
+            && (d.reviewSchedule.level <= 1 || notebookReviewAdvance(old, d.reviewSchedule.level)));
+      }
       function notebookEntry(d,id) {
         return historyHash(id)
           && d.keys().hasAll(['schemaVersion','entryKey','ref','sourceGroup','bookmarked','note','mistake','reviewed','lastWrongAt','lastReviewedAt','revision','lastOperationId','lastOperationFingerprint','createdAt','updatedAt'])
-          && d.keys().hasOnly(['schemaVersion','entryKey','ref','sourceGroup','bookmarked','note','mistake','reviewed','lastWrongAt','lastReviewedAt','revision','lastOperationId','lastOperationFingerprint','createdAt','updatedAt'])
+          && d.keys().hasOnly(['schemaVersion','entryKey','ref','sourceGroup','bookmarked','note','mistake','reviewed','lastWrongAt','lastReviewedAt','revision','lastOperationId','lastOperationFingerprint','createdAt','updatedAt','reviewSchedule'])
           && d.schemaVersion == 1 && d.entryKey == id && notebookRef(d.ref)
           && d.sourceGroup == (d.ref.kind == 'bank' ? 'bank:'+d.ref.quizId : 'custom:'+d.ref.instanceId+':v'+string(d.ref.contentVersion))
           && d.bookmarked is bool && d.mistake is bool && d.reviewed is bool
@@ -145,7 +313,8 @@ service cloud.firestore {
           && (d.lastReviewedAt == null || (d.lastReviewedAt is timestamp && d.lastReviewedAt <= request.time))
           && (!d.reviewed || (d.mistake && d.lastReviewedAt is timestamp))
           && d.revision is int && d.revision > 0 && historyId(d.lastOperationId) && historyHash(d.lastOperationFingerprint)
-          && d.createdAt is timestamp && d.createdAt <= request.time && d.updatedAt == request.time;
+          && d.createdAt is timestamp && d.createdAt <= request.time && d.updatedAt == request.time
+          && notebookReview(d);
       }
       function notebookQuotaTransition(id) {
         let old = exists(notebookQuotaPath()) ? get(notebookQuotaPath()).data : {'count':0,'revision':0,'generation':0};
@@ -170,17 +339,19 @@ service cloud.firestore {
         allow get: if notebookOwner();
         allow list: if notebookOwner() && request.query.limit > 0 && request.query.limit <= 20;
         allow create: if notebookOwner() && notebookEntry(request.resource.data,entryKey)
+          && !('reviewSchedule' in request.resource.data)
           && request.resource.data.revision == 1 && request.resource.data.createdAt == request.time
           && (request.resource.data.lastWrongAt == null || request.resource.data.lastWrongAt == request.time)
           && (request.resource.data.lastReviewedAt == null || request.resource.data.lastReviewedAt == request.time)
           && notebookSourceCurrent(request.resource.data.ref) && notebookQuotaTransition(entryKey);
         allow update: if notebookOwner() && notebookEntry(request.resource.data,entryKey)
+          && notebookReviewUpdate(request.resource.data, resource.data)
           && request.resource.data.ref == resource.data.ref
           && request.resource.data.createdAt == resource.data.createdAt
           && request.resource.data.revision == resource.data.revision+1
           && (request.resource.data.lastWrongAt == resource.data.lastWrongAt || request.resource.data.lastWrongAt == request.time)
           && (request.resource.data.lastReviewedAt == resource.data.lastReviewedAt || request.resource.data.lastReviewedAt == request.time)
-          && ((request.resource.data.diff(resource.data).affectedKeys().hasOnly(['bookmarked','note','revision','lastOperationId','lastOperationFingerprint','updatedAt']))
+          && ((request.resource.data.diff(resource.data).affectedKeys().hasOnly(['bookmarked','note','reviewSchedule','revision','lastOperationId','lastOperationFingerprint','updatedAt']))
             || notebookSourceCurrent(request.resource.data.ref))
           && notebookQuotaTransition(entryKey);
         allow delete: if notebookOwner() && notebookQuotaTransition(entryKey);

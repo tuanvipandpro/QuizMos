@@ -1,0 +1,36 @@
+export const SPACED_REVISION_MESSAGES = {
+  'Spaced review': 'Ôn tập ngắt quãng',
+  'Open spaced review': 'Mở ôn tập ngắt quãng',
+  'Back to spaced review': 'Về ôn tập ngắt quãng',
+  'Spaced review is not enabled yet.': 'Ôn tập ngắt quãng chưa được bật.',
+  'Times in {zone}': 'Giờ theo {zone}',
+  'All review sources': 'Tất cả nguồn ôn tập',
+  'Refresh reviews': 'Tải lại lịch ôn',
+  'Loading reviews…': 'Đang tải lịch ôn…',
+  'Could not load reviews.': 'Không tải được lịch ôn.',
+  'Due questions': 'Câu đến hạn',
+  'Upcoming reviews': 'Các lượt ôn sắp tới',
+  'Unavailable questions': 'Câu hỏi không còn khả dụng',
+  'Removed from review': 'Đã bỏ khỏi lịch ôn',
+  'Reset review schedule?': 'Đặt lại lịch ôn?',
+  'Reset schedule': 'Đặt lại lịch',
+  'Remove this question from review?': 'Bỏ câu này khỏi lịch ôn?',
+  'Remove from review': 'Bỏ khỏi lịch ôn',
+  'Restore this question to review?': 'Khôi phục lịch ôn cho câu này?',
+  'Restore review': 'Khôi phục lịch ôn',
+  '{count} due for review': '{count} câu đến hạn ôn',
+  '{count} overdue': '{count} câu quá hạn',
+  'Next review {date}': 'Lượt ôn tiếp theo {date}',
+  'Start due review': 'Ôn các câu đến hạn',
+  'You are caught up. Your next review is shown above.':
+    'Bạn đã ôn hết các câu đến hạn. Xem thời gian ôn tiếp theo ở trên.',
+  'No questions are due. Practice or take a Mock exam to build a review queue.':
+    'Chưa có câu đến hạn. Làm bài Luyện tập hoặc Thi thử để tạo lịch ôn.',
+  Overdue: 'Quá hạn',
+  'Show more': 'Xem thêm',
+  'Your notes, bookmarks and past answers are kept.':
+    'Ghi chú, câu đã đánh dấu và các câu trả lời trước vẫn được giữ.',
+  '{count} reviews this week': '{count} câu cần ôn trong tuần',
+  'This reads the latest review schedule before retrying.':
+    'Tải lịch ôn mới nhất trước khi thử lại.',
+};

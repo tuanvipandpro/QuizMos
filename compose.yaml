@@ -1,0 +1,17 @@
+services:
+  quizmos:
+    image: ${QUIZMOS_IMAGE:-quizmos:local}
+    build:
+      context: .
+      args:
+        VITE_BASE: ${VITE_BASE:-/}
+        VITE_APP_AI_URL: ${VITE_APP_AI_URL:-}
+    ports:
+      - '127.0.0.1:${QUIZMOS_PORT:-8080}:8080'
+    read_only: true
+    tmpfs:
+      - '/tmp:rw,noexec,nosuid,nodev,size=16m,mode=1777'
+    cap_drop:
+      - ALL
+    security_opt:
+      - 'no-new-privileges:true'

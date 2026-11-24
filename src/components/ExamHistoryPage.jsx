@@ -4,6 +4,7 @@ import { ArrowLeftOutlined, ArrowRightOutlined, ReloadOutlined } from '@ant-desi
 import { useLanguage } from '../contexts/LanguageContext';
 import { useExamHistory } from '../hooks/useExamHistory';
 import { EXAM_HISTORY_ENABLED } from '../config/examHistoryConfig';
+import { CERT_OUTCOMES_ENABLED } from '../config/certOutcomeConfig';
 import { EXAM_HISTORY_LIMIT, EXAM_HISTORY_PAGE_SIZE } from '../data/examHistoryLimits.js';
 import { getExamFeedbackMode } from '../data/examModes.js';
 import { retainedHistoryStats } from '../utils/examHistory.js';
@@ -292,6 +293,9 @@ export default function ExamHistoryPage({
           </Button>
         )}
       </div>
+      {uid && CERT_OUTCOMES_ENABLED && !attemptId && (
+        <Button onClick={() => onNavigate('#/outcomes')}>{t('Certification outcomes')}</Button>
+      )}
       {deletedNotice && (
         <Alert
           role="status"

@@ -67,6 +67,11 @@ export async function readNotebookEntry(snapshot) {
     if (typeof data[field]?.toMillis !== 'function') throw notebookError('INVALID');
     data[field] = Math.floor(data[field].toMillis());
   }
+  if (Object.hasOwn(data, 'reviewSchedule')) {
+    const value = data.reviewSchedule;
+    if (typeof value?.anchor?.toMillis !== 'function') throw notebookError('INVALID');
+    data.reviewSchedule = { ...value, anchor: Math.floor(value.anchor.toMillis()) };
+  }
   if (data.entryKey !== snapshot.id) throw notebookError('INVALID');
   return validateNotebookEntry(data);
 }
@@ -171,12 +176,13 @@ export function createStudyNotebookRepository(db, { transact = runTransaction } 
               (entry?.revision || 0) !== command.expectedRevision
             )
               throw notebookError('CONFLICT');
+            const current = entry && notebookStateFromEntry(entry);
             const next = transitionNotebookState(
-              entry && notebookStateFromEntry(entry),
+              current,
               command.change,
               Math.max(Date.now(), entry?.updatedAt || 0)
             );
-            if (!entry && !next) return { entry: null, state, noop: true };
+            if (next === current) return { entry, state, noop: true };
             if (!entry && state.count >= NOTEBOOK_ENTRY_LIMIT) throw notebookError('QUOTA');
             // Retained notes may be edited/deleted after source removal. New rows
             // and outcome capture must still point to the current private source.
@@ -214,6 +220,14 @@ export function createStudyNotebookRepository(db, { transact = runTransaction } 
                 ref: command.ref,
                 sourceGroup: notebookSourceGroup(command.ref),
                 ...next,
+                ...(next.reviewSchedule
+                  ? {
+                      reviewSchedule:
+                        next.reviewSchedule === entry?.reviewSchedule
+                          ? wire.reviewSchedule
+                          : { level: next.reviewSchedule.level, anchor: stamp },
+                    }
+                  : {}),
                 revision: (entry?.revision || 0) + 1,
                 lastOperationId: command.operationId,
                 lastOperationFingerprint: command.fingerprint,
@@ -235,6 +249,9 @@ export function createStudyNotebookRepository(db, { transact = runTransaction } 
               // Validate the exact normalized envelope before using transforms.
               await validateNotebookEntry({
                 ...row,
+                ...(row.reviewSchedule
+                  ? { reviewSchedule: { level: row.reviewSchedule.level, anchor: 0 } }
+                  : {}),
                 ...Object.fromEntries(
                   ['createdAt', 'updatedAt', 'lastWrongAt', 'lastReviewedAt'].map((field) => [
                     field,

@@ -49,9 +49,12 @@ export function useNotebookCapture(session, quiz, uid, kind) {
     eligible,
     needsCapture,
     ...(needsCapture ? { status: 'error', error: notebookError('UNCONFIRMED') } : {}),
-    practice(question, answer, eventId) {
+    practice(question, answer, eventId, spaced = false) {
       if (eligible)
-        store.practice(() => notebookCaptureEvent(quiz, question, answer, uid, eventId));
+        store.practice(async () => {
+          const event = await notebookCaptureEvent(quiz, question, answer, uid, eventId);
+          return event && spaced ? { ...event, change: { ...event.change, spaced: true } } : event;
+        });
     },
     retry(options = {}) {
       if (!eligible) return;

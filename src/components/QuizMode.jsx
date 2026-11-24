@@ -137,7 +137,7 @@ export default function QuizMode({
                       name="exam-feedback"
                       value={mode.id}
                       checked={feedbackMode === mode.id}
-                      onChange={() => exam.change('feedbackMode', mode.id)}
+                      onChange={() => exam.changeFeedback(mode.id)}
                       aria-labelledby={`exam-feedback-${mode.id}-label`}
                       aria-describedby={`exam-feedback-${mode.id}-hint`}
                     />
@@ -166,7 +166,7 @@ export default function QuizMode({
         </>
       )}
       <div className="quiz-mode-start">
-        {!(selectedMode === 'exam' && noExamQuestions) && (
+        {!(selectedMode === 'exam' && (noExamQuestions || count === null)) && (
           <Text type="secondary">
             {selectedMode === 'exam'
               ? t('{count} questions', { count }) + ' · ' + t('{count} minutes', { count: time })

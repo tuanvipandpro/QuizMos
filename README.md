@@ -38,6 +38,10 @@ Untracking `.env` does not remove previous commits. Rotate provider keys that we
 
 Follow the [credential policy](docs/contributing.md#credentials-and-secrets): review staged/outgoing changes and run a redacted secret scan before push. Use GitHub Actions Secrets for authorized CI/deployment secrets, and backend/Worker secret storage for private runtime keys. Secrets injected into `VITE_*` or generated frontend files become public. Commit only secret names/references and blank or synthetic examples.
 
+### Run with Docker
+
+`docker compose up --build -d --wait` serves QuizMos at [http://localhost:8080/](http://localhost:8080/). See the [Docker guide](docs/docker.md) for build arguments, subpath hosting and rollback.
+
 ## Commands
 
 | Command                                     | Purpose                                                                                           |

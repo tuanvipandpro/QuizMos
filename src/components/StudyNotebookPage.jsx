@@ -10,6 +10,8 @@ import { useNotebookEntrySources } from '../hooks/useNotebookSources';
 import NotebookEntryEditor from './NotebookEntryEditor';
 import NotebookEntryCard from './NotebookEntryCard';
 import { useCompactStudyLayout } from '../hooks/useCompactStudyLayout';
+import { SPACED_REVISION_ENABLED } from '../config/spacedRevisionConfig';
+import { spacedRevisionUrl } from '../utils/spacedRevision.js';
 
 export default function StudyNotebookPage({ notebook, onNavigate }) {
   const { t } = useLanguage();
@@ -69,6 +71,11 @@ export default function StudyNotebookPage({ notebook, onNavigate }) {
             {t('Your mistakes, review progress, bookmarks and private notes.')}
           </Typography.Paragraph>
         </div>
+        {SPACED_REVISION_ENABLED && (
+          <Button type="primary" onClick={() => onNavigate(spacedRevisionUrl())}>
+            {t('Open spaced review')}
+          </Button>
+        )}
         <Button
           icon={<ReloadOutlined aria-hidden="true" />}
           loading={notebook.loading}

@@ -21,7 +21,7 @@ export function parseRoute(hash = '') {
       return { page: 'library', params: new URLSearchParams(query) };
     if (path === '/donate' || path === '/donate/')
       return { page: 'donate', params: new URLSearchParams(query) };
-    for (const page of ['profile', 'updates'])
+    for (const page of ['profile', 'updates', 'roadmap', 'outcomes'])
       if (path === `/${page}` || path === `/${page}/`)
         return { page, params: new URLSearchParams(query) };
     const parts = path.split('/').filter(Boolean).map(decodeURIComponent);

@@ -1,4 +1,11 @@
+import { STUDY_ROADMAP_MESSAGES } from './studyRoadmapMessages.js';
+import { SPACED_REVISION_MESSAGES } from './spacedRevisionMessages.js';
+import { CERTIFICATION_OUTCOME_MESSAGES } from './certificationOutcomeMessages.js';
+
 export const vi = {
+  ...CERTIFICATION_OUTCOME_MESSAGES,
+  ...SPACED_REVISION_MESSAGES,
+  ...STUDY_ROADMAP_MESSAGES,
   '{count} questions available for short Practice. Notes and full-bank sessions are kept.':
     'Có {count} câu cho luyện tập ngắn. Ghi chú và các lượt luyện toàn bộ bank được giữ nguyên.',
   'Notebook revision is untimed Practice. Each question keeps its original source.':
@@ -43,8 +50,11 @@ export const vi = {
     'Chỉ mô phỏng hình thức. Chọn câu ngẫu nhiên không tái hiện các lĩnh vực, lab, case study hay câu không tính điểm chính thức. Không tự thêm giờ dựa vào ngôn ngữ.',
   'Choose {min}–{max} questions within the published range. Answering time is fixed.':
     'Chọn {min}–{max} câu trong phạm vi công bố. Thời gian làm bài cố định.',
-  'Training limits: 1–{count} questions and 1–{minutes} minutes.':
-    'Giới hạn bài luyện: 1–{count} câu và 1–{minutes} phút.',
+  'All {count} eligible questions': 'Tất cả {count} câu hợp lệ',
+  'No eligible questions': 'Không có câu hợp lệ',
+  'This quiz uses all eligible questions because presets start at {count}.':
+    'Quiz này dùng toàn bộ câu hợp lệ vì các mốc chọn sẵn bắt đầu từ {count} câu.',
+  'Larger presets require more eligible questions.': 'Mốc lớn hơn cần thêm câu hỏi hợp lệ.',
   '{count} eligible; {excluded} excluded because answers or certification formats are incompatible.':
     '{count} câu hợp lệ; loại {excluded} câu do đáp án hoặc dạng câu không tương thích.',
   '{count} eligible; {excluded} excluded because questions are retired or incompatible.':
@@ -253,7 +263,14 @@ export const vi = {
     'Các bổ sung và thay đổi đã được rà soát trong thư viện quiz công khai. Ngày hiển thị là ngày thay đổi nội dung bộ câu hỏi.',
   'No reviewed quiz updates yet. Explore the Quiz Bank while new changes are reviewed.':
     'Chưa có cập nhật quiz đã được rà soát. Hãy khám phá thư viện quiz trong khi các thay đổi mới được kiểm tra.',
+  'Added 24 AB-100 questions and a certification prerequisite note.':
+    'Bổ sung 24 câu AB-100 và ghi chú điều kiện nhận chứng chỉ.',
+  'Added 52 AI-103 questions, including illustrated and interactive items.':
+    'Bổ sung 52 câu AI-103, gồm câu có hình minh họa và câu tương tác.',
   Added: 'Đã thêm',
+  'AB-100 certification prerequisite': 'Điều kiện nhận chứng chỉ AB-100',
+  'To earn the Expert certification, pass AB-100 and earn at least one of these Associate certifications.':
+    'Để nhận chứng chỉ Expert, cần đỗ kỳ thi AB-100 và có ít nhất một chứng chỉ Associate trong danh sách sau.',
   Updated: 'Đã cập nhật',
   'Reviewed source': 'Nguồn đã rà soát',
   'Open quiz': 'Mở quiz',
@@ -819,6 +836,13 @@ export const vi = {
   'Signed out successfully': 'Đã đăng xuất',
   'Could not sign out. Please retry.': 'Không đăng xuất được. Vui lòng thử lại.',
   'Could not sign in. Please retry.': 'Không đăng nhập được. Vui lòng thử lại.',
+  'Could not continue this study draft after signing in.':
+    'Không thể tiếp tục bản nháp này sau khi đăng nhập.',
+  'Choose which study draft to keep': 'Chọn bản nháp muốn giữ',
+  'Continue guest draft': 'Tiếp tục bản nháp khách',
+  'Keep account draft': 'Giữ bản nháp tài khoản',
+  'This account already has a draft for this session. Continuing the guest draft replaces the account draft in this tab. Keeping the account draft discards the guest draft.':
+    'Tài khoản này đã có bản nháp cho phiên học này. Tiếp tục bản nháp khách sẽ thay bản nháp tài khoản trong tab này. Giữ bản nháp tài khoản sẽ bỏ bản nháp khách.',
   'Welcome, {name}!': 'Chào {name}!',
   Contents: 'Mục lục',
   Sources: 'Nguồn tham khảo',
@@ -979,6 +1003,8 @@ export const vi = {
 
 export function translate(language, key, params = {}) {
   const singular = {
+    'All {count} eligible questions': 'The only eligible question',
+    '{count} reviews this week': '{count} review this week',
     '{count} active filters': '{count} active filter',
     '{count} questions selected': '{count} question selected',
     '{count} selected questions are unavailable and excluded.':
