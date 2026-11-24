@@ -74,6 +74,14 @@ test('failed profile write rejects and does not replace the active key', async (
   await assert.rejects(store.saveKey('gemini', 'bad-save', 'a'), /Could not save/);
   assert.equal((await store.getKeys('a')).gemini, 'legacy-cloud');
 });
+test('late startup profile hydration cannot restore a key cleared while it was pending', async () => {
+  const { store, profiles } = credentialFixture();
+  await store.saveKey('gemini', '', 'a');
+  store.prime('a', profiles.a, { onlyIfUnset: true });
+  assert.equal((await store.getKeys('a')).gemini, '');
+  store.prime('a', profiles.a);
+  assert.equal((await store.getKeys('a')).gemini, 'legacy-cloud');
+});
 test('simultaneous saves to different providers preserve both keys', async () => {
   const { store } = credentialFixture();
   await Promise.all([store.saveKey('gemini', 'g', 'a'), store.saveKey('groq', 'q', 'a')]);

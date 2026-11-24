@@ -5,9 +5,16 @@ const key = (uid) => 'quiz-e2e-profile:' + uid;
 const read = (uid) =>
   JSON.parse(localStorage.getItem(key(uid)) || '{"llmProviders":{},"quizProgress":{}}');
 const write = (uid, profile) => localStorage.setItem(key(uid), JSON.stringify(profile));
+const waitForRead = async (name) => {
+  if (!sessionStorage.getItem('quiz-e2e-defer-' + name)) return;
+  await new Promise((resolve) =>
+    window.addEventListener('quiz-e2e-resolve-' + name, resolve, { once: true })
+  );
+};
 
 export default {
   async initializeUser(user) {
+    await waitForRead('user-profile');
     return { success: true, user: { ...read(user.uid), ...user } };
   },
   async getUserProfile(uid) {
@@ -21,6 +28,7 @@ export default {
     return { success: true };
   },
   async getAllQuizProgress(uid) {
+    await waitForRead('quiz-progress');
     return normalizeProgress(read(uid).quizProgress);
   },
   async saveQuizProgress(uid, id, questionIndex, questionId) {

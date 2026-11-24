@@ -3,7 +3,8 @@ import {
   getFirestore,
   doc,
   getDoc,
-  setDoc,
+  getDocFromServer,
+  runTransaction,
   updateDoc,
   deleteField,
   serverTimestamp,
@@ -34,14 +35,9 @@ class UserService {
    * @returns {Promise<boolean>}
    */
   async userExists(uid) {
-    try {
-      const userDocRef = this.getUserDocRef(uid);
-      const userDoc = await getDoc(userDocRef);
-      return userDoc.exists();
-    } catch (error) {
-      console.error('Error checking user existence:', error);
-      return false;
-    }
+    // Creating a profile requires a confirmed absence. A failed read must not trigger a write.
+    const snapshot = await getDocFromServer(this.getUserDocRef(uid));
+    return snapshot.exists();
   }
 
   /**
@@ -67,12 +63,15 @@ class UserService {
         lastLoginAt: serverTimestamp(),
       };
 
-      await setDoc(userDocRef, userProfile);
-
-      console.log('User created in Firestore:', uid);
+      const profile = await runTransaction(db, async (transaction) => {
+        const existing = await transaction.get(userDocRef);
+        if (existing.exists()) return existing.data();
+        transaction.set(userDocRef, userProfile);
+        return userProfile;
+      });
       return {
         success: true,
-        user: userProfile,
+        user: profile,
       };
     } catch (error) {
       console.error('Error creating user:', error);

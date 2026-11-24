@@ -29,16 +29,8 @@ export function AuthProvider({ children }) {
   /**
    * Initialize user in Firestore
    */
-  const initializeUserInFirestore = async (firebaseUser, revision) => {
+  const initializeUserInFirestore = async (userData, revision) => {
     try {
-      const userData = {
-        uid: firebaseUser.uid,
-        email: firebaseUser.email,
-        displayName: firebaseUser.displayName,
-        photoURL: firebaseUser.photoURL,
-        emailVerified: firebaseUser.emailVerified,
-      };
-
       // Initialize or update user in Firestore
       const result = await userService.initializeUser(userData);
 
@@ -48,7 +40,7 @@ export function AuthProvider({ children }) {
         authRevision.current === revision
       ) {
         setUserProfile(result.user);
-        credentials.prime(userData.uid, result.user);
+        credentials.prime(userData.uid, result.user, { onlyIfUnset: true });
       }
     } catch (error) {
       console.error('Error initializing user in Firestore:', error);
@@ -57,7 +49,7 @@ export function AuthProvider({ children }) {
 
   // Subscribe to auth state changes
   useEffect(() => {
-    const unsubscribe = authService.onAuthStateChanged(async (firebaseUser) => {
+    const unsubscribe = authService.onAuthStateChanged((firebaseUser) => {
       const revision = ++authRevision.current;
       const nextUid = firebaseUser?.uid || null;
       clearLlmSession({ clearGuest: !!nextUid || !!activeUid.current });
@@ -75,15 +67,14 @@ export function AuthProvider({ children }) {
 
         setUser(userData);
 
-        // Initialize user in Firestore and get profile
-        await initializeUserInFirestore(firebaseUser, revision);
+        // Firebase Auth has resolved the identity. Profile I/O can wait for connectivity.
+        void initializeUserInFirestore(userData, revision);
       } else {
         // User is signed out
         setUser(null);
-        setUserProfile(null);
       }
 
-      if (authRevision.current === revision) setLoading(false);
+      setLoading(false);
     });
 
     // Cleanup subscription on unmount
