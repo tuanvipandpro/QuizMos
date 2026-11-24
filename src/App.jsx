@@ -37,6 +37,7 @@ import {
 import QuizLibrary from './components/QuizLibrary';
 import MyQuizzes from './components/MyQuizzes';
 import QuizMode from './components/QuizMode';
+import { AB_100_ASSOCIATE_CERTIFICATIONS } from './data/certificationProfiles.js';
 import SignInModal from './components/SignInModal';
 import AppHeader from './components/AppHeader';
 import AppFooter from './components/AppFooter';
@@ -820,6 +821,17 @@ export default function App() {
               {t('{count} questions', { count: active.questions.length })}
             </Text>
           </div>
+          {active.id === 'ab-100' && active.kind === 'bank' && (
+            <Typography.Paragraph className="ab100-prerequisite-note">
+              <Text strong>{t('AB-100 certification prerequisite')}</Text>
+              <br />
+              {t(
+                'To earn the Expert certification, pass AB-100 and earn at least one of these Associate certifications.'
+              )}
+              <br />
+              {AB_100_ASSOCIATE_CERTIFICATIONS.join(' · ')}
+            </Typography.Paragraph>
+          )}
         </div>
         <QuizPdfExport key={`pdf:${studyId}:${uid || 'guest'}`} quiz={active} />
         <QuizMode
