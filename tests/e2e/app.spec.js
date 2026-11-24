@@ -409,8 +409,12 @@ test(
     });
     await page.goto('./#/quiz/aws-ace/practice?resume=1&entry=regression');
     await expect(page).toHaveURL(/#\/quiz\/gcp-ace\/practice\?resume=1&entry=regression$/);
-    await expect(page.locator('.question-title')).toBeVisible();
+    await expect(page.getByText('Question 1 of 302', { exact: true })).toBeVisible();
     await signIn(page);
+    await expect(page).toHaveURL(/#\/quiz\/gcp-ace\/practice$/);
+    await expect(page.getByText('Question 1 of 302', { exact: true })).toBeVisible();
+    await page.goto('./#/quiz/aws-ace/practice?resume=1&entry=account-regression');
+    await expect(page).toHaveURL(/#\/quiz\/gcp-ace\/practice\?resume=1&entry=account-regression$/);
     await expect(page.getByText('Question 10 of 302', { exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Next question', exact: true }).click();
     await expect(page.getByText('Question 11 of 302', { exact: true })).toBeVisible();
