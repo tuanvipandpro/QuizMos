@@ -1,0 +1,146 @@
+.study-roadmap-page,
+.roadmap-plan,
+.roadmap-week,
+.roadmap-editor {
+  min-width: 0;
+}
+
+.study-roadmap-page,
+.roadmap-plan > .ant-card-body,
+.roadmap-form {
+  display: grid;
+  gap: 16px;
+}
+
+.study-roadmap-page {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+  padding-block: 8px 24px;
+}
+
+.study-roadmap-page > .ant-btn {
+  justify-self: start;
+}
+
+.roadmap-actions,
+.roadmap-plan-list,
+.roadmap-task-label,
+.roadmap-week-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.roadmap-week-heading {
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-block-end: 12px;
+}
+
+.roadmap-week-heading > div {
+  min-width: 0;
+}
+
+.roadmap-week-heading :is(h2, h3).ant-typography {
+  margin-block: 0 4px;
+  overflow-wrap: anywhere;
+}
+
+.roadmap-week-heading p.ant-typography {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.study-roadmap-page :is(.ant-btn, .ant-input, .ant-checkbox-wrapper),
+.roadmap-move-dialog :is(.ant-btn, .ant-input) {
+  min-height: 44px;
+}
+
+.study-roadmap-page .ant-btn {
+  max-width: 100%;
+  height: auto;
+  white-space: normal;
+}
+
+.roadmap-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.roadmap-form label,
+.roadmap-date-label {
+  display: block;
+  margin-block-end: 4px;
+  font-weight: 600;
+}
+
+.roadmap-form .ant-input {
+  width: 100%;
+  min-width: 0;
+  font-size: 1rem;
+  color-scheme: inherit;
+}
+
+.roadmap-form select {
+  padding-inline: 10px;
+  color: var(--app-text);
+  background: var(--app-surface);
+  border: 1px solid var(--app-control-border);
+  border-radius: 8px;
+}
+
+.roadmap-form select:focus-visible {
+  outline: 2px solid var(--app-primary);
+  outline-offset: 2px;
+}
+
+.roadmap-form select:disabled {
+  color: var(--app-muted);
+}
+
+.roadmap-form-wide {
+  grid-column: 1 / -1;
+}
+
+.roadmap-tasks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.roadmap-task {
+  display: grid;
+  gap: 8px;
+  padding-block: 12px;
+  border-top: 1px solid var(--app-border);
+}
+
+.roadmap-task time {
+  color: var(--app-muted);
+}
+
+.roadmap-task .ant-checkbox-wrapper {
+  align-items: center;
+  margin-inline-start: 0;
+}
+
+.roadmap-outside {
+  margin-block-start: 16px;
+}
+
+.roadmap-move-dialog .ant-alert,
+.roadmap-move-dialog .ant-alert + .ant-btn {
+  margin-block-start: 10px;
+}
+
+@media (max-width: 560px) {
+  .roadmap-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .study-roadmap-page .ant-card-body {
+    padding: 12px;
+  }
+}

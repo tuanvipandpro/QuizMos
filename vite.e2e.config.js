@@ -22,6 +22,18 @@ export default defineConfig(({ command }) => {
     resolve: {
       alias: [
         {
+          find: /^(?:.*\/)?studyRoadmapService(?:\.js)?$/,
+          replacement: fileURLToPath(
+            new URL('./tests/fixtures/studyRoadmapService.js', import.meta.url)
+          ),
+        },
+        {
+          find: /^(?:.*\/)?studyRoadmapConfig(?:\.js)?$/,
+          replacement: fileURLToPath(
+            new URL('./tests/fixtures/studyRoadmapConfig.js', import.meta.url)
+          ),
+        },
+        {
           find: /^(?:.*\/)?studyNotebookSourceService(?:\.js)?$/,
           replacement: fileURLToPath(
             new URL('./tests/fixtures/studyNotebookSourceService.js', import.meta.url)

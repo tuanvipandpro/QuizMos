@@ -2,6 +2,7 @@ import React, { useEffect, useId, useRef, useState } from 'react';
 import { Avatar, Button, Dropdown, Menu } from 'antd';
 import {
   HistoryOutlined,
+  CalendarOutlined,
   FolderOutlined,
   LogoutOutlined,
   SettingOutlined,
@@ -12,6 +13,7 @@ import {
 import { useLanguage } from '../contexts/LanguageContext';
 import { EXAM_HISTORY_ENABLED } from '../config/examHistoryConfig';
 import { STUDY_NOTEBOOK_ENABLED } from '../config/studyNotebookConfig';
+import { STUDY_ROADMAP_ENABLED } from '../config/studyRoadmapConfig';
 
 export default function AccountMenu({ user, onSettings, onSignOut, onNavigate, inline = false }) {
   const { t } = useLanguage();
@@ -60,6 +62,16 @@ export default function AccountMenu({ user, onSettings, onSignOut, onNavigate, i
         onClick: (event) => activate(event, onSettings),
       },
       { type: 'divider' },
+      ...(STUDY_ROADMAP_ENABLED
+        ? [
+            {
+              key: 'roadmap',
+              label: t('Study roadmap'),
+              icon: <CalendarOutlined aria-hidden="true" />,
+              onClick: (event) => activate(event, () => onNavigate('#/roadmap')),
+            },
+          ]
+        : []),
       ...(STUDY_NOTEBOOK_ENABLED
         ? [
             {
