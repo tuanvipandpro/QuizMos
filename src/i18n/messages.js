@@ -265,6 +265,8 @@ export const vi = {
     'Chưa có cập nhật quiz đã được rà soát. Hãy khám phá thư viện quiz trong khi các thay đổi mới được kiểm tra.',
   'Added 24 AB-100 questions and a certification prerequisite note.':
     'Bổ sung 24 câu AB-100 và ghi chú điều kiện nhận chứng chỉ.',
+  'Added 52 AI-103 questions, including illustrated and interactive items.':
+    'Bổ sung 52 câu AI-103, gồm câu có hình minh họa và câu tương tác.',
   Added: 'Đã thêm',
   'AB-100 certification prerequisite': 'Điều kiện nhận chứng chỉ AB-100',
   'To earn the Expert certification, pass AB-100 and earn at least one of these Associate certifications.':

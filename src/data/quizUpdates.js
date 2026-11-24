@@ -2,6 +2,14 @@
 // Review the referenced bank diff before adding or revising an entry.
 export const quizUpdates = [
   {
+    id: 'ai-103-study-2026-11-24',
+    bankId: 'ai-103',
+    kind: 'updated',
+    date: '2026-11-24',
+    summary: 'Added 52 AI-103 questions, including illustrated and interactive items.',
+    sourceRevision: 'ceddca7dd75f22b5656213bca120162016747831',
+  },
+  {
     id: 'ab-100-study-2026-11-24',
     bankId: 'ab-100',
     kind: 'updated',
