@@ -141,7 +141,7 @@ export const quizzes = [
     file: 'quiz/Azure/AB-100.json',
     category: 'Microsoft',
     difficulty: 'Expert',
-    totalQuestions: 111,
+    totalQuestions: 117,
     code: 'AB-100',
   },
   {

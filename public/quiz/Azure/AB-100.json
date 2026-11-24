@@ -1664,5 +1664,95 @@
     ],
     "explanation": "Phương án phù hợp là : CFO → Use; CTO → Satisfaction. CFO cần biết số lượng tương tác bị bỏ dở so với hội thoại được giải quyết để đánh giá việc sử dụng Copilot Studio credits, nên dùng metric Use. CTO cần theo dõi phản hồi của người dùng về chất lượng câu trả lời của agent, nên dùng metric Satisfaction.",
     "imageUrl": ""
+  },
+  {
+    "id": "ab-100-115",
+    "question": "A service desk uses a Copilot Studio agent to look up Dataverse support cases. Team leads can read cases assigned to their team, and other employees can read only their own cases. The existing tool supports a per-user connection. Which authentication setting should the architect choose so that the tool respects each caller’s existing access?",
+    "options": {
+      "A": "Agent author authentication with a shared account that can read all cases",
+      "B": "User authentication with a connection established by each caller",
+      "C": "Agent author authentication with the team name added to the agent instructions",
+      "D": "An anonymous endpoint that forwards the caller's displayed name"
+    },
+    "answer": [
+      "B"
+    ],
+    "explanation": "Chọn User authentication để công cụ dùng kết nối của người gọi và Dataverse áp dụng quyền tương ứng. Chỉ thêm tên nhóm vào lời nhắc không tạo ranh giới phân quyền; kết nối dùng chung có thể đọc dữ liệu vượt quyền của người hỏi.\n\n[Microsoft Learn](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configure-enduser-authentication)",
+    "imageUrl": ""
+  },
+  {
+    "id": "ab-100-116",
+    "question": "A company has a Power Platform environment dedicated to internal finance agents. Its administrators must prevent makers in that environment from publishing Copilot Studio agents that allow users to chat without signing in. Which policy should the administrators configure?",
+    "options": {
+      "A": "Block the Application Insights in Copilot Studio connector",
+      "B": "Set a longer retention period for the Copilot Studio audit log",
+      "C": "Block the Chat without Microsoft Entra ID authentication in Copilot Studio connector in an environment data policy",
+      "D": "Limit the number of generative answers per conversation"
+    },
+    "answer": [
+      "C"
+    ],
+    "explanation": "Data policy chặn connector dành cho chat không có xác thực. Maker phải chọn một cấu hình có xác thực để người dùng đăng nhập. Logging, retention và giới hạn lượt trả lời không áp đặt yêu cầu đăng nhập.\n\n[Microsoft Learn](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-data-loss-prevention)",
+    "imageUrl": ""
+  },
+  {
+    "id": "ab-100-117",
+    "question": "A Copilot Studio benefits agent is checked against a curated answer for each leave-policy question before release. Different wording is acceptable if eligibility and entitlement have the same meaning as the expected answer. Which evaluation method most directly meets the requirement?",
+    "options": {
+      "A": "Compare meaning against the expected response",
+      "B": "Exact match against the expected response",
+      "C": "Text similarity based on character overlap alone",
+      "D": "General quality without an expected response"
+    },
+    "answer": [
+      "A"
+    ],
+    "explanation": "Compare meaning đối chiếu ý nghĩa với câu trả lời mong đợi nên vẫn chấp nhận cách diễn đạt khác. Exact match yêu cầu cùng văn bản. General quality đánh giá chất lượng chung mà không đối chiếu với đáp án cụ thể.\n\n[Microsoft Learn](https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-agent-evaluation-overview)",
+    "imageUrl": ""
+  },
+  {
+    "id": "ab-100-118",
+    "question": "A team has deployed a Power Platform solution containing a Copilot Studio agent to Test using a pipeline configured with Test and Production stages. QA approves that deployment. A maker then makes unrelated edits in Development. What should the team do to move the approved solution to Production?",
+    "options": {
+      "A": "Export the current unmanaged solution from Development and import it directly into Production",
+      "B": "Rebuild the package from the latest Development state just before production deployment",
+      "C": "Copy the maker's latest changes manually into the Production agent",
+      "D": "Continue the same pipeline deployment to the Production stage"
+    },
+    "answer": [
+      "D"
+    ],
+    "explanation": "Giai đoạn Production của cùng lượt pipeline sử dụng bản solution đã được chuyển qua Test. Tiếp tục lượt đó giữ đúng artifact QA đã chấp thuận. Xuất hoặc sửa lại từ Development có thể đưa thay đổi chưa nghiệm thu vào production.\n\n[Microsoft Learn](https://learn.microsoft.com/en-us/power-platform/alm/run-pipeline)",
+    "imageUrl": ""
+  },
+  {
+    "id": "ab-100-119",
+    "question": "An internal compliance review must identify which maker published a Copilot Studio agent and when it happened. The team already has response latency charts. Which source should the architect use to answer the compliance question?",
+    "options": {
+      "A": "Power Platform capacity reports filtered to the environment",
+      "B": "Microsoft Purview Audit records for Copilot Studio activities",
+      "C": "The agent's knowledge-source refresh status",
+      "D": "An Azure Monitor chart of average request duration"
+    },
+    "answer": [
+      "B"
+    ],
+    "explanation": "Microsoft Purview Audit ghi lại hoạt động quản trị và maker trong Copilot Studio, gồm sự kiện xuất bản. Biểu đồ độ trễ giúp đo vận hành nhưng không phải nhật ký xác định ai đã thực hiện thao tác xuất bản.\n\n[Microsoft Learn](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-logging-copilot-studio)",
+    "imageUrl": ""
+  },
+  {
+    "id": "ab-100-120",
+    "question": "A procurement team pilots an AI agent for routine supplier inquiries. Leadership wants evidence that the agent reduces operating cost while preserving service quality. Which measure should the architect recommend?",
+    "options": {
+      "A": "The total number of conversations initiated by the agent",
+      "B": "The number of tools exposed to the agent",
+      "C": "Cost per correctly resolved inquiry, including escalation and rework, compared with a comparable baseline",
+      "D": "The percentage of inquiries with any generated reply"
+    },
+    "answer": [
+      "C"
+    ],
+    "explanation": "So sánh chi phí trên mỗi yêu cầu được xử lý đúng với nhóm hoặc giai đoạn tương đương. Tính cả chuyển người xử lý và làm lại để phản ánh chi phí thật. Chỉ đếm phiên chat hoặc phản hồi có thể che đi sự suy giảm chất lượng.\n\n[Microsoft Learn](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ab-100)",
+    "imageUrl": ""
   }
 ]
