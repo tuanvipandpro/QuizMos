@@ -30,7 +30,8 @@ export function createCredentialStore(service, getStorage = () => globalThis.loc
     };
   }
   return {
-    prime(uid, profile) {
+    prime(uid, profile, { onlyIfUnset = false } = {}) {
+      if (onlyIfUnset && cache.has(uid)) return;
       const keys = keysFromProfile(profile);
       latest.set(uid, keys);
       cache.set(uid, Promise.resolve(keys));

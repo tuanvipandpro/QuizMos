@@ -384,6 +384,31 @@ export default function App() {
   );
   const studyProgress = cloudRoute ? customQuizProgress(active, cloud) : progressState;
   const studyId = active && cloudRoute ? customDraftId(active) : active?.id;
+  const practiceSize = route.params.get('size');
+  const shortPractice = practiceSize !== null && practiceSize !== 'all';
+  let waitingForCheckpoint = route.params.get('resume') === '1' && studyProgress.loading;
+  if (
+    waitingForCheckpoint &&
+    route.mode === 'practice' &&
+    !shortPractice &&
+    !route.params.has('fresh') &&
+    active?.kind === 'bank' &&
+    !authLoading &&
+    studyOwner === uid
+  ) {
+    try {
+      const draft = readStudySession(
+        sessionStorage,
+        sessionKey(uid, studyId, 'practice'),
+        active.questions,
+        'practice'
+      );
+      // The matching entry already applied its checkpoint. A new Resume entry still waits.
+      if (draft?.entryToken === canonicalQuizHash(hash)) waitingForCheckpoint = false;
+    } catch {
+      /* Local drafts are optional. */
+    }
+  }
   const cloudError =
     !cloudRoute || authLoading || studyOwner !== uid || cloud.loading
       ? null
@@ -684,7 +709,7 @@ export default function App() {
     !active ||
     authLoading ||
     studyOwner !== uid ||
-    (route.params.get('resume') === '1' && studyProgress.loading)
+    waitingForCheckpoint
   )
     screen = (
       <div className="load-state" role="status">
@@ -702,13 +727,10 @@ export default function App() {
       route.params.get('resume') === '1'
         ? resolveCheckpoint(active.questions, studyProgress.progress[active.id])
         : null;
-    const Practice =
-      route.params.has('size') && route.params.get('size') !== 'all'
-        ? QuickPracticeMode
-        : PracticeMode;
+    const Practice = shortPractice ? QuickPracticeMode : PracticeMode;
     screen = (
       <Practice
-        size={route.params.get('size')}
+        size={practiceSize}
         onRestart={() =>
           go(
             activeQuizUrl('practice', { size: route.params.get('size'), fresh: String(Date.now()) })
