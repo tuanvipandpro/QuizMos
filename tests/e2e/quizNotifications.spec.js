@@ -13,6 +13,22 @@ import { clickAfterUiMotion } from './uiMotion.js';
 const errors = new WeakMap();
 const bell = (page) => headerControl(page, { name: 'Quiz updates', exact: true });
 const panel = (page) => page.locator('.quiz-notification-panel');
+async function expectSemanticBadges(surface, t) {
+  for (const [label, channel] of [
+    ['Added', 1],
+    ['Updated', 2],
+  ]) {
+    const badge = surface.getByText(t(label), { exact: true }).first();
+    await expect(badge).toBeVisible();
+    expect(await contrastRatio(badge)).toBeGreaterThanOrEqual(4.5);
+    const colors = await badge.evaluate((element) => {
+      const { color, backgroundColor } = getComputedStyle(element);
+      return [color, backgroundColor].map((value) => value.match(/\d+/g).map(Number));
+    });
+    for (const rgb of colors)
+      expect(rgb[channel]).toBeGreaterThan(Math.max(...rgb.filter((_, i) => i !== channel)));
+  }
+}
 test.beforeEach(async ({ page }) => {
   const found = [];
   errors.set(page, found);
@@ -174,6 +190,7 @@ test('long notification content and header fit all locales/themes/phone-landscap
       true
     );
     expect(await contrastRatio(popup.locator('p').first())).toBeGreaterThanOrEqual(4.5);
+    await expectSemanticBadges(popup, t);
     for (const action of await popup.getByRole('button').all()) {
       const a = await action.boundingBox();
       expect(a.width).toBeGreaterThanOrEqual(44);
@@ -184,6 +201,8 @@ test('long notification content and header fit all locales/themes/phone-landscap
     });
     await page.keyboard.press('Escape');
     await expect(trigger).toBeFocused();
+    await page.goto('./#/updates');
+    await expectSemanticBadges(page.locator('.quiz-updates-list'), t);
   }
 });
 test('notification navigation retains active-exam Cancel and unchanged stored deadlines', async ({

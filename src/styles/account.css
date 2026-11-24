@@ -92,6 +92,16 @@
 .quiz-update .ant-tag {
   margin: 0;
 }
+.quiz-update-kind-added.ant-tag {
+  color: var(--app-success-text);
+  background-color: var(--app-success-bg);
+  border-color: var(--app-success-border);
+}
+.quiz-update-kind-updated.ant-tag {
+  color: var(--app-primary);
+  background-color: var(--app-info-bg);
+  border-color: var(--app-info-border);
+}
 .quiz-update-actions a {
   display: inline-flex;
   align-items: center;
