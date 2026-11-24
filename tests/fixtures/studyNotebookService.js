@@ -102,8 +102,9 @@ export default {
         throw notebookError('SOURCE_CHANGED');
     }
     const now = Math.max(Date.now(), (old?.updatedAt || 0) + 1);
-    const next = transitionNotebookState(old && notebookStateFromEntry(old), command.change, now);
-    if (!old && !next) return { entry: null, state: data.state, noop: true };
+    const current = old ? notebookStateFromEntry(old) : null;
+    const next = transitionNotebookState(current, command.change, now);
+    if (next === current) return { entry: old || null, state: data.state, noop: true };
     if (!old && data.state.count >= 500) throw notebookError('QUOTA');
     const markers = {
       lastOperationId: command.operationId,

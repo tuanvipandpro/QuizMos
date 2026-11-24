@@ -327,10 +327,13 @@ test('guest uploads remain local and login does not migrate a guest draft into s
   await page.getByRole('radio', { name: /Paris/ }).check();
   await (await headerControl(page, { name: 'Sign in', exact: true })).click();
   await clickAfterUiMotion(page.getByRole('button', { name: 'Continue with Google', exact: true }));
-  await expect(page.getByRole('heading', { name: 'Quiz Bank', exact: true })).toBeVisible();
+  await expectHeaderAccount(page, 'Test account');
+  await expect(page).toHaveURL(/#\/quiz\/custom\/practice$/);
+  await expect(page.getByRole('radio', { name: /Paris/ })).toBeChecked();
   await (await headerControl(page, { name: 'My quizzes', exact: true })).click();
   await expect(page.getByText('0/3 saved quizzes', { exact: true })).toBeVisible();
-  await expect(page.getByText('Guest only', { exact: true })).toHaveCount(0);
+  await expect(card(page, 'Guest only')).toHaveCount(0);
+  expect(Object.keys(await values(page))).toHaveLength(0);
 });
 
 test('logout and another account cannot display a private quiz through its old deep link', async ({

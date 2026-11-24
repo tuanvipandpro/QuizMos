@@ -1,11 +1,12 @@
 import React from 'react';
-import { Button, Card, Empty, Tag, Typography } from 'antd';
+import { Button, Card, Empty, Typography } from 'antd';
 import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { quizUpdates } from '../data/quizUpdates';
 import { quizzes } from '../data/quizzes';
 import { validateQuizUpdates } from '../utils/quizUpdates';
 import { quizUrl } from '../utils/navigation';
+import QuizUpdateKindBadge from './QuizUpdateKindBadge';
 
 const { Title, Paragraph } = Typography;
 const updates = validateQuizUpdates(quizUpdates, quizzes);
@@ -47,7 +48,7 @@ export default function QuizUpdatesPage({ onNavigate }) {
               <li key={entry.id}>
                 <Card className="quiz-update">
                   <div className="quiz-update-meta">
-                    <Tag>{t(entry.kind === 'added' ? 'Added' : 'Updated')}</Tag>
+                    <QuizUpdateKindBadge kind={entry.kind} />
                     <time dateTime={entry.date}>
                       {dateFormat.format(new Date(`${entry.date}T00:00:00Z`))}
                     </time>

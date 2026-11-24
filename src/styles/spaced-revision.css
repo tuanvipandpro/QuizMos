@@ -1,0 +1,41 @@
+.spaced-summary,
+.spaced-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px 12px;
+}
+.spaced-summary {
+  justify-content: space-between;
+}
+.spaced-summary > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.spaced-summary .ant-typography {
+  margin-block: 0 4px;
+}
+.spaced-list > ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.spaced-list time {
+  margin-inline-end: 8px;
+}
+.spaced-revision .spaced-overdue {
+  color: var(--app-progress-text);
+  background: var(--app-progress-bg);
+  border-color: var(--app-progress-text);
+}
+.spaced-revision .ant-btn,
+.spaced-roadmap .ant-btn {
+  min-height: 44px;
+  max-width: 100%;
+  height: auto;
+  white-space: normal;
+}
+.spaced-roadmap {
+  margin-block: 12px;
+}

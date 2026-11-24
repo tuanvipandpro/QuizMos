@@ -28,6 +28,20 @@
 
 For the M2 study notebook (#81), `firestore.notebook.indexes.json` is a complete **tracked-policy candidate** combining the custom-question/history-payload exemptions, the notebook note exemption and 11 query indexes. Reconcile it against current published configuration before any owner-authorized publication; do not deploy a fragment or replace unrelated live indexes. Keep `VITE_STUDY_NOTEBOOK_ENABLED=false` until compatible Rules and ready indexes are verified. Notebook policy/client activation and a bounded account smoke remain a separate rollout gate; see [the notebook contract](../docs/study-notebook.md). No notebook publication has occurred.
 
+## Study roadmap candidate (M3)
+
+The #116 candidate adds owner-scoped `users/{uid}/studyPlans` Rules for three fixed plan slots. It requires no new composite indexes or field overrides. Reconcile the candidate against the current published policy and verify owner access before setting the repository build variable `VITE_STUDY_ROADMAP_ENABLED=true`. After the verified frontend release, smoke test create, edit, reload, archive and delete with a designated test account. Disable the variable to hide the planner while retaining stored plans.
+
+## Spaced review candidate (M3)
+
+The #85 candidate adds an optional server-anchored `reviewSchedule` to existing Notebook documents. The existing mistake and source indexes remain sufficient. Verify compatible published Notebook Rules and a client that reads the optional field before setting `VITE_SPACED_REVISION_ENABLED=true`. The Notebook flag is also required for the queue. After release, use a designated account to confirm wrong/correct, retry and remove/restore behavior. Disable the flag to hide the spaced review workflow while retaining saved schedules and Notebook entries.
+
+## Certification outcomes candidate (M3)
+
+For #115, private outcomes under `users/{uid}/certificationOutcomes` and moderation submissions are separate from the allowlisted `publishedOutcomes` projection. No composite indexes are required. Verify the reconciled live Rules before enabling `VITE_CERT_OUTCOMES_ENABLED`. Keep `VITE_CERT_OUTCOME_SHARING_ENABLED` off until designated moderators have the Firebase custom claim `certOutcomeModerator: true`. Assign or revoke that claim from a trusted owner-managed Admin SDK context and refresh the moderator's sign-in token. It is never sourced from a profile document or editable client settings.
+
+Use designated owner, moderator and guest sessions to verify pending visibility, moderation, public field boundaries and withdrawal. To suspend new sharing, turn off the sharing flag. Owners can still withdraw from the private journal. Already published documents are public until withdrawn or removed, so remove affected reports before any rollback that must revoke their public access. Reviewers must check the previewed public experience for identifying information before publishing.
+
 ## Rollback
 
 Revert/disable the cloud client first while preserving saved documents. Bank and local uploads remain independent. Evaluate old/new client compatibility before reverting Rules; do not make private content public or delete quizzes as rollback. Keep the original baseline/provenance for comparison. No Firebase deployment is performed automatically by this repository's CI.

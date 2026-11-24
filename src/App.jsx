@@ -24,6 +24,11 @@ import { useQuizProgress } from './hooks/useQuizProgress';
 import { useStudyNotebook } from './hooks/useStudyNotebook';
 import { useCustomQuizzes, customQuizProgress } from './hooks/useCustomQuizzes';
 import {
+  TAB_UPLOAD_KEY as UPLOAD_KEY,
+  commitGuestStudyTransfer,
+  prepareGuestStudyTransfer,
+} from './services/guestStudyStorage.js';
+import {
   parseCloudQuizId,
   customDraftId,
   CUSTOM_QUIZ_MESSAGES,
@@ -32,6 +37,7 @@ import {
 import QuizLibrary from './components/QuizLibrary';
 import MyQuizzes from './components/MyQuizzes';
 import QuizMode from './components/QuizMode';
+import { AB_100_ASSOCIATE_CERTIFICATIONS } from './data/certificationProfiles.js';
 import SignInModal from './components/SignInModal';
 import AppHeader from './components/AppHeader';
 import AppFooter from './components/AppFooter';
@@ -52,13 +58,13 @@ import { canonicalQuizHash, DEFAULT_HASH, quizUrl, resolveLoadedQuiz } from './u
 import { readDarkMode, THEME_KEY } from './utils/appearance';
 import { examHistorySource } from './utils/examHistory.js';
 import { EXAM_HISTORY_ENABLED } from './config/examHistoryConfig';
+import { STUDY_NOTEBOOK_ENABLED } from './config/studyNotebookConfig';
 import 'antd/dist/reset.css';
 import './App.css';
 import './markdown.css';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
-const UPLOAD_KEY = 'quiz-tab-upload-v1';
 const QuizPdfExport = lazy(() => import('./components/QuizPdfExport'));
 const PracticeMode = lazy(() => import('./components/PracticeMode'));
 const ExamMode = lazy(() => import('./components/ConfiguredExam'));
@@ -69,6 +75,8 @@ const ExamHistoryPage = lazy(() => import('./components/ExamHistoryPage'));
 const LandingPage = lazy(() => import('./components/LandingPage'));
 const DonatePage = lazy(() => import('./components/DonatePage'));
 const ProfilePage = lazy(() => import('./components/ProfilePage'));
+const StudyRoadmapPage = lazy(() => import('./components/StudyRoadmapPage'));
+const CertificationOutcomesPage = lazy(() => import('./components/CertificationOutcomesPage'));
 const QuizUpdatesPage = lazy(() => import('./components/QuizUpdatesPage'));
 const StudyNotebookWorkspace = lazy(() => import('./components/StudyNotebookWorkspace'));
 
@@ -96,7 +104,34 @@ export default function App() {
   const [isDarkMode, setIsDarkMode] = useState(initialDarkMode);
   const [modal, modalHolder] = Modal.useModal();
   const [messageApi, messageHolder] = message.useMessage();
+  const [guestStudy, setGuestStudy] = useState(null);
   const signIn = useSignIn({
+    onStart: () => {
+      if (
+        authLoading ||
+        studyOwner !== null ||
+        uid ||
+        route.page !== 'quiz' ||
+        !['practice', 'exam'].includes(route.mode) ||
+        !active ||
+        loaded?.id !== route.quizId ||
+        !['bank', 'tab-upload'].includes(active.kind)
+      )
+        return null;
+      const details = { hash, quiz: active, mode: route.mode, params: route.params };
+      setGuestStudy({ details });
+      return details;
+    },
+    onSettled: (details, account) => {
+      if (details)
+        setGuestStudy((current) =>
+          current?.details === details
+            ? account?.uid
+              ? { details, account: account.uid }
+              : null
+            : current
+        );
+    },
     onSuccess: (account) =>
       messageApi.success(t('Welcome, {name}!', { name: account.displayName || account.email })),
   });
@@ -194,17 +229,57 @@ export default function App() {
   }, [examActive]);
 
   useEffect(() => {
-    if (authLoading) return;
+    if (authLoading || studyOwner === uid) return;
+    let continued = false,
+      preserveGuest = false;
     if (studyOwner !== undefined && studyOwner !== uid) {
+      const localSignIn = studyOwner === null && uid && guestStudy?.details.hash === hash;
+      // The observer and popup may complete in either order.
+      if (localSignIn && !guestStudy.account) return;
+      if (localSignIn && guestStudy.account === uid) {
+        try {
+          const transfer =
+            guestStudy.transfer ||
+            prepareGuestStudyTransfer(
+              sessionStorage,
+              guestStudy.details,
+              uid,
+              STUDY_NOTEBOOK_ENABLED && !user?.isAnonymous
+            );
+          if (!transfer) throw new Error('Guest draft unavailable');
+          if (transfer.conflict && !guestStudy.choice) {
+            if (!guestStudy.transfer) setGuestStudy({ ...guestStudy, transfer });
+            return;
+          }
+          if (guestStudy.choice === 'account') {
+            if (transfer.resumeAccount) replace(transfer.resumeHash);
+            else
+              replace(
+                route.quizId === 'custom' ? '#/my-quizzes' : quizUrl(route.quizId, 'overview')
+              );
+          } else {
+            commitGuestStudyTransfer(sessionStorage, transfer);
+            replace(transfer.resumeHash);
+          }
+          continued = true;
+        } catch {
+          preserveGuest = true;
+          messageApi.warning(t('Could not continue this study draft after signing in.'));
+        }
+      }
+      if (guestStudy) setGuestStudy(null);
       setLoaded((previous) => (previous?.id === 'custom' ? null : previous));
       try {
-        clearStudySessions(sessionStorage, studyOwner);
+        if (!preserveGuest) clearStudySessions(sessionStorage, studyOwner);
       } catch {
         /* Optional local drafts. */
       }
-      if (route.quizId === 'custom' || parseCloudQuizId(route.quizId)) navigate('#/library', true);
-      else if (route.page === 'quiz' && route.mode === 'exam')
-        navigate(quizUrl(route.quizId, 'overview', { mode: 'exam' }), true);
+      if (!continued) {
+        if (route.quizId === 'custom' || parseCloudQuizId(route.quizId))
+          navigate('#/library', true);
+        else if (route.page === 'quiz' && route.mode === 'exam')
+          navigate(quizUrl(route.quizId, 'overview', { mode: 'exam' }), true);
+      }
     }
     setStudyOwner(uid);
     let next = null;
@@ -220,13 +295,15 @@ export default function App() {
         validateCustomQuestions(saved.questions);
         next = saved;
       }
-      if (!next) sessionStorage.removeItem(UPLOAD_KEY);
+      const retainGuestUpload =
+        saved?.owner === null && (preserveGuest || studyOwner === undefined);
+      if (!next && !retainGuestUpload) sessionStorage.removeItem(UPLOAD_KEY);
     } catch {
       /* A malformed or inaccessible upload is ignored. */
     }
     setUpload(next);
     setUploadReady(true);
-  }, [uid, authLoading, studyOwner]);
+  }, [uid, authLoading, studyOwner, guestStudy, hash]);
 
   useEffect(() => {
     if (route.page !== 'quiz') {
@@ -339,23 +416,27 @@ export default function App() {
   const guide = getQuickSummary(route.quizId);
   useEffect(() => {
     document.title =
-      (route.page === 'notebook'
-        ? t('Study notebook')
-        : route.page === 'history'
-          ? t('Exam history')
-          : route.page === 'home'
-            ? t('Small quizzes. Big confidence.')
-            : route.page === 'donate'
-              ? t('Support QuizMos')
-              : route.page === 'library'
-                ? t('Quiz Bank')
-                : route.page === 'my-quizzes'
-                  ? t('My quizzes')
-                  : route.page === 'profile'
-                    ? t('Profile')
-                    : route.page === 'updates'
-                      ? t('Quiz updates')
-                      : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
+      (route.page === 'roadmap'
+        ? t('Study roadmap')
+        : route.page === 'notebook'
+          ? t('Study notebook')
+          : route.page === 'history'
+            ? t('Exam history')
+            : route.page === 'home'
+              ? t('Small quizzes. Big confidence.')
+              : route.page === 'donate'
+                ? t('Support QuizMos')
+                : route.page === 'library'
+                  ? t('Quiz Bank')
+                  : route.page === 'my-quizzes'
+                    ? t('My quizzes')
+                    : route.page === 'profile'
+                      ? t('Profile')
+                      : route.page === 'updates'
+                        ? t('Quiz updates')
+                        : route.page === 'outcomes'
+                          ? t('Certification outcomes')
+                          : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
   }, [route.page, active?.name, t]);
   let examDraft = null;
   if (active && ['overview', 'exam'].includes(route.mode)) {
@@ -509,6 +590,26 @@ export default function App() {
         isDarkMode={isDarkMode}
         onThemeChange={(value) => setIsDarkMode(value === 'dark')}
         onSettings={() => setSettingsStatus('open')}
+        onNavigate={go}
+        onSignIn={openLogin}
+      />
+    );
+  else if (route.page === 'roadmap')
+    screen = (
+      <StudyRoadmapPage
+        initialPlanId={route.params.get('plan')}
+        user={authLoading ? null : user}
+        authLoading={authLoading}
+        onNavigate={go}
+        onSignIn={openLogin}
+      />
+    );
+  else if (route.page === 'outcomes')
+    screen = (
+      <CertificationOutcomesPage
+        user={authLoading ? null : user}
+        authLoading={authLoading}
+        params={route.params}
         onNavigate={go}
         onSignIn={openLogin}
       />
@@ -720,6 +821,17 @@ export default function App() {
               {t('{count} questions', { count: active.questions.length })}
             </Text>
           </div>
+          {active.id === 'ab-100' && active.kind === 'bank' && (
+            <Typography.Paragraph className="ab100-prerequisite-note">
+              <Text strong>{t('AB-100 certification prerequisite')}</Text>
+              <br />
+              {t(
+                'To earn the Expert certification, pass AB-100 and earn at least one of these Associate certifications.'
+              )}
+              <br />
+              {AB_100_ASSOCIATE_CERTIFICATIONS.join(' · ')}
+            </Typography.Paragraph>
+          )}
         </div>
         <QuizPdfExport key={`pdf:${studyId}:${uid || 'guest'}`} quiz={active} />
         <QuizMode
@@ -828,6 +940,28 @@ export default function App() {
         {!studying && route.page !== 'home' && <AppFooter onNavigate={go} page={route.page} />}
       </Layout>
       <SignInModal {...signIn.modalProps} />
+      <Modal
+        className="app-danger-dialog"
+        open={
+          !!guestStudy?.transfer &&
+          !guestStudy.choice &&
+          guestStudy.account === uid &&
+          guestStudy.details.hash === hash
+        }
+        title={t('Choose which study draft to keep')}
+        okText={t('Continue guest draft')}
+        cancelText={t('Keep account draft')}
+        okButtonProps={{ danger: true }}
+        cancelButtonProps={{ autoFocus: true }}
+        onOk={() => setGuestStudy((current) => ({ ...current, choice: 'guest' }))}
+        onCancel={() => setGuestStudy((current) => ({ ...current, choice: 'account' }))}
+      >
+        <Typography.Paragraph>
+          {t(
+            'This account already has a draft for this session. Continuing the guest draft replaces the account draft in this tab. Keeping the account draft discards the guest draft.'
+          )}
+        </Typography.Paragraph>
+      </Modal>
       {settingsStatus !== 'closed' && (
         <Suspense fallback={null}>
           <SettingsModal

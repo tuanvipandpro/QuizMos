@@ -1,10 +1,11 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { Badge, Button, Dropdown, Empty, Tag, Typography } from 'antd';
+import { Badge, Button, Dropdown, Empty, Typography } from 'antd';
 import { BellOutlined, CloseOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useQuizUpdateNotifications } from '../hooks/useQuizUpdateNotifications.js';
 import { findQuiz } from '../data/quizzes.js';
 import { quizUrl } from '../utils/navigation.js';
+import QuizUpdateKindBadge from './QuizUpdateKindBadge';
 import './QuizUpdateNotifications.css';
 export default function QuizUpdateNotifications({ onNavigate }) {
   const { t, language } = useLanguage();
@@ -60,7 +61,7 @@ export default function QuizUpdateNotifications({ onNavigate }) {
           {entries.map((entry) => (
             <li key={entry.id}>
               <div className="quiz-notification-date">
-                <Tag>{t(entry.kind === 'added' ? 'Added' : 'Updated')}</Tag>
+                <QuizUpdateKindBadge kind={entry.kind} />
                 <time dateTime={entry.date}>
                   {formatter.format(new Date(entry.date + 'T00:00:00Z'))}
                 </time>

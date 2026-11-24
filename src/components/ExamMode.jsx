@@ -24,7 +24,7 @@ import CertificationProfileInfo from './CertificationProfileInfo';
 import ExamArchiveStatus from './ExamArchiveStatus';
 import ExamReviewFilters from './ExamReviewFilters';
 import { isAnswerComplete, isAnswerCorrect } from '../utils/questionModel';
-import { matchesExamReviewFilter } from '../utils/examReviewFilters.js';
+import { EXAM_REVIEW_FILTERS, matchesExamReviewFilter } from '../utils/examReviewFilters.js';
 import { scrollToTop } from '../utils/scroll';
 import { getExamFeedbackMode } from '../data/examModes';
 import { STUDY_NOTEBOOK_ENABLED } from '../config/studyNotebookConfig';
@@ -94,7 +94,9 @@ export default function ExamMode({
   const archive = useExamArchive(session, user?.uid, questions);
   const capture = useNotebookCapture(session, sourceQuiz, user?.uid, 'exam');
   const [submitOpen, setSubmitOpen] = useState(false);
-  const [filter, setFilter] = useState('all');
+  const filter = EXAM_REVIEW_FILTERS.some(([value]) => value === session.reviewFilter)
+    ? session.reviewFilter
+    : 'all';
   const stats = useMemo(() => examStats(session), [session]);
   const question = session.questions[session.index];
   const feedback = getExamFeedbackMode(session.feedbackMode);
@@ -131,14 +133,20 @@ export default function ExamMode({
     .map((_, index) => index)
     .filter((index) => !session.submitted || matches(index, filter));
   const go = (index) => {
-    if (session.submitted && !matches(index, filter)) setFilter('all');
-    setSession((previous) => ({ ...previous, index }));
+    setSession((previous) => ({
+      ...previous,
+      index,
+      ...(previous.submitted && !matches(index, filter) ? { reviewFilter: 'all' } : {}),
+    }));
     scrollToTop();
   };
   const selectFilter = (value) => {
-    setFilter(value);
     const first = session.questions.findIndex((_, index) => matches(index, value));
-    if (first >= 0) setSession((previous) => ({ ...previous, index: first }));
+    setSession((previous) => ({
+      ...previous,
+      reviewFilter: value,
+      index: first >= 0 ? first : previous.index,
+    }));
   };
   const position = indexes.indexOf(session.index);
   const answer = (value) => setSession((previous) => answerExamQuestion(previous, value));

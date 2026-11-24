@@ -50,6 +50,7 @@ export function createNotebookCaptureJournal(storage = () => globalThis.sessionS
             if (
               item.command.entryKey !== (await notebookEntryKey(item.ref)) ||
               item.command.change.kind !== 'outcome' ||
+              item.command.change.spaced !== item.change.spaced ||
               item.command.change.correct !== item.change.correct
             )
               return null;

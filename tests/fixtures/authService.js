@@ -36,6 +36,10 @@ export default {
       emailVerified: true,
     };
     publish(user);
+    if (sessionStorage.getItem('quiz-e2e-defer-signin-result'))
+      await new Promise((resolve) =>
+        window.addEventListener('quiz-e2e-resolve-signin-result', resolve, { once: true })
+      );
     return { success: true, user };
   },
   async signOut() {

@@ -54,6 +54,7 @@ export default function PracticeMode({
   notebook,
   onSignIn,
   revision = false,
+  spacedRevision = false,
 }) {
   const { user, isAuthenticated } = useAuth();
   const { t } = useLanguage();
@@ -131,7 +132,13 @@ export default function PracticeMode({
       <div className="study-heading">
         <div>
           <Button type="text" icon={<ArrowLeftOutlined aria-hidden="true" />} onClick={onExit}>
-            {t(revision ? 'Back to notebook' : 'Back to quiz overview')}
+            {t(
+              spacedRevision
+                ? 'Back to spaced review'
+                : revision
+                  ? 'Back to notebook'
+                  : 'Back to quiz overview'
+            )}
           </Button>
           <Title level={1}>{t('Practice')}</Title>
           <Text type="secondary">{quizName}</Text>
@@ -232,7 +239,7 @@ export default function PracticeMode({
                   index === previous.index ? value : item
                 ),
               }));
-              capture.practice(question, value, eventId);
+              capture.practice(question, value, eventId, spacedRevision);
             }}
             showFeedback={complete}
             isCorrect={isAnswerCorrect(question, answer)}
@@ -294,7 +301,7 @@ export default function PracticeMode({
                 )}
               </Paragraph>
             )}
-          <NotebookCaptureStatus capture={capture} />
+          <NotebookCaptureStatus capture={capture} spacedRevision={spacedRevision} />
         </div>
         <QuestionNavigator
           feedback

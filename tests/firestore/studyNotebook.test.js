@@ -92,6 +92,60 @@ before(async () => {
 beforeEach(() => env.clearFirestore());
 after(() => env?.cleanup());
 
+test('spaced reviews use server time, keep the original evidence and reject early or foreign writes', async () => {
+  const alice = client();
+  const service = repo(alice);
+  const ref = await reference();
+  const note = await command(ref);
+  await service.mutate('alice', note);
+  const wrong = await next(service, note, { kind: 'outcome', correct: false });
+  await service.mutate('alice', wrong);
+  const review = await next(service, wrong, { kind: 'outcome', correct: true, spaced: true });
+  await service.mutate('alice', review);
+  const saved = await service.get('alice', review.entryKey);
+  assert.equal(saved.entry.reviewSchedule.level, 1);
+  assert.equal(saved.entry.reviewSchedule.anchor, saved.entry.updatedAt);
+  assert.equal(saved.entry.note, 'Owner note');
+  assert.equal((await service.mutate('alice', review)).replayed, true);
+  const early = await next(service, review, { kind: 'outcome', correct: true, spaced: true });
+  assert.equal((await service.mutate('alice', early)).noop, true);
+  const target = paths(alice, review.entryKey);
+  const current = (await getDoc(target.entry)).data();
+  const quota = (await getDoc(target.quota)).data();
+  const forged = writeBatch(alice);
+  const markers = {
+    lastOperationId: early.operationId,
+    lastOperationFingerprint: early.fingerprint,
+    updatedAt: serverTimestamp(),
+  };
+  forged.set(target.entry, {
+    ...current,
+    ...markers,
+    revision: current.revision + 1,
+    reviewSchedule: { level: 2, anchor: serverTimestamp() },
+  });
+  forged.set(target.quota, { ...quota, ...markers, revision: quota.revision + 1 });
+  await assertFails(forged.commit());
+  await env.withSecurityRulesDisabled(async (context) =>
+    setDoc(paths(context.firestore(), review.entryKey).entry, {
+      ...current,
+      reviewSchedule: { level: 1, anchor: Timestamp.fromMillis(Date.now() - 2 * 86400000) },
+    })
+  );
+  await assertSucceeds(service.mutate('alice', early));
+  const advanced = (await service.get('alice', review.entryKey)).entry;
+  assert.equal(advanced.reviewSchedule.level, 2);
+  const pause = await next(service, review, { kind: 'reviewSchedule', action: 'pause' });
+  await assert.rejects(() => repo(client('bob')).mutate('alice', pause), /DENIED/);
+  await service.mutate('alice', pause);
+  const restore = await next(service, pause, { kind: 'reviewSchedule', action: 'reset' });
+  await service.mutate('alice', restore);
+  const resumed = (await service.get('alice', review.entryKey)).entry;
+  assert.equal(resumed.reviewSchedule.level, 0);
+  assert.equal(resumed.lastReviewedAt, advanced.lastReviewedAt);
+  assert.equal(resumed.note, saved.entry.note);
+});
+
 function rawData(cmd, { entry = {}, state = {} } = {}) {
   return {
     entry: {

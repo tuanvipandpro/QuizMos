@@ -752,7 +752,7 @@
 .quiz-exam-fields {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-.quiz-exam-fields input {
+.quiz-exam-fields :is(input, select) {
   width: 100%;
   min-width: 0;
   min-height: 44px;
@@ -762,16 +762,25 @@
   border: 1px solid var(--app-control-border);
   border-radius: 8px;
 }
-.quiz-exam-fields input:focus-visible {
+.quiz-exam-fields select {
+  font-size: 1rem;
+}
+.quiz-exam-fields :is(input, select):focus-visible {
   outline: 2px solid var(--app-primary);
   outline-offset: 3px;
 }
-.quiz-exam-fields input[aria-invalid='true'] {
+.quiz-exam-fields :is(input, select)[aria-invalid='true'] {
   border-color: var(--app-danger-text);
 }
 .quiz-exam-fields input[readonly] {
   border-color: var(--app-muted);
   background: var(--app-info-bg);
+}
+.quiz-exam-fields select:disabled {
+  color: var(--app-muted);
+  background: var(--app-info-bg);
+  border-color: var(--app-muted);
+  opacity: 1;
 }
 .practice-size-picker {
   margin: 24px 0;
