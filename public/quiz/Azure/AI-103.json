@@ -2050,7 +2050,7 @@
       "D"
     ],
     "explanation": "tool_choice is the deterministic run-level control for requiring a specific tool call. Setting it in create_and_process() to select kbsearch prevents the default automatic model decision from bypassing the knowledge-base tool, so responses are grounded in its results.",
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1786767511858-jnet4i48.png"
+    "imageUrl": "quiz/Azure/AI-103-assets/ai-103-study-122.png"
   },
   {
     "id": "ai-103-study-123",
@@ -2065,7 +2065,7 @@
       "s3": "A"
     },
     "explanation": "GET /status validates the startup API key without making an endpoint query, so the first statement is false. No logging provider or output mount is configured; disk logging requires both configuration and an output mount, so the second statement is false. The /swagger endpoint provides documentation for the container endpoints, so the third statement is true.",
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1786767512062-v1ye8uok.png",
+    "imageUrl": "quiz/Azure/AI-103-assets/ai-103-study-123.png",
     "type": "yes_no",
     "statements": [
       {
@@ -2095,7 +2095,7 @@
       "s3": "A"
     },
     "explanation": "Language-model output is probabilistic, so a broad prompt cannot ensure a certain explanation. Making the user prompt more specific supplies clearer context, while a system message that limits the answer’s domain steers the model toward the intended subject and increases the likelihood of the desired response.",
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1786767513061-wlqjq4bh.png",
+    "imageUrl": "quiz/Azure/AI-103-assets/ai-103-study-124.png",
     "type": "yes_no",
     "statements": [
       {
@@ -2125,7 +2125,7 @@
       "A"
     ],
     "explanation": "Azure Text Analytics Named Entity Recognition returns recognized entities from the document, and iterating through response.entities prints each entity’s text. London is recognized as a location, and Buckingham Palace as a named location/landmark, so those two entity texts are printed. Microsoft Learn: Use the NER client library",
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1786767512878-y41gmb38.png"
+    "imageUrl": "quiz/Azure/AI-103-assets/ai-103-study-125.png"
   },
   {
     "id": "ai-103-study-126",
@@ -2333,7 +2333,7 @@
       "s3": "A"
     },
     "explanation": "Entity linking identifies and disambiguates entities and supplies a URL to a knowledge-base entry, commonly Wikipedia; it is not a document-language detection operation. A linked entity can include a Bing entity-search ID, but its url is the entity page URL rather than a Bing search-results link. The matches collection contains each occurrence of the entity, with offset and length values that locate it in the document.",
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1787531559190-u9sg14qy.png",
+    "imageUrl": "quiz/Azure/AI-103-assets/ai-103-study-135.png",
     "type": "yes_no",
     "statements": [
       {
@@ -2412,7 +2412,7 @@
       "D"
     ],
     "explanation": "Azure Read OCR is asynchronous. Poll get_read_result(operation_id) in a loop, pausing between requests, and inspect read_result.status until it is no longer notStarted or running before processing the result. The Operation-Location value supplies the operation ID rather than reporting completion status.",
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1789705165897-wcnd8ipp.png"
+    "imageUrl": "quiz/Azure/AI-103-assets/ai-103-study-139.jpg"
   },
   {
     "id": "ai-103-study-140",
@@ -2889,7 +2889,7 @@
       "C"
     ],
     "explanation": "A concise natural-language instruction such as // what does function F do? explicitly asks GPT-35 Turbo to explain the code while retaining the lower-cost model. GPT-35 Turbo can generate natural-language and code-related responses, and adding the instruction adds only a small number of prompt tokens. Increasing temperature changes output randomness, not the requested task; changing to GPT-4-32k is unnecessary for this simple explanation and would not minimize cost.",
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1792533090388-us6rcy7v.png"
+    "imageUrl": "quiz/Azure/AI-103-assets/ai-103-study-161.png"
   },
   {
     "id": "ai-103-study-162",
@@ -2948,7 +2948,7 @@
       "B"
     ],
     "explanation": "The regenerateKey operation regenerates the specified Cognitive Services account key. Because keyName is Key2, it replaces the secondary resource subscription key; it does not rotate Key1. (learn.microsoft.com)",
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1793461654585-nogo1tex.png"
+    "imageUrl": "quiz/Azure/AI-103-assets/ai-103-study-168.png"
   },
   {
     "id": "ai-103-study-170",
@@ -3028,7 +3028,7 @@
       "s3": "A"
     },
     "explanation": "• No: The discount_code property must appear in the output, but its value may be null, so a non-null discount code is not required.\n\n• Yes: The schema uses supported types and nested anyOf, requires every property, and sets additionalProperties to false for both objects.\n\n• Yes: Structured outputs preserve the property order specified in the schema. (learn.microsoft.com)",
-    "imageUrl": "https://cdn.examcademy.com/images/questions/1793463074738-uqhi6bh7.png",
+    "imageUrl": "quiz/Azure/AI-103-assets/ai-103-study-173.png",
     "type": "yes_no",
     "statements": [
       {

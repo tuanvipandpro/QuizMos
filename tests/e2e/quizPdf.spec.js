@@ -105,6 +105,29 @@ test('whole seven-format quiz downloads with Unicode, image, long text/template 
   expect(download.suggestedFilename()).toContain('Bộ câu hỏi');
   await expect(page.locator('.ant-modal-body')).not.toContainText('EXPLANATION_MUST_NOT_APPEAR');
 });
+test('AI-103 exports with its published question illustrations', async ({ page }, info) => {
+  test.setTimeout(120000);
+  const bank = JSON.parse(
+    fs.readFileSync(new URL('../../public/quiz/Azure/AI-103.json', import.meta.url))
+  );
+  const illustrations = new Set(bank.map((q) => q.imageUrl).filter(Boolean));
+  expect(illustrations.size).toBeGreaterThan(0);
+
+  await page.goto('./#/quiz/ai-103');
+  const expectedUrls = new Set([...illustrations].map((path) => new URL(path, page.url()).href));
+  const loadedUrls = new Set();
+  page.on('response', (response) => {
+    if (response.ok() && expectedUrls.has(response.url())) loadedUrls.add(response.url());
+  });
+  await page.getByRole('button', { name: 'Export PDF', exact: true }).click();
+  await saveDownload(page, info, 'ai-103.pdf');
+
+  expect(loadedUrls).toEqual(expectedUrls);
+  const pdf = fs.readFileSync(info.outputPath('ai-103.pdf')).toString('latin1');
+  expect([...pdf.matchAll(/\/Subtype \/Image\b/g)].length).toBeGreaterThanOrEqual(
+    illustrations.size
+  );
+});
 test('export leaves an existing practice draft and an absolute exam deadline unchanged', async ({
   page,
 }, info) => {
