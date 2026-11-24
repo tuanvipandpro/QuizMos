@@ -22,6 +22,18 @@ export default defineConfig(({ command }) => {
     resolve: {
       alias: [
         {
+          find: /^(?:.*\/)?certOutcomeService(?:\.js)?$/,
+          replacement: fileURLToPath(
+            new URL('./tests/fixtures/certOutcomeService.js', import.meta.url)
+          ),
+        },
+        {
+          find: /^(?:.*\/)?certOutcomeConfig(?:\.js)?$/,
+          replacement: fileURLToPath(
+            new URL('./tests/fixtures/certOutcomeConfig.js', import.meta.url)
+          ),
+        },
+        {
           find: /^(?:.*\/)?spacedRevisionConfig(?:\.js)?$/,
           replacement: fileURLToPath(
             new URL('./tests/fixtures/spacedRevisionConfig.js', import.meta.url)
