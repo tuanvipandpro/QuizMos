@@ -819,6 +819,13 @@ export const vi = {
   'Signed out successfully': 'Đã đăng xuất',
   'Could not sign out. Please retry.': 'Không đăng xuất được. Vui lòng thử lại.',
   'Could not sign in. Please retry.': 'Không đăng nhập được. Vui lòng thử lại.',
+  'Could not continue this study draft after signing in.':
+    'Không thể tiếp tục bản nháp này sau khi đăng nhập.',
+  'Choose which study draft to keep': 'Chọn bản nháp muốn giữ',
+  'Continue guest draft': 'Tiếp tục bản nháp khách',
+  'Keep account draft': 'Giữ bản nháp tài khoản',
+  'This account already has a draft for this session. Continuing the guest draft replaces the account draft in this tab. Keeping the account draft discards the guest draft.':
+    'Tài khoản này đã có bản nháp cho phiên học này. Tiếp tục bản nháp khách sẽ thay bản nháp tài khoản trong tab này. Giữ bản nháp tài khoản sẽ bỏ bản nháp khách.',
   'Welcome, {name}!': 'Chào {name}!',
   Contents: 'Mục lục',
   Sources: 'Nguồn tham khảo',

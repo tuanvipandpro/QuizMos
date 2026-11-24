@@ -39,6 +39,51 @@ export function quickPracticeSlot(uid, sourceId, size) {
   return `${SESSION_PREFIX}${owner}:quick:${encodeURIComponent(canonicalQuizId(sourceId))}:${count}`;
 }
 
+function validManifest(manifest, { owner, source, count, pool }) {
+  const eligible = new Map(pool.items.map((item) => [item.index, item.key]));
+  return (
+    exact(manifest) &&
+    manifest.schemaVersion === 1 &&
+    manifest.owner === owner &&
+    manifest.sourceId === source &&
+    manifest.size === count &&
+    typeof manifest.runId === 'string' &&
+    UUID_PATTERN.test(manifest.runId) &&
+    typeof manifest.freshToken === 'string' &&
+    /^[0-9]+$/.test(manifest.freshToken) &&
+    Number.isSafeInteger(Number(manifest.freshToken)) &&
+    Number(manifest.freshToken) > 0 &&
+    Array.isArray(manifest.indices) &&
+    Array.isArray(manifest.keys) &&
+    manifest.indices.length === count &&
+    manifest.keys.length === count &&
+    new Set(manifest.indices).size === count &&
+    new Set(manifest.keys).size === count &&
+    manifest.indices.every(
+      (index, position) =>
+        Number.isSafeInteger(index) && eligible.get(index) === manifest.keys[position]
+    )
+  );
+}
+
+export function readQuickPracticeManifest(storage, uid, sourceId, questions, size) {
+  try {
+    const manifest = JSON.parse(
+      storage.getItem(quickPracticeSlot(uid, sourceId, size) + ':manifest')
+    );
+    return validManifest(manifest, {
+      owner: ownerKey(uid),
+      source: canonicalQuizId(sourceId),
+      count: practiceSize(size),
+      pool: eligibleStudyPool(questions),
+    }) && manifest.signature === questionFingerprint(questions)
+      ? manifest
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 /** One manifest/draft slot per owner + source/version + preset. No source copy. */
 export function createQuickPracticeStorage({
   storage = () => globalThis.sessionStorage,
@@ -78,29 +123,7 @@ export function createQuickPracticeStorage({
       } catch {
         malformed = true;
       }
-      const eligible = new Map(pool.items.map((item) => [item.index, item]));
-      const valid =
-        exact(manifest) &&
-        manifest.schemaVersion === 1 &&
-        manifest.owner === owner &&
-        manifest.sourceId === source &&
-        manifest.size === count &&
-        typeof manifest.runId === 'string' &&
-        UUID_PATTERN.test(manifest.runId) &&
-        typeof manifest.freshToken === 'string' &&
-        /^[0-9]+$/.test(manifest.freshToken) &&
-        Number.isSafeInteger(Number(manifest.freshToken)) &&
-        Number(manifest.freshToken) > 0 &&
-        Array.isArray(manifest.indices) &&
-        Array.isArray(manifest.keys) &&
-        manifest.indices.length === count &&
-        manifest.keys.length === count &&
-        new Set(manifest.indices).size === count &&
-        new Set(manifest.keys).size === count &&
-        manifest.indices.every(
-          (index, position) =>
-            Number.isSafeInteger(index) && eligible.get(index)?.key === manifest.keys[position]
-        );
+      const valid = validManifest(manifest, { owner, source, count, pool });
       const sameSource = valid && manifest.signature === signature;
       const older = valid && fresh && Number(fresh) < Number(manifest.freshToken);
       const reuse = sameSource && (!fresh || fresh === manifest.freshToken || older);

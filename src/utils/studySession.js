@@ -329,15 +329,19 @@ export function answerExamQuestion(session, value, now = Date.now()) {
   };
 }
 
-export function readStudySession(storage, key, questions, mode) {
+export function studySessionKeys(key, mode) {
   const keys = [key];
   for (const [alias, canonicalId] of Object.entries(QUIZ_ID_ALIASES)) {
     const suffix = `:${canonicalId}:${mode}`;
     if (key.startsWith(SESSION_PREFIX) && key.endsWith(suffix))
       keys.push(key.slice(0, -suffix.length) + `:${alias}:${mode}`);
   }
+  return keys;
+}
+
+export function readStudySession(storage, key, questions, mode) {
   let restored = null;
-  for (const candidateKey of keys) {
+  for (const candidateKey of studySessionKeys(key, mode)) {
     const candidate = readStoredStudySession(storage, candidateKey, questions, mode);
     if (!candidate) continue;
     if (typeof candidate.entryToken === 'string')
