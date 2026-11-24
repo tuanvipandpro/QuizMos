@@ -168,7 +168,7 @@ export const quizzes = [
     file: 'quiz/Azure/AI-103.json',
     category: 'Microsoft',
     difficulty: 'Associate',
-    totalQuestions: 117,
+    totalQuestions: 169,
     code: 'AI-103',
   },
   {

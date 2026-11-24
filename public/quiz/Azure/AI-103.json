@@ -1750,5 +1750,1299 @@
     ],
     "explanation": "A là đúng. Object projection lưu enriched content dưới dạng JSON object trong Azure Storage, phù hợp với JSON phi cấu trúc và text được trích xuất từ document. Table projection dùng cho dữ liệu có dạng quan hệ/bảng được lưu trong Azure Table Storage. File projection dùng cho binary content như normalized image hoặc file khác, không phù hợp với extracted text trong tình huống này.",
     "imageUrl": ""
+  },
+  {
+    "id": "ai-103-study-10",
+    "question": "You have a Microsoft Foundry project with a customer support agent built using the Foundry Agent Service. The agent uploads user-provided screenshots to Azure Storage via a ticketing tool and receives back a blob URL for further reasoning.\n\nYou need to apply image moderation during agent runs so that harmful content is never returned, with Azure AI Content Safety accessing the images through the blob URL. The solution must follow the principle of least privilege.\n\nWhat should you configure for Content Safety?",
+    "options": {
+      "slot1": {
+        "A": "Select Tool call and set Action to Block.",
+        "B": "Select User input and Output and set Action to Annotate.",
+        "C": "Select User input and Tool response and set Action to Annotate.",
+        "D": "Select User input, Output, Tool response, and Tool call and set Action to Block."
+      },
+      "slot2": {
+        "A": "Storage account access keys",
+        "B": "A user-assigned identity that is assigned the Storage Queue Data Contributor role",
+        "C": "A system-assigned managed identity that is assigned the Storage Blob Data Reader role",
+        "D": "A system-assigned managed identity that is assigned the Storage Blob Data Contributor role"
+      }
+    },
+    "answer": {
+      "slot1": "D",
+      "slot2": "D"
+    },
+    "explanation": "Foundry Agent Service guardrails support four intervention points - user input, tool call, tool response, and output - and for agents (as opposed to models) the only available response action is Annotate and block; a plain Annotate-only action is not offered for agents, so any control meant to prevent harmful content from being returned must use Block. Because the screenshot's blob URL is produced by the ticketing tool and only becomes available to the agent as content returned by that tool, the guardrail must cover the tool response - along with user input, tool call, and output - so image content is screened wherever it can enter or leave the run, with Block enforcing that flagged harmful content is stopped rather than merely logged. For storage access, Azure AI Content Safety's documented requirement is that its resource identity hold the Storage Blob Data Contributor (or Owner) role to read a blob via a blobUrl; Storage Blob Data Reader is not a supported role for this scenario. The least-privileged working configuration is therefore a system-assigned managed identity granted Storage Blob Data Contributor, which avoids both storage account keys and an unrelated user-assigned queue role.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Guardrails:"
+      },
+      {
+        "id": "slot2",
+        "label": "Storage access:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ai-103-study-22",
+    "question": "You have a Microsoft Foundry project containing an agent that your company's financial analysts use.\n\nYou need to optimize the agent workflow by adding data access and processing capabilities that meet these requirements:\n\n• The agent must be able to perform calculations during conversations.\n\n• The agent must be able to access up-to-date information from public websites.\n\n• The agent must be able to retrieve information from documents uploaded directly to it.\n\nWhich tool should you use for each requirement? A tool can be used once, more than once, or not at all.",
+    "options": {
+      "slot1": {
+        "A": "Code interpreter",
+        "B": "Computer use",
+        "C": "File search",
+        "D": "Grounding with Bing Search",
+        "E": "Microsoft Fabric"
+      },
+      "slot2": {
+        "A": "Code interpreter",
+        "B": "Computer use",
+        "C": "File search",
+        "D": "Grounding with Bing Search",
+        "E": "Microsoft Fabric"
+      },
+      "slot3": {
+        "A": "Code interpreter",
+        "B": "Computer use",
+        "C": "File search",
+        "D": "Grounding with Bing Search",
+        "E": "Microsoft Fabric"
+      }
+    },
+    "answer": {
+      "slot1": "D",
+      "slot2": "A",
+      "slot3": "C"
+    },
+    "explanation": "Grounding with Bing Search lets an agent retrieve current, real-time information from the public web, which is required to answer with up-to-date information from public websites. Code interpreter runs code in a sandboxed execution environment, letting the agent perform calculations and data processing during a conversation. File search indexes and retrieves content from documents uploaded directly to the agent, satisfying the third requirement. Computer use and Microsoft Fabric are not designed for these scenarios: computer use drives a GUI/OS environment, and Microsoft Fabric integration targets enterprise data platform assets rather than files uploaded directly to the agent.",
+    "type": "drag_drop",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Access up-to-date information from public websites:"
+      },
+      {
+        "id": "slot2",
+        "label": "Perform calculations during conversations:"
+      },
+      {
+        "id": "slot3",
+        "label": "Retrieve information from documents uploaded directly to the agent:"
+      }
+    ]
+  },
+  {
+    "id": "ai-103-study-56",
+    "question": "You have a Microsoft Foundry project containing an agent named PaymentAgent. PaymentAgent has a function tool that issues customer refunds through an external API. You are authoring a workflow in YAML and need the workflow to pause for human approval, proceeding to the refund step only once approval has been granted.\n\nHow should you complete the workflow definition?",
+    "options": {
+      "slot1": {
+        "A": "ask_question",
+        "B": "basic_chat",
+        "C": "data_transformation"
+      },
+      "slot2": {
+        "A": "approval == \"approved\"",
+        "B": "propose_refund.output != null",
+        "C": "true"
+      }
+    },
+    "answer": {
+      "slot1": "A",
+      "slot2": "A"
+    },
+    "explanation": "Microsoft Foundry's human-in-the-loop workflow pattern uses an Ask a question step to pause execution and wait for a person's response before continuing, which is the mechanism used to gate the refund on human approval; a basic chat (send-message) step does not wait for input, and a data-transformation step only sets or parses a variable. The subsequent refund step's condition must test the value captured by the approval step, so condition: approval == \"approved\" only proceeds when the human explicitly approved the request; checking propose_refund.output != null merely confirms the initial proposal produced output (not that anyone approved it), and a literal true would execute the refund unconditionally, defeating the approval gate.",
+    "type": "dropdown",
+    "layout": "inline",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Blank 1"
+      },
+      {
+        "id": "slot2",
+        "label": "Blank 2"
+      }
+    ],
+    "instruction": "",
+    "template": "steps:\n  - id: propose_refund\n    type: agent\n    agent: PaymentAgent\n\n  - id: approval\n    type: {{slot1}}\n\n  - id: execute_refund\n    type: agent\n    agent: PaymentAgent\n    condition: {{slot2}}"
+  },
+  {
+    "id": "ai-103-study-111",
+    "question": "You have a Microsoft Foundry project containing two agents, named PolicyWriter and RskReviewer.\n\nPolicyWriter produces draft updates for customer policies, and RiskReviewer reviews those drafts.\n\nIn the visual builder, create a workflow that meets these requirements:\n\n• Finalize low-risk updates without manual intervention.\n\n• Ensure predictable execution between the agents.\n\n• Require user approval for high-risk updates.\n\nWhat should you configure?",
+    "options": {
+      "slot1": {
+        "A": "The sequential template that passes outputs node by-node",
+        "B": "The group chat template to dynamically route control between the agents",
+        "C": "The human-in-the-loop template that pauses execution of the workflow for input"
+      },
+      "slot2": {
+        "A": "Add a Basic chat node.",
+        "B": "Add a Condition statement.",
+        "C": "Add an Ask a question node."
+      }
+    },
+    "answer": {
+      "slot1": "A",
+      "slot2": "C"
+    },
+    "explanation": "A sequential Foundry workflow passes each agent’s result to the next in a defined order, making the PolicyWriter-to-RiskReviewer process predictable. An Ask a question node waits for user input, so it can serve as the approval checkpoint for high-risk updates while low-risk updates proceed automatically.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Orchestration pattern:"
+      },
+      {
+        "id": "slot2",
+        "label": "Approval checkpoints:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ai-103-study-118",
+    "question": "You have a Microsoft Foundry project for a support ticket triage app that reads ticket text from a database.\n\nYou need to ensure that the app meets the following requirements:\n\n• Compares candidate models by quality, cost, and throughput\n\n• Prevents hosting model weights in the Azure subscription\n\nWhat should you configure?",
+    "options": {
+      "slot1": {
+        "A": "Configure private endpoint access.",
+        "B": "Use deployment lists and license tabs.",
+        "C": "Use tool catalog connections and run traces.",
+        "D": "Use model catalog leaderboards and model cards."
+      },
+      "slot2": {
+        "A": "Bring your own model.",
+        "B": "Build a vector index.",
+        "C": "Use a serverless deployment.",
+        "D": "Use a managed compute deployment."
+      }
+    },
+    "answer": {
+      "slot1": "D",
+      "slot2": "C"
+    },
+    "explanation": "Microsoft Foundry model leaderboards benchmark models by quality, cost, and throughput, enabling candidate-model comparison. Serverless deployments provide API access to models hosted and managed by Microsoft, rather than deploying model weights to compute in the Azure subscription.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Model evaluation:"
+      },
+      {
+        "id": "slot2",
+        "label": "Deployment option:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ai-103-study-119",
+    "question": "HOTSPOT\n\nYou have a collection of press releases saved as PDF files.\n\nYou need to extract text from the files and perform sentiment analysis.\n\nWhich service should you use for each task?",
+    "options": {
+      "slot1": {
+        "A": "Azure AI Search",
+        "B": "Azure Vision in Foundry Tools",
+        "C": "Azure Document Intelligence in Foundry Tools"
+      },
+      "slot2": {
+        "A": "Azure AI Search",
+        "B": "Azure AI Computer Vision",
+        "C": "Azure Document Intelligence in Foundry Tools",
+        "D": "Azure Language in Foundry Tools"
+      }
+    },
+    "answer": {
+      "slot1": "C",
+      "slot2": "D"
+    },
+    "explanation": "Azure Document Intelligence extracts text from PDF documents through its document analysis and OCR capabilities. Azure Language provides sentiment analysis for text, identifying positive, negative, neutral, and mixed sentiment.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Extract text:"
+      },
+      {
+        "id": "slot2",
+        "label": "Perform sentiment analysis:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ai-103-study-120",
+    "question": "You are creating a Custom Vision model to deploy as part of an iOS app.\n\nYou have cat and dog images, and each image contains either a cat or a dog.\n\nYou need to use Azure Custom Vision to determine whether an image shows a cat or a dog.\n\nHow should you configure the project in the Azure Custom Vision portal?",
+    "options": {
+      "slot1": {
+        "A": "Classification",
+        "B": "Object Detection"
+      },
+      "slot2": {
+        "A": "Multiclass (Single tag per image)",
+        "B": "Multilabel (Multiple tags per image)"
+      },
+      "slot3": {
+        "A": "Adult",
+        "B": "Food",
+        "C": "General",
+        "D": "General (compact)",
+        "E": "Landmarks",
+        "F": "Landmarks (compact)",
+        "G": "Retail",
+        "H": "Retail (compact)"
+      }
+    },
+    "answer": {
+      "slot1": "A",
+      "slot2": "A",
+      "slot3": "D"
+    },
+    "explanation": "Classification assigns a label to an entire image, which fits images containing exactly one cat or one dog. A multiclass classifier is appropriate when each image has exactly one tag. The compact General domain is intended for export to mobile and edge devices, which supports deployment in an iOS app.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Project Types:"
+      },
+      {
+        "id": "slot2",
+        "label": "Classification Types:"
+      },
+      {
+        "id": "slot3",
+        "label": "Domains:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ai-103-study-121",
+    "question": "You are developing an Azure solution that will use Azure Language in Foundry Tools to process sensitive customer data.\n\nYou must ensure that only specified Azure processes can access the Language service while minimizing administrative effort.\n\nWhat should you include in the solution?",
+    "options": {
+      "A": "Azure Application Gateway",
+      "B": "a virtual network gateway",
+      "C": "IPsec rules",
+      "D": "virtual network rules"
+    },
+    "answer": [
+      "D"
+    ],
+    "explanation": "Foundry Tools network rules can block access by default and permit only traffic originating from allowed Azure virtual-network subnets. Virtual network rules therefore restrict Azure Language service access to the specified Azure workloads without managing individual IPsec configurations."
+  },
+  {
+    "id": "ai-103-study-122",
+    "question": "You have a Microsoft Foundry project that includes an agent. The agent has a Model Context Protocol (MCP) tool named kbsearch that queries a knowledge base stored in Azure AI Search.\n\nSome agent runs produce answers from the base model without calling the knowledge base, resulting in responses that lack grounded citations.\n\nYou are given the following code snippet used to run the agent.\n\nYou need to deterministically require the agent to invoke kbsearch on every run.\n\nWhat should you do?",
+    "options": {
+      "A": "Add the response_format parameter to the create_and_process() method call.",
+      "B": "Replace create_and_process() method with the create_thread_and_process_run() method.",
+      "C": "Add the toolset parameter to the create_and_process() method call.",
+      "D": "Add the tool_choice parameter to the create_and_process() method call."
+    },
+    "answer": [
+      "D"
+    ],
+    "explanation": "tool_choice is the deterministic run-level control for requiring a specific tool call. Setting it in create_and_process() to select kbsearch prevents the default automatic model decision from bypassing the knowledge-base tool, so responses are grounded in its results.",
+    "imageUrl": "https://cdn.examcademy.com/images/questions/1786767511858-jnet4i48.png"
+  },
+  {
+    "id": "ai-103-study-123",
+    "question": "HOTSPOT\n\nYou run the following command.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+    "options": {
+      "A": "Yes",
+      "B": "No"
+    },
+    "answer": {
+      "s1": "B",
+      "s2": "B",
+      "s3": "A"
+    },
+    "explanation": "GET /status validates the startup API key without making an endpoint query, so the first statement is false. No logging provider or output mount is configured; disk logging requires both configuration and an output mount, so the second statement is false. The /swagger endpoint provides documentation for the container endpoints, so the third statement is true.",
+    "imageUrl": "https://cdn.examcademy.com/images/questions/1786767512062-v1ye8uok.png",
+    "type": "yes_no",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "Going to http://localhost:5000/status will query the Azure endpoint to verify whether the API key used to start the container is valid."
+      },
+      {
+        "id": "s2",
+        "text": "The container logging provider will write log data."
+      },
+      {
+        "id": "s3",
+        "text": "Going to http://localhost:5000/swagger will provide the details to access the documentation for the available endpoints."
+      }
+    ]
+  },
+  {
+    "id": "ai-103-study-124",
+    "question": "You are developing an app that will give users definitions of common AI terms.\n\nYou create the following Python code.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+    "options": {
+      "A": "Yes",
+      "B": "No"
+    },
+    "answer": {
+      "s1": "B",
+      "s2": "A",
+      "s3": "A"
+    },
+    "explanation": "Language-model output is probabilistic, so a broad prompt cannot ensure a certain explanation. Making the user prompt more specific supplies clearer context, while a system message that limits the answer’s domain steers the model toward the intended subject and increases the likelihood of the desired response.",
+    "imageUrl": "https://cdn.examcademy.com/images/questions/1786767513061-wlqjq4bh.png",
+    "type": "yes_no",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "The response will contain an explanation of large language models (LLMs) that has a high degree of certainty."
+      },
+      {
+        "id": "s2",
+        "text": "Changing \"What is an LLM?\" to \"What is an LLM in the context of AI models?\" will produce the intended response."
+      },
+      {
+        "id": "s3",
+        "text": "Changing \"You are a helpful assistant.\" to \"You must answer only within the context of AI language models.\" will give a higher likelihood of producing the intended response."
+      }
+    ]
+  },
+  {
+    "id": "ai-103-study-125",
+    "question": "You are creating a text-processing solution.\n\nYou have the following function.\n\nYou invoke the function, using the following string as its second argument.\n\nOur tour of London included a visit to Buckingham Palace\n\nWhat is the function's output?",
+    "options": {
+      "A": "London and Buckingham Palace only",
+      "B": "Tour and visit only",
+      "C": "Our tour of London included a visit to Buckingham Palace",
+      "D": "London and Tour only"
+    },
+    "answer": [
+      "A"
+    ],
+    "explanation": "Azure Text Analytics Named Entity Recognition returns recognized entities from the document, and iterating through response.entities prints each entity’s text. London is recognized as a location, and Buckingham Palace as a named location/landmark, so those two entity texts are printed. Microsoft Learn: Use the NER client library",
+    "imageUrl": "https://cdn.examcademy.com/images/questions/1786767512878-y41gmb38.png"
+  },
+  {
+    "id": "ai-103-study-126",
+    "question": "You have an Azure subscription.\n\nYou need to create an app that compares documents for semantic similarity. The solution must satisfy these requirements:\n\n• Return numeric vectors representing the tokens in each document.\n\n• Minimize development effort.\n\nWhich Azure OpenAI model should you use?",
+    "options": {
+      "A": "GPT-3.5",
+      "B": "embeddings",
+      "C": "GPT-4",
+      "D": "DALL-E"
+    },
+    "answer": [
+      "B"
+    ],
+    "explanation": "Azure OpenAI embedding models produce numeric vector representations of text, and the distance or cosine similarity between those vectors correlates with the semantic similarity of the source documents. This provides the required document-comparison capability without building a custom representation model."
+  },
+  {
+    "id": "ai-103-study-127",
+    "question": "You are developing an app that will use the Azure Vision in Foundry Tools API to analyze an image.\n\nYou need to configure the request used by the app to determine whether an image is clipart or a line drawing.\n\nHow should you complete the request?",
+    "options": {
+      "slot1": {
+        "A": "GET",
+        "B": "PATCH",
+        "C": "POST"
+      },
+      "slot2": {
+        "A": "description",
+        "B": "imageType",
+        "C": "objects",
+        "D": "tags"
+      }
+    },
+    "answer": {
+      "slot1": "C",
+      "slot2": "B"
+    },
+    "explanation": "The v3.2 Analyze Image REST operation is invoked with POST. Selecting the ImageType visual feature returns clipart and line-drawing classifications.",
+    "type": "dropdown",
+    "layout": "inline",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Blank 1"
+      },
+      {
+        "id": "slot2",
+        "label": "Blank 2"
+      }
+    ],
+    "instruction": "",
+    "template": "{{slot1}} \"https://*.cognitiveservices.azure.com/vision/v3.2/analyze?visualFeatures={{slot2}}&details={string}&language=en"
+  },
+  {
+    "id": "ai-103-study-128",
+    "question": "You are building an app that will use the Speech and Language APIs.\n\nYou need to provision resources for the app. The solution must ensure that each service is accessed through a single endpoint and credential.\n\nWhich resource type should you create?",
+    "options": {
+      "A": "Azure Language in Foundry Tools",
+      "B": "Microsoft Foundry service",
+      "C": "Azure Speech in Foundry Tools",
+      "D": "Content Safety in Foundry Control Plane"
+    },
+    "answer": [
+      "B"
+    ],
+    "explanation": "A Microsoft Foundry service is a multi-service resource that includes both Language and Speech. It enables those services to use a shared endpoint and credential, unlike single-service Speech or Language resources. Microsoft lists Language and Speech among the services bundled with a Foundry resource."
+  },
+  {
+    "id": "ai-103-study-129",
+    "question": "An Azure subscription contains a Microsoft Foundry Service resource named CSAccount1 and a virtual network named VNet1. CSAaccount1 is connected to VNet1.\n\nYou need to ensure that only specified resources can access CSAccount1. The solution must satisfy these requirements:\n\n• Prevent external access to CSAccount1.\n\n• Minimize administrative effort.\n\nWhich two actions should you take? Each correct answer is part of the solution.\n\nNOTE: Each correct answer is worth one point.",
+    "options": {
+      "A": "In CSAccount1, modify the virtual network settings.",
+      "B": "In VNet1, create a virtual subnet.",
+      "C": "In VNet1, enable a service endpoint for CSAccount1.",
+      "D": "In CSAccount1, configure the Access control (IAM) settings.",
+      "E": "In VNet1, modify the virtual network settings."
+    },
+    "answer": [
+      "A",
+      "C"
+    ],
+    "explanation": "Foundry Tools network rules can deny access by default and allow only selected virtual networks or subnets. A permitted virtual-network subnet must have the Foundry Tools (Microsoft.CognitiveServices) service endpoint enabled, which identifies the subnet to the service. Configuring the resource's virtual-network settings and enabling that service endpoint therefore restricts access without requiring separate identity permissions or unnecessary network changes."
+  },
+  {
+    "id": "ai-103-study-130",
+    "question": "You use the Azure Custom Vision service to create a classifier.\n\nAfter training has finished, you must evaluate the classifier.\n\nWhich two metrics are available to review? Each correct answer provides a complete solution.\n\nNOTE: Each correct choice is worth one point.",
+    "options": {
+      "A": "F-score",
+      "B": "area under the curve (AUC)",
+      "C": "precision",
+      "D": "weighted accuracy",
+      "E": "recall"
+    },
+    "answer": [
+      "C",
+      "E"
+    ],
+    "explanation": "Azure Custom Vision calculates and displays precision and recall for a trained image classifier. Precision measures the proportion of predicted classifications that are correct, while recall measures the proportion of actual classifications that are correctly identified."
+  },
+  {
+    "id": "ai-103-study-131",
+    "question": "You are developing an app that will contain one million scanned magazine articles. Each article will be saved as an image file.\n\nYou need to configure the app to extract text from those images. The solution must minimize development effort.\n\nWhat should you include in the solution?",
+    "options": {
+      "A": "Azure Document Intelligence in Foundry Tools",
+      "B": "the Read API in Azure Vision in Foundry Tools",
+      "C": "Azure Vision in Foundry Tools Image Analysis",
+      "D": "Azure Language in Foundry Tools"
+    },
+    "answer": [
+      "A"
+    ],
+    "explanation": "Microsoft's own OCR guidance draws a direct line between the input type and the recommended service: general, in-the-wild images such as labels, street signs, and posters should use the Azure Vision Read OCR API, while digital and scanned text-heavy documents such as books, articles, and reports should use the Document Intelligence Read model, which is purpose-built and optimized for automating intelligent document processing at scale with an asynchronous API. A million scanned magazine articles is exactly the text-heavy, document-scale scenario Document Intelligence targets, and using its prebuilt Read model requires only calling a managed API rather than building custom OCR pipeline logic, which minimizes development effort compared to lower-level image APIs."
+  },
+  {
+    "id": "ai-103-study-132",
+    "question": "You are developing an app that scans confidential documents and uses the Azure Language in Foundry Tools service to analyze their contents.\n\nYou provision a Microsoft Foundry Service resource.\n\nEnsure that the app can make requests to the Azure Language in Foundry Tools service endpoint while confidential documents remain on-premises.\n\nWhich three actions should you perform, in sequence?",
+    "options": {
+      "slot1": {
+        "A": "Pull an image from Docker Hub.",
+        "B": "Run the container and specify an API key and the Endpoint URL of the Azure AI resource.",
+        "C": "Provision an on-premises Kubernetes cluster that is isolated from the internet.",
+        "D": "Provision an on-premises Kubernetes cluster that has internet connectivity.",
+        "E": "Provision an Azure Kubernetes Service (AKS) resource.",
+        "F": "Run the container and specify an App ID and Client Secret.",
+        "G": "Pull an image from the Microsoft Container Registry (MCR)."
+      },
+      "slot2": {
+        "A": "Pull an image from Docker Hub.",
+        "B": "Run the container and specify an API key and the Endpoint URL of the Azure AI resource.",
+        "C": "Provision an on-premises Kubernetes cluster that is isolated from the internet.",
+        "D": "Provision an on-premises Kubernetes cluster that has internet connectivity.",
+        "E": "Provision an Azure Kubernetes Service (AKS) resource.",
+        "F": "Run the container and specify an App ID and Client Secret.",
+        "G": "Pull an image from the Microsoft Container Registry (MCR)."
+      },
+      "slot3": {
+        "A": "Pull an image from Docker Hub.",
+        "B": "Run the container and specify an API key and the Endpoint URL of the Azure AI resource.",
+        "C": "Provision an on-premises Kubernetes cluster that is isolated from the internet.",
+        "D": "Provision an on-premises Kubernetes cluster that has internet connectivity.",
+        "E": "Provision an Azure Kubernetes Service (AKS) resource.",
+        "F": "Run the container and specify an App ID and Client Secret.",
+        "G": "Pull an image from the Microsoft Container Registry (MCR)."
+      }
+    },
+    "answer": {
+      "slot1": "D",
+      "slot2": "G",
+      "slot3": "B"
+    },
+    "explanation": "Azure AI Language containers analyze content locally, so confidential documents remain on-premises. A connected container needs outbound connectivity to report billing to Azure, its image is pulled from Microsoft Container Registry, and it must be started with the Azure AI resource endpoint and API key.",
+    "type": "drag_drop",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "1"
+      },
+      {
+        "id": "slot2",
+        "label": "2"
+      },
+      {
+        "id": "slot3",
+        "label": "3"
+      }
+    ]
+  },
+  {
+    "id": "ai-103-study-133",
+    "question": "You have an Azure OpenAI model called AI1.\n\nYou are developing a web app named App1 by using the Azure OpenAI SDK.\n\nYou need to configure App1 to connect to AI1.\n\nWhich information must you provide?",
+    "options": {
+      "A": "the deployment name, key, and model name",
+      "B": "the endpoint, key, and model type",
+      "C": "the deployment name, endpoint, and key",
+      "D": "the endpoint, key, and model name"
+    },
+    "answer": [
+      "C"
+    ],
+    "explanation": "An Azure OpenAI SDK client needs the Azure OpenAI resource endpoint and an API key for API-key authentication. Requests must also specify the Azure OpenAI deployment name; the SDK uses that deployment name as the model identifier, rather than the underlying model name or model type."
+  },
+  {
+    "id": "ai-103-study-134",
+    "question": "You are designing an Azure AI solution to detect defective products on a production line.\n\nYou have a real-time video feed and an image library of sample products that were manually approved or rejected.\n\nYou need to recommend a service that fulfills the following requirements:\n\n• Monitors the video feed and detects defective products.\n\n• Can train a new model by using the image library.\n\n• Minimizes development effort.\n\nWhat should you recommend?",
+    "options": {
+      "A": "Azure Vision in Foundry Tools",
+      "B": "Azure AI Video Indexer",
+      "C": "Azure AI Custom Vision",
+      "D": "Azure Machine Learning"
+    },
+    "answer": [
+      "C"
+    ],
+    "explanation": "Azure AI Custom Vision supports training custom image-classification and object-detection models from labeled images, then deploying the trained model for prediction. A production-line video feed can be evaluated by submitting frames to that custom model, while the managed training and prediction service minimizes implementation effort compared with building a model in Azure Machine Learning."
+  },
+  {
+    "id": "ai-103-study-135",
+    "question": "HOTSPOT\n\nYou are developing a solution that students will use to locate references for essays.\n\nUse the following code as the starting point for the solution.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+    "options": {
+      "A": "Yes",
+      "B": "No"
+    },
+    "answer": {
+      "s1": "B",
+      "s2": "B",
+      "s3": "A"
+    },
+    "explanation": "Entity linking identifies and disambiguates entities and supplies a URL to a knowledge-base entry, commonly Wikipedia; it is not a document-language detection operation. A linked entity can include a Bing entity-search ID, but its url is the entity page URL rather than a Bing search-results link. The matches collection contains each occurrence of the entity, with offset and length values that locate it in the document.",
+    "imageUrl": "https://cdn.examcademy.com/images/questions/1787531559190-u9sg14qy.png",
+    "type": "yes_no",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "The code will detect the language of documents."
+      },
+      {
+        "id": "s2",
+        "text": "The url attribute returned for each linked entity will be a Bing search link."
+      },
+      {
+        "id": "s3",
+        "text": "The matches attribute returned for each linked entity will provide the location in a document where the entity is referenced."
+      }
+    ]
+  },
+  {
+    "id": "ai-103-study-136",
+    "question": "You have an Azure AI Search resource named Search1 that multiple applications hosted in Azure use.\n\nYou need to secure Search1 while meeting these requirements:\n\n• Prevent internet access to Search1.\n\n• Restrict each application so it can query only particular indexes.\n\nWhat should you do?",
+    "options": {
+      "slot1": {
+        "A": "Configure an IP firewall.",
+        "B": "Create a private endpoint.",
+        "C": "Use Azure roles."
+      },
+      "slot2": {
+        "A": "Create a private endpoint.",
+        "B": "Use Azure roles.",
+        "C": "Use key authentication."
+      }
+    },
+    "answer": {
+      "slot1": "B",
+      "slot2": "B"
+    },
+    "explanation": "A private endpoint connects Azure AI Search through Private Link and enables public network access to be disabled, preventing public-internet access. Azure RBAC can assign search data roles at an individual index scope, allowing each app identity to query only its permitted indexes. API query keys grant service-level read access and do not isolate indexes.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "To prevent access from the internet:"
+      },
+      {
+        "id": "slot2",
+        "label": "To limit access to query specific indexes:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ai-103-study-138",
+    "question": "You are developing an internet-based training solution that requires each user’s camera and microphone to stay enabled.\n\nYou need to monitor the user’s video stream and confirm that the user is alone and not collaborating with another user. The solution must minimize development effort.\n\nWhat should you include in the solution?",
+    "options": {
+      "A": "content moderation in Azure AI Azure Video Indexer",
+      "B": "speech-to-text in the Azure Speech in Foundry Tools",
+      "C": "object detection in Azure AI Custom Vision",
+      "D": "Spatial Analysis in Azure Vision in Foundry Tools"
+    },
+    "answer": [
+      "D"
+    ],
+    "explanation": "Spatial Analysis in Azure Vision in Foundry Tools is intended to analyze live video streams for people in a physical space and supports person-counting operations. It can therefore detect when more than one person is present without requiring a custom object-detection model."
+  },
+  {
+    "id": "ai-103-study-139",
+    "question": "You are developing a method that uses the Azure Vision in Foundry Tools client library. The method will perform optical character recognition (OCR) on images. The method contains the following code.\n\nDuring testing, you find that the call to the get_read_result method happens before the read operation has completed.\n\nYou need to stop the get_read_result method from continuing until the read operation is complete.\n\nWhich two actions should you take? Each correct answer provides part of the solution.\n\nNOTE: Each correct selection is worth one point.",
+    "options": {
+      "A": "Add code to verify the read_result.status value.",
+      "B": "Add code to verify the status of the read_operation_location value.",
+      "C": "Remove the operation_id parameter.",
+      "D": "Wrap the call to get_read_result within a loop that contains a delay."
+    },
+    "answer": [
+      "A",
+      "D"
+    ],
+    "explanation": "Azure Read OCR is asynchronous. Poll get_read_result(operation_id) in a loop, pausing between requests, and inspect read_result.status until it is no longer notStarted or running before processing the result. The Operation-Location value supplies the operation ID rather than reporting completion status.",
+    "imageUrl": "https://cdn.examcademy.com/images/questions/1789705165897-wcnd8ipp.png"
+  },
+  {
+    "id": "ai-103-study-140",
+    "question": "You have a Microsoft Foundry resource named AI1 that hosts three GPT-3.5 deployments. Each deployment is optimized for a distinct workload.\n\nYou plan to deploy three apps. Each app will use the REST API to access AI1 and the deployment optimized for that app’s intended workload.\n\nYou must give each app access to AI1 and its appropriate deployment, while ensuring that only the apps can access AI1.\n\nWhat should you use to provide access to AI1, and what should each app use to connect to its appropriate deployment?",
+    "options": {
+      "slot1": {
+        "A": "An API key",
+        "B": "A bearer token",
+        "C": "A shared access signature (SAS) token"
+      },
+      "slot2": {
+        "A": "An API key",
+        "B": "A deployment endpoint",
+        "C": "A deployment name",
+        "D": "A deployment type"
+      }
+    },
+    "answer": {
+      "slot1": "B",
+      "slot2": "C"
+    },
+    "explanation": "Microsoft Entra ID bearer-token authentication supports granting the required Azure role to each app identity, so only authorized apps can access the resource. Azure OpenAI/Microsoft Foundry REST inference requests identify the target model by deployment name; the resource endpoint is shared by the deployments.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Provide access to AI1 by using:"
+      },
+      {
+        "id": "slot2",
+        "label": "Connect to the deployment by using:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ai-103-study-141",
+    "question": "You have an app that uses Azure AI Custom Vision and a custom-trained classifier to identify products in images.\n\nYou need to add new products to the classifier. The solution must meet these requirements:\n\n• Minimize the time required to add the products.\n\n• Minimize development effort.\n\nWhich five actions should you perform, in sequence?",
+    "options": {
+      "slot1": {
+        "A": "From the Custom Vision portal, open the project.",
+        "B": "From the Azure Machine Learning studio, open the workspace.",
+        "C": "From Vision Studio, open the project.",
+        "D": "Upload sample images of the new products.",
+        "E": "Label the sample images.",
+        "F": "Retrain the model.",
+        "G": "Publish the model."
+      },
+      "slot2": {
+        "A": "From the Custom Vision portal, open the project.",
+        "B": "From the Azure Machine Learning studio, open the workspace.",
+        "C": "From Vision Studio, open the project.",
+        "D": "Upload sample images of the new products.",
+        "E": "Label the sample images.",
+        "F": "Retrain the model.",
+        "G": "Publish the model."
+      },
+      "slot3": {
+        "A": "From the Custom Vision portal, open the project.",
+        "B": "From the Azure Machine Learning studio, open the workspace.",
+        "C": "From Vision Studio, open the project.",
+        "D": "Upload sample images of the new products.",
+        "E": "Label the sample images.",
+        "F": "Retrain the model.",
+        "G": "Publish the model."
+      },
+      "slot4": {
+        "A": "From the Custom Vision portal, open the project.",
+        "B": "From the Azure Machine Learning studio, open the workspace.",
+        "C": "From Vision Studio, open the project.",
+        "D": "Upload sample images of the new products.",
+        "E": "Label the sample images.",
+        "F": "Retrain the model.",
+        "G": "Publish the model."
+      },
+      "slot5": {
+        "A": "From the Custom Vision portal, open the project.",
+        "B": "From the Azure Machine Learning studio, open the workspace.",
+        "C": "From Vision Studio, open the project.",
+        "D": "Upload sample images of the new products.",
+        "E": "Label the sample images.",
+        "F": "Retrain the model.",
+        "G": "Publish the model."
+      }
+    },
+    "answer": {
+      "slot1": "A",
+      "slot2": "D",
+      "slot3": "E",
+      "slot4": "F",
+      "slot5": "G"
+    },
+    "explanation": "Azure AI Custom Vision projects are managed in the Custom Vision portal. Adding new product classes requires uploading representative training images and assigning them tags, then training a new iteration. Publishing that iteration makes the updated classifier available to the application prediction endpoint.",
+    "type": "drag_drop",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "1"
+      },
+      {
+        "id": "slot2",
+        "label": "2"
+      },
+      {
+        "id": "slot3",
+        "label": "3"
+      },
+      {
+        "id": "slot4",
+        "label": "4"
+      },
+      {
+        "id": "slot5",
+        "label": "5"
+      }
+    ]
+  },
+  {
+    "id": "ai-103-study-142",
+    "question": "You plan to build an app that generates a list of tags for uploaded images. The app must meet these requirements:\n\n• Generate tags in a user’s preferred language.\n\n• Support English, French, and Spanish.\n\n• Minimize development effort.\n\nYou need to create a function that generates the tags for the app.\n\nWhich Azure service endpoint should you use?",
+    "options": {
+      "A": "Azure Vision in Foundry Tools Image Analysis",
+      "B": "Azure Custom Vision image classification",
+      "C": "Content Safety in Foundry Control Plane",
+      "D": "Custom Translator"
+    },
+    "answer": [
+      "A"
+    ],
+    "explanation": "Azure Vision in Foundry Tools Image Analysis is a prebuilt service that generates image tags and supports localized tag output through its language parameter, including English, French, and Spanish. It avoids the custom training required by Custom Vision, while Content Safety and Custom Translator do not perform general image-tag generation."
+  },
+  {
+    "id": "ai-103-study-143",
+    "question": "You are designing a solution to answer questions about human resources (HR) policies stored in PDF format.\n\nYou must ensure that the same answer to a particular question is returned every time. The solution must minimize development effort.\n\nWhich service should you include in the solution?",
+    "options": {
+      "A": "Azure OpenAI",
+      "B": "Azure Language in Foundry Tools",
+      "C": "Azure Machine Learning",
+      "D": "Azure Document Intelligence in Foundry Tools"
+    },
+    "answer": [
+      "B"
+    ],
+    "explanation": "Azure Language custom question answering is intended for static information sources, including PDFs, and returns the same answer when different users submit the same question. Azure OpenAI chat completions are nondeterministic by default, so using them would require additional controls and development without providing the same direct guarantee."
+  },
+  {
+    "id": "ai-103-study-144",
+    "question": "You have an Azure subscription that includes an Azure Language in Foundry Tools service resource.\n\nYou need to determine the URL for the Language service REST interface.\n\nWhich blade should you use in the Azure portal?",
+    "options": {
+      "A": "Networking",
+      "B": "Identity",
+      "C": "Properties",
+      "D": "Keys and Endpoint"
+    },
+    "answer": [
+      "D"
+    ],
+    "explanation": "The Keys and Endpoint blade displays the Azure Language resource endpoint, which is the base URL used to make REST API requests, along with the resource access keys."
+  },
+  {
+    "id": "ai-103-study-145",
+    "question": "You have an Azure subscription containing a Microsoft Foundry resource named AI1 and a Content Safety in Foundry Control Plane resource named CS1.\n\nYou build an agent that uses AI1 to generate answers to specific questions and uses CS1 to check both input and output for objectionable content.\n\nYou need to optimize the content filter configurations by testing sample questions.\n\nSolution: In Content Safety Studio, you use the Safety metaprompt feature to perform the tests.\n\nDoes this satisfy the requirement?",
+    "options": {
+      "A": "Yes",
+      "B": "No"
+    },
+    "answer": [
+      "B"
+    ],
+    "explanation": "Safety metaprompts guide a model’s behavior as a complementary safety layer; they are not a mechanism for testing or optimizing content-filter configurations. Content Safety’s text-moderation testing experience evaluates sample text against configured severity thresholds and returns moderation results, which supports filter tuning."
+  },
+  {
+    "id": "ai-103-study-146",
+    "question": "You have 100,000 images.\n\nYou need to build an app that performs the following actions:\n\n• Identify road signs in the images and extract the text on the signs.\n\n• Analyze the text to identify well-known locations.\n\nThe solution must minimize development effort.\n\nWhat should you use for each action?",
+    "options": {
+      "slot1": {
+        "A": "Azure Document Intelligence in Foundry Tools",
+        "B": "Azure Language in Foundry Tools",
+        "C": "Azure AI Search",
+        "D": "Azure Vision in Foundry Tools"
+      },
+      "slot2": {
+        "A": "Azure Document Intelligence in Foundry Tools",
+        "B": "Azure Language in Foundry Tools",
+        "C": "Azure AI Search",
+        "D": "Azure Vision in Foundry Tools"
+      }
+    },
+    "answer": {
+      "slot1": "D",
+      "slot2": "B"
+    },
+    "explanation": "Azure Vision in Foundry Tools OCR extracts printed text from images such as street signs. Azure Language in Foundry Tools provides named entity recognition and entity linking to identify places and other well-known entities in text, avoiding custom OCR and location-recognition development. Azure AI Search is an indexing and retrieval service rather than the appropriate service for this entity analysis.",
+    "type": "dropdown",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Extract the text:"
+      },
+      {
+        "id": "slot2",
+        "label": "Identify well-known locations:"
+      }
+    ],
+    "instruction": ""
+  },
+  {
+    "id": "ai-103-study-147",
+    "question": "You have an Azure subscription containing a Microsoft Foundry resource named AI1 and a Content Safety in Foundry Control Plane resource named CS1.\n\nYou build an agent that uses AI1 to generate answers to specific questions and uses CS1 to check both input and output for objectionable content.\n\nYou need to optimize the content filter configurations by testing sample questions.\n\nSolution: In Content Safety Studio, use the Monitor online activity feature to run the tests.\n\nDoes this satisfy the requirement?",
+    "options": {
+      "A": "Yes",
+      "B": "No"
+    },
+    "answer": [
+      "B"
+    ],
+    "explanation": "Content-filter configurations should be tested with the Content Safety Studio moderation test experience, which accepts sample text, applies configurable category thresholds, and lets the text be run again to evaluate the filter behavior. Monitoring online activity is not the feature for running sample-content configuration tests."
+  },
+  {
+    "id": "ai-103-study-148",
+    "question": "You operate a factory that produces cardboard packaging for food products, and the factory’s internet connectivity is intermittent.\n\nPackages must contain four samples of every product.\n\nYou need to build an Azure Custom Vision model that identifies packaging defects, provides their locations to an operator, and ensures that every package contains the four products.\n\nWhich project type and domain should you use? Each option may be used once, more than once, or not at all.",
+    "options": {
+      "slot1": {
+        "A": "Food",
+        "B": "General",
+        "C": "General (compact)",
+        "D": "Image classification",
+        "E": "Logo",
+        "F": "Object detection"
+      },
+      "slot2": {
+        "A": "Food",
+        "B": "General",
+        "C": "General (compact)",
+        "D": "Image classification",
+        "E": "Logo",
+        "F": "Object detection"
+      }
+    },
+    "answer": {
+      "slot1": "F",
+      "slot2": "C"
+    },
+    "explanation": "Object detection is required because it returns bounding-box locations for defects and can detect multiple product instances, allowing the operator to verify that four samples are present. The General (compact) domain is appropriate when a compact, exportable model is needed for local inference during unreliable internet connectivity.",
+    "type": "drag_drop",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Project type:"
+      },
+      {
+        "id": "slot2",
+        "label": "Domain:"
+      }
+    ]
+  },
+  {
+    "id": "ai-103-study-149",
+    "question": "You have an agent named Agent1 that uses Model Context Protocol (MCP) calls to retrieve external data.\n\nYou need to implement guardrails so that Agent1 cannot send any content tagged as Violence to the MCP server.\n\nWhich intervention point should be used?",
+    "options": {
+      "A": "tool call",
+      "B": "user input",
+      "C": "tool response",
+      "D": "output"
+    },
+    "answer": [
+      "A"
+    ],
+    "explanation": "A tool call intervention point evaluates the action and arguments an agent is about to send to an external tool, including the data in the request. Blocking Violence-tagged content there prevents that content from being transmitted to the MCP server before the call executes."
+  },
+  {
+    "id": "ai-103-study-150",
+    "question": "You have a configurable guardrail in a Microsoft Foundry project.\n\nA Python application has a text blocklist named ConfidentialTerms that already contains terms to detect in user messages. Each incoming user message is stored in input_text.\n\nYou plan to moderate input_text before sending the text to a language model.\n\nYou need to analyze input_text by using the existing blocklist.\n\nHow should you complete the code?",
+    "options": {
+      "slot1": {
+        "A": "AddOrUpdateTextBlocklistItemsOptions",
+        "B": "AnalyzeImageOptions",
+        "C": "AnalyzeTextOptions",
+        "D": "TextBlocklist"
+      },
+      "slot2": {
+        "A": "client.add_or_update_blocklist_items",
+        "B": "client.analyze_image",
+        "C": "client.analyze_text",
+        "D": "client.list_text_blocklists"
+      }
+    },
+    "answer": {
+      "slot1": "C",
+      "slot2": "C"
+    },
+    "explanation": "AnalyzeTextOptions creates a text-moderation request and supports blocklist_names to supply the existing blocklist. client.analyze_text(request) submits that request for text analysis; image analysis and blocklist-management methods do not perform the required text moderation.",
+    "type": "dropdown",
+    "layout": "inline",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Blank 1"
+      },
+      {
+        "id": "slot2",
+        "label": "Blank 2"
+      }
+    ],
+    "instruction": "",
+    "template": "...\n\nblocklist_name = “ConfidentialTerms”\n\nclient = ContentSafetyClient(endpoint, credential)\n\nrequest = {{slot1}} (\n\n    text=input_text,\n\n    blocklist_names=[blocklist_name],\n\n    halt_on_blocklist_hit=False\n\n)\n\nanalysis_result = {{slot2}} (request)\n\n..."
+  },
+  {
+    "id": "ai-103-study-151",
+    "question": "You have a Docker host named Host1 that contains a container base image.\n\nYour Azure subscription contains a custom speech-to-text model named model1.\n\nYou need to run model1 on Host1.\n\nWhich three actions should you perform, in order?",
+    "options": {
+      "slot1": {
+        "A": "Request approval to run the container.",
+        "B": "Export model1 to Host1.",
+        "C": "Configure disk logging.",
+        "D": "Run the container.",
+        "E": "Retrain the model."
+      },
+      "slot2": {
+        "A": "Request approval to run the container.",
+        "B": "Export model1 to Host1.",
+        "C": "Configure disk logging.",
+        "D": "Run the container.",
+        "E": "Retrain the model."
+      },
+      "slot3": {
+        "A": "Request approval to run the container.",
+        "B": "Export model1 to Host1.",
+        "C": "Configure disk logging.",
+        "D": "Run the container.",
+        "E": "Retrain the model."
+      }
+    },
+    "answer": {
+      "slot1": "A",
+      "slot2": "B",
+      "slot3": "D"
+    },
+    "explanation": "A custom Speech-to-Text container requires approval for disconnected use. The trained custom model is then downloaded to the Docker host and supplied to the container when it starts. The model is already trained and the base image is already present, so retraining and disk logging are not required.",
+    "type": "drag_drop",
+    "layout": "rows",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Step 1"
+      },
+      {
+        "id": "slot2",
+        "label": "Step 2"
+      },
+      {
+        "id": "slot3",
+        "label": "Step 3"
+      }
+    ]
+  },
+  {
+    "id": "ai-103-study-152",
+    "question": "Your Azure subscription contains a Microsoft Foundry resource.\n\nYou need to build an app that suggests product names from a supplied product description.\n\nWhich Foundry model should you use?",
+    "options": {
+      "A": "Whisper",
+      "B": "DALL-E",
+      "C": "embeddings",
+      "D": "GPT-4"
+    },
+    "answer": [
+      "D"
+    ],
+    "explanation": "GPT-4 can understand a product description and generate a suitable product name as natural-language text. Embedding models produce numerical vectors for similarity tasks, DALL-E generates images, and Whisper handles speech-to-text. Microsoft Foundry documentation describes GPT-4 models as able to understand and generate natural language and code."
+  },
+  {
+    "id": "ai-103-study-154",
+    "question": "You have an Azure subscription containing a Microsoft Foundry resource named AI1 and a Content Safety in Foundry Control Plane resource named CS1.\n\nYou build an agent that uses AI1 to generate answers to specific questions and uses CS1 to check both input and output for objectionable content.\n\nYou need to optimize the content filter configurations by testing sample questions.\n\nSolution: From Content Safety Studio, you use the Protected material detection feature to perform the tests.\n\nDoes this satisfy the requirement?",
+    "options": {
+      "A": "Yes",
+      "B": "No"
+    },
+    "answer": [
+      "B"
+    ],
+    "explanation": "Protected material detection scans AI-generated output for known protected text or code, such as lyrics, articles, recipes, selected web content, or code from public repositories. It does not evaluate objectionable-content categories and their severity thresholds, which are required when optimizing harmful-content filter configurations."
+  },
+  {
+    "id": "ai-103-study-155",
+    "question": "You plan to deploy a containerized Azure AI Language service for sentiment analysis.\n\nYou configure https://contoso.cognitiveservices.azure.com as the endpoint URI for the service.\n\nYou must run the container on an Azure virtual machine by using Docker.\n\nHow should you complete the command?",
+    "options": {
+      "slot1": {
+        "A": "http://contoso.blob.core.windows.net",
+        "B": "http://contoso.cognitiveservices.azure.com",
+        "C": "mcr.microsoft.com/azure-cognitive-services/textanalytics/keyphrase",
+        "D": "mcr.microsoft.com/azure-cognitive-services/textanalytics/sentiment"
+      },
+      "slot2": {
+        "A": "http://contoso.blob.core.windows.net",
+        "B": "http://contoso.cognitiveservices.azure.com",
+        "C": "mcr.microsoft.com/azure-cognitive-services/textanalytics/keyphrase",
+        "D": "mcr.microsoft.com/azure-cognitive-services/textanalytics/sentiment"
+      }
+    },
+    "answer": {
+      "slot1": "D",
+      "slot2": "B"
+    },
+    "explanation": "The Sentiment Analysis container uses the mcr.microsoft.com/azure-cognitive-services/textanalytics/sentiment image. Its required Billing argument is the endpoint URI of the Azure AI Language resource that meters container usage; the API key must correspond to that same resource.",
+    "type": "dropdown",
+    "layout": "inline",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Blank 1"
+      },
+      {
+        "id": "slot2",
+        "label": "Blank 2"
+      }
+    ],
+    "instruction": "",
+    "template": "docker run --rm -it -p 5000:5000 --memory 8g --cpus 1 \\\n{{slot1}} \\\nEula=accept \\\nBilling={{slot2}} \\\nApiKey=xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  {
+    "id": "ai-103-study-156",
+    "question": "You are developing an AI solution that will use Sentiment Analysis results from surveys to calculate bonuses for customer-service staff.\n\nYou need to ensure that the solution complies with Microsoft responsible AI principles.\n\nWhat should you do?",
+    "options": {
+      "A": "Add a human review and approval step before making decisions that affect the staff’s financial situation.",
+      "B": "Include the Sentiment Analysis results when surveys return a low confidence score.",
+      "C": "Use all the surveys, including surveys by customers who requested that their account be deleted and their data be removed.",
+      "D": "Publish the raw survey data to a central location and provide the staff with access to the location."
+    },
+    "answer": [
+      "A"
+    ],
+    "explanation": "Bonus determinations have a consequential financial and employment impact on staff. Such AI-supported decisions require meaningful human oversight, including review and approval before the result affects an individual. Microsoft guidance identifies human-in-the-loop checkpoints and approval for high-impact actions as responsible-AI safeguards."
+  },
+  {
+    "id": "ai-103-study-157",
+    "question": "You have an Azure subscription that contains an Azure Language in Foundry Tools service resource named ta1 and a virtual network named vnet1.\n\nYou need to make sure that only resources in vnet1 can access ta1.\n\nWhat should you configure?",
+    "options": {
+      "A": "a network security group (NSG) for vnet1",
+      "B": "an Azure Language in Foundry Tools service container for ta1",
+      "C": "Azure Firewall for vnet1",
+      "D": "the virtual network settings for ta1"
+    },
+    "answer": [
+      "D"
+    ],
+    "explanation": "Azure Language in Foundry Tools restricts network access through the resource’s networking settings, where selected virtual networks and private endpoints can be configured. Allowing only vnet1 there limits access to that resource from the designated virtual network."
+  },
+  {
+    "id": "ai-103-study-159",
+    "question": "You have an Azure subscription containing a Microsoft Foundry resource named AI1 and a Content Safety in Foundry Control Plane resource named CS1.\n\nYou build an agent that uses AI1 to generate answers to specific questions and uses CS1 to check both input and output for objectionable content.\n\nYou need to optimize the content filter configurations by testing sample questions.\n\nSolution: From Content Safety Studio, you use the Moderate text content feature to perform the tests.\n\nDoes this satisfy the requirement?",
+    "options": {
+      "A": "Yes",
+      "B": "No"
+    },
+    "answer": [
+      "A"
+    ],
+    "explanation": "Content Safety Studio’s Moderate text content feature supports testing sample text against configurable content-filter severity thresholds and rerunning the tests to evaluate the filtering results. This enables optimization of text content-filter configurations."
+  },
+  {
+    "id": "ai-103-study-161",
+    "question": "In Microsoft Foundry, you use the Chat playground with the GPT-35 Turbo model. A prompt contains the following code.\n\nYou need the model to generate an explanation of the code while minimizing costs. What should you do?",
+    "options": {
+      "A": "Add function F (explanation) to the prompt.",
+      "B": "Change the model to GPT-4-32k.",
+      "C": "Add// what does function F do? to the prompt.",
+      "D": "Set the temperature parameter to 1."
+    },
+    "answer": [
+      "C"
+    ],
+    "explanation": "A concise natural-language instruction such as // what does function F do? explicitly asks GPT-35 Turbo to explain the code while retaining the lower-cost model. GPT-35 Turbo can generate natural-language and code-related responses, and adding the instruction adds only a small number of prompt tokens. Increasing temperature changes output randomness, not the requested task; changing to GPT-4-32k is unnecessary for this simple explanation and would not minimize cost.",
+    "imageUrl": "https://cdn.examcademy.com/images/questions/1792533090388-us6rcy7v.png"
+  },
+  {
+    "id": "ai-103-study-162",
+    "question": "You are developing an app that will share users’ images.\n\nYou need to configure the app to:\n\n• Categorize every image as either a photograph or a drawing.\n\n• Generate a caption for each image while minimizing development effort.\n\nWhich two services should you include?",
+    "options": {
+      "A": "Image type detection in Azure Vision in Foundry Tools",
+      "B": "Object detection in Azure Vision in Foundry Tools",
+      "C": "Content tags in Azure Vision in Foundry Tools",
+      "D": "Image classification in Azure Custom Vision",
+      "E": "Image descriptions in Azure Vision in Foundry Tools"
+    },
+    "answer": [
+      "A",
+      "E"
+    ],
+    "explanation": "Azure Vision Image Type detects image characteristics such as whether an image is a line drawing or the likelihood that it is clip art, which supports distinguishing drawings from photographs. Azure Vision Image Descriptions generates human-readable captions, so it meets the caption requirement without building a custom solution."
+  },
+  {
+    "id": "ai-103-study-164",
+    "question": "You need to use natural language processing to measure public perception of your brand on social media.\n\nWhich Azure service should you use?",
+    "options": {
+      "A": "Azure Document Intelligence in Foundry Tools",
+      "B": "Content Safety in Foundry Control Plane",
+      "C": "Azure Language in Foundry Tools",
+      "D": "Azure Vision in Foundry Tools"
+    },
+    "answer": [
+      "C"
+    ],
+    "explanation": "Azure Language in Foundry Tools provides sentiment analysis and opinion mining, which analyze text for positive, neutral, or negative sentiment and can identify opinions about specific aspects of a brand or topic. These capabilities are designed to understand public perception from sources such as social media."
+  },
+  {
+    "id": "ai-103-study-167",
+    "question": "You have an Azure DevOps pipeline named Pipeline1 that deploys an app. Pipeline1 includes a step that creates an Azure AI services account.\n\nYou need to add a step to Pipeline1 to identify the created Azure AI services account. The solution must minimize development effort.\n\nWhich Azure Command-Line Interface (CLI) command should you run?",
+    "options": {
+      "A": "az cognitiveservices account network-rule",
+      "B": "az cognitiveservices account show",
+      "C": "az account list",
+      "D": "az resource link"
+    },
+    "answer": [
+      "B"
+    ],
+    "explanation": "az cognitiveservices account show retrieves information about an Azure AI services account using its name and resource group. It can identify the created account directly without custom development. (learn.microsoft.com)"
+  },
+  {
+    "id": "ai-103-study-168",
+    "question": "You successfully execute the following HTTP request.\n\nWhat does the request result in?",
+    "options": {
+      "A": "A new query key was generated.",
+      "B": "A new secondary subscription key was created.",
+      "C": "A key for Azure AI Services was generated in Azure Key Vault.",
+      "D": "The primary subscription key and the secondary subscription key were rotated."
+    },
+    "answer": [
+      "B"
+    ],
+    "explanation": "The regenerateKey operation regenerates the specified Cognitive Services account key. Because keyName is Key2, it replaces the secondary resource subscription key; it does not rotate Key1. (learn.microsoft.com)",
+    "imageUrl": "https://cdn.examcademy.com/images/questions/1793461654585-nogo1tex.png"
+  },
+  {
+    "id": "ai-103-study-170",
+    "question": "You are building an image-sharing app that will use Azure AI to prevent users from sharing sexually explicit images.\n\nYou need to ensure that inappropriate images are identified correctly. The solution must minimize development effort.\n\nWhat should you use?",
+    "options": {
+      "A": "Vision Studio in Azure Vision in Foundry Tools",
+      "B": "Microsoft Foundry",
+      "C": "Visual Studio",
+      "D": "Content Safety in Foundry Control Plane Studio"
+    },
+    "answer": [
+      "D"
+    ],
+    "explanation": "Azure AI Content Safety can classify images for sexual content at multiple severity levels. Its studio lets developers test images, configure thresholds, and export sample code for integration, reducing development effort. The application can use the moderation result to prevent inappropriate images from being shared. (learn.microsoft.com)"
+  },
+  {
+    "id": "ai-103-study-171",
+    "question": "You have an Azure subscription with these configurations:\n\n• Subscription ID: 8d3591aa-96b8-4737-ad09-00f9b1ed35ad\n\n• Tenant ID: 3edfe572-cb54-3ced-ae12-c5c177f39a12\n\nYou plan to create a resource that performs sentiment analysis and optical character recognition (OCR).\n\nYou need to use an HTTP request to create the resource in the subscription. The solution must use a single key and endpoint.\n\nHow should you complete the request?",
+    "options": {
+      "slot1": {
+        "A": "subscriptions/3edfe572-cb54-3ced-ae12-c5c177f39a12",
+        "B": "subscriptions/8d3591aa-96b8-4737-ad09-00f9b1ed35ad",
+        "C": "tenant/3edfe572-cb54-3ced-ae12-c5c177f39a12",
+        "D": "tenant/8d3591aa-96b8-4737-ad09-00f9b1ed35ad"
+      },
+      "slot2": {
+        "A": "Microsoft.ApiManagement",
+        "B": "Microsoft.CognitiveServices",
+        "C": "Microsoft.ContainerService",
+        "D": "Microsoft.KeyVault"
+      }
+    },
+    "answer": {
+      "slot1": "B",
+      "slot2": "B"
+    },
+    "explanation": "The account-creation URI identifies the target subscription using its subscription ID and uses the Microsoft.CognitiveServices resource provider. A multi-service AI Services account can use one key and endpoint across supported language and vision services; the request body must specify the appropriate multi-service account kind. (learn.microsoft.com)",
+    "type": "dropdown",
+    "layout": "inline",
+    "slots": [
+      {
+        "id": "slot1",
+        "label": "Blank 1"
+      },
+      {
+        "id": "slot2",
+        "label": "Blank 2"
+      }
+    ],
+    "instruction": "",
+    "template": "https://management.azure.com/{{slot1}}/resourceGroups/OCRProject/providers/{{slot2}}/accounts/CS1?api-version=2021-10-01"
+  },
+  {
+    "id": "ai-103-study-172",
+    "question": "You need to recommend a solution for assessing the responses generated by Agent1 when it uses the product information stored in storage1. The solution must meet the technical requirements.\n\nWhat should you include in your recommendation?",
+    "options": {
+      "A": "a Retrieval Augmented Generation (RAG) evaluator",
+      "B": "a custom guardrail",
+      "C": "a coherence evaluator",
+      "D": "model fine-tuning"
+    },
+    "answer": [
+      "A"
+    ],
+    "explanation": "A RAG evaluator can assess how well Agent1's responses align with the product information retrieved from storage1. In particular, a groundedness evaluator measures whether a response is supported by the supplied context rather than containing fabricated information. A coherence evaluator instead measures the logical flow and consistency of the response. (learn.microsoft.com)"
+  },
+  {
+    "id": "ai-103-study-173",
+    "question": "You have a Python application that uses Azure OpenAI structured outputs to extract fields from unstructured receipt text and support ticket text. The application uses this schema:\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+    "options": {
+      "A": "Yes",
+      "B": "No"
+    },
+    "answer": {
+      "s1": "B",
+      "s2": "A",
+      "s3": "A"
+    },
+    "explanation": "• No: The discount_code property must appear in the output, but its value may be null, so a non-null discount code is not required.\n\n• Yes: The schema uses supported types and nested anyOf, requires every property, and sets additionalProperties to false for both objects.\n\n• Yes: Structured outputs preserve the property order specified in the schema. (learn.microsoft.com)",
+    "imageUrl": "https://cdn.examcademy.com/images/questions/1793463074738-uqhi6bh7.png",
+    "type": "yes_no",
+    "statements": [
+      {
+        "id": "s1",
+        "text": "The schema requires that a receipt has a discount_code value."
+      },
+      {
+        "id": "s2",
+        "text": "The schema can be used as is for Azure OpenAI structured outputs."
+      },
+      {
+        "id": "s3",
+        "text": "The generated JSON object will preserve the schema property order of merchant, order_number, discount_code, line_items, and total."
+      }
+    ]
   }
 ]
