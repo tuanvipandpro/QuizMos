@@ -2,6 +2,14 @@
 // Review the referenced bank diff before adding or revising an entry.
 export const quizUpdates = [
   {
+    id: 'ab-100-study-2026-11-24',
+    bankId: 'ab-100',
+    kind: 'updated',
+    date: '2026-11-24',
+    summary: 'Added 24 AB-100 questions and a certification prerequisite note.',
+    sourceRevision: 'fd30f41b2505d1a949d0630cbd637d477c8cfe32',
+  },
+  {
     id: 'gcp-paa-2026-11-10',
     bankId: 'gcp-paa',
     kind: 'added',
