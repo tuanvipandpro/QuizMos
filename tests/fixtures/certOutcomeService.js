@@ -2,9 +2,8 @@ import {
   changedOutcomeClaim,
   outcomeError,
   outcomeRecordEdit,
-  outcomeReportEdit,
-  publicOutcome,
   sameOutcomeVersion,
+  withdrawOutcomeReport,
 } from '../../src/utils/certificationOutcomes.js';
 
 const storageName = 'quiz-e2e-outcomes-fixture';
@@ -18,13 +17,9 @@ const requireOwner = (uid) => {
 const setReport = (data, id, next) => {
   if (!next) return;
   data.reports[id] = next;
-  if (next.status === 'published') data.public[id] = publicOutcome(next);
-  else delete data.public[id];
+  delete data.public[id];
 };
 export default {
-  async canModerate(uid) {
-    return account()?.uid === uid && account()?.moderator === true;
-  },
   async list(uid, report) {
     requireOwner(uid);
     const data = read();
@@ -43,11 +38,7 @@ export default {
     if (next) {
       const report = current && data.reports[current.instanceId];
       if (report && report.status !== 'removed' && changedOutcomeClaim(current, next))
-        setReport(
-          data,
-          current.instanceId,
-          outcomeReportEdit(report, { action: 'remove', revision: report.revision })
-        );
+        setReport(data, current.instanceId, withdrawOutcomeReport(report, report.revision));
       records[command.slot] = next;
       store(data);
     }
@@ -67,7 +58,7 @@ export default {
     delete data.public[current.instanceId];
     store(data);
   },
-  async share(uid, command) {
+  async withdraw(uid, command) {
     requireOwner(uid);
     const data = read();
     const row = data.records[uid]?.[command.slot];
@@ -75,39 +66,8 @@ export default {
     setReport(
       data,
       row.instanceId,
-      outcomeReportEdit(data.reports[row.instanceId], {
-        uid,
-        slot: command.slot,
-        bankId: row.bankId,
-        result: row.result,
-        action: command.action,
-        revision: command.reportRevision,
-        experience: command.experience,
-      })
+      withdrawOutcomeReport(data.reports[row.instanceId], command.reportRevision)
     );
-    store(data);
-  },
-  async publicPage() {
-    return {
-      rows: Object.entries(read().public).map(([id, value]) => ({ id, ...value })),
-      next: null,
-    };
-  },
-  async moderationPage(status) {
-    if (!account()?.moderator) throw outcomeError('denied');
-    return {
-      rows: Object.entries(read().reports)
-        .filter(([, value]) => value.status === status)
-        .map(([id, value]) => ({ id, ...value })),
-      next: null,
-    };
-  },
-  async moderate(uid, { id, action, revision }) {
-    if (!(await this.canModerate(uid))) throw outcomeError('denied');
-    const data = read();
-    const before = data.reports[id];
-    if (before?.owner === uid) throw outcomeError('denied');
-    setReport(data, id, outcomeReportEdit(before, { action, revision }));
     store(data);
   },
 };

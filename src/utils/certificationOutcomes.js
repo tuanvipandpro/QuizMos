@@ -4,7 +4,6 @@ import { isRoadmapDay, roadmapDayInZone, ROADMAP_SLOTS } from './studyRoadmap.js
 import { UUID_PATTERN } from './secureId.js';
 
 export const OUTCOME_SLOTS = Array.from({ length: 6 }, (_, index) => 'slot-' + (index + 1));
-export const OUTCOME_PAGE_SIZE = 20;
 export const OUTCOME_NOTE_MAX = 1200;
 export const OUTCOME_EXPERIENCE_MAX = 400;
 export const OUTCOME_SCORE_MAX = 1000000;
@@ -90,16 +89,6 @@ export function readOutcome(slot, data) {
   return { ...data, slot };
 }
 
-export function normalizeExperience(value) {
-  const text = typeof value === 'string' ? value.trim() : null;
-  if (!stringLimit(text, OUTCOME_EXPERIENCE_MAX)) throw outcomeError('experience');
-  return text;
-}
-
-export function publicOutcome(report) {
-  return { bankId: report.bankId, result: report.result, experience: report.experience };
-}
-
 export function readOutcomeReport(data) {
   if (
     !data ||
@@ -113,17 +102,6 @@ export function readOutcomeReport(data) {
   )
     throw outcomeError('invalid');
   return data;
-}
-
-export function readPublicOutcome(data) {
-  if (
-    !exact(data, ['bankId', 'result', 'experience', 'publishedAt']) ||
-    !bankFormat(data.bankId) ||
-    !validResult(data.result) ||
-    !stringLimit(data.experience, OUTCOME_EXPERIENCE_MAX)
-  )
-    throw outcomeError('invalid');
-  return publicOutcome(data);
 }
 
 export function matchingPlan(plan, record) {
@@ -154,42 +132,17 @@ export function changedOutcomeClaim(before, after) {
   return before.bankId !== after.bankId || before.result !== after.result;
 }
 
-export function outcomeReportEdit(
-  current,
-  { uid, slot, action, revision, bankId, result, experience }
-) {
-  const previous = current?.status;
-  const next = { submit: 'pending', publish: 'published', reject: 'rejected', remove: 'removed' }[
-    action
-  ];
-  if (!next) throw outcomeError('invalid');
-  if (
-    (current?.revision || 0) === revision + 1 &&
-    previous === next &&
-    (action !== 'submit' ||
-      (current.bankId === bankId && current.result === result && current.experience === experience))
-  )
-    return null;
-  if ((current?.revision || 0) !== revision) throw outcomeError('conflict');
-  const allowed = {
-    submit: [undefined, 'removed', 'rejected'],
-    publish: ['pending'],
-    reject: ['pending'],
-    remove: ['pending', 'rejected', 'published'],
-  };
-  if (!allowed[action].includes(previous)) throw outcomeError('conflict');
+export function withdrawOutcomeReport(current, revision) {
+  if (current?.status === 'removed' && current.revision === revision + 1) return null;
+  if (!current || current.revision !== revision || current.status === 'removed')
+    throw outcomeError('conflict');
   return {
-    owner: current?.owner || uid,
-    slot: current?.slot || slot,
-    bankId: action === 'submit' ? bankId : current.bankId,
-    result: action === 'submit' ? result : current.result,
-    experience:
-      action === 'submit'
-        ? normalizeExperience(experience)
-        : action === 'remove'
-          ? ''
-          : current.experience,
-    status: next,
+    owner: current.owner,
+    slot: current.slot,
+    bankId: current.bankId,
+    result: current.result,
+    experience: '',
+    status: 'removed',
     revision: revision + 1,
   };
 }

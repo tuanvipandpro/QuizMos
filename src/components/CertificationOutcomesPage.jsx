@@ -1,18 +1,14 @@
-import React, { useEffect, useId, useState } from 'react';
-import { Alert, Button, Card, Checkbox, Empty, Input, Modal, Spin, Tag, Typography } from 'antd';
+import React, { useState } from 'react';
+import { Alert, Button, Card, Empty, Modal, Spin, Tag, Typography } from 'antd';
 import CertificationOutcomeEditor, { planForOutcome } from './CertificationOutcomeEditor';
-import CertificationOutcomeFeed, {
-  outcomeResultLabel,
-  PublicOutcomeCard,
-} from './CertificationOutcomeFeed';
+import CertificationLinks from './CertificationLinks';
 import { useOutcomeRecords, useOutcomeWrite, outcomeMessage } from '../hooks/useCertOutcomes';
 import { useLanguage } from '../contexts/LanguageContext';
 import { CERT_OUTCOMES_ENABLED, CERT_OUTCOME_SHARING_ENABLED } from '../config/certOutcomeConfig';
 import { STUDY_ROADMAP_ENABLED } from '../config/studyRoadmapConfig';
 import { findQuiz } from '../data/quizzes.js';
 import { secureId } from '../utils/secureId.js';
-import service from '../services/certOutcomeService';
-import { OUTCOME_EXPERIENCE_MAX, OUTCOME_SLOTS } from '../utils/certificationOutcomes.js';
+import { OUTCOME_SLOTS } from '../utils/certificationOutcomes.js';
 
 const { Title, Paragraph, Text } = Typography;
 const statusText = {
@@ -22,18 +18,13 @@ const statusText = {
   removed: 'Removed',
 };
 const labels = {
-  submit: ['Preview public report', 'Submit for moderation'],
   withdraw: ['Withdraw this public report?', 'Withdraw report'],
   delete: ['Delete this certification outcome?', 'Delete outcome'],
 };
 
 function OutcomeDialog({ operation, busy, failure, onCancel, onConfirm }) {
   const { t } = useLanguage();
-  const id = useId();
-  const [experience, setExperience] = useState('');
-  const [agreed, setAgreed] = useState(false);
-  const { action, record } = operation;
-  const preview = action === 'submit';
+  const { action } = operation;
   return (
     <Modal
       className="app-danger-dialog outcome-dialog"
@@ -43,58 +34,17 @@ function OutcomeDialog({ operation, busy, failure, onCancel, onConfirm }) {
       cancelText={t('Cancel')}
       confirmLoading={busy}
       cancelButtonProps={{ autoFocus: true }}
-      okButtonProps={{
-        danger: !preview,
-        disabled: (preview && !agreed) || failure?.outcomeCode === 'conflict',
-      }}
+      okButtonProps={{ danger: true, disabled: failure?.outcomeCode === 'conflict' }}
       onCancel={() => !busy && onCancel()}
-      onOk={() => onConfirm(experience.trim())}
+      onOk={onConfirm}
     >
-      {preview ? (
-        <>
-          <label htmlFor={id}>{t('Public study experience (optional)')}</label>
-          <Input.TextArea
-            id={id}
-            rows={3}
-            maxLength={OUTCOME_EXPERIENCE_MAX}
-            value={experience}
-            disabled={busy}
-            onChange={(event) => {
-              setExperience(event.target.value);
-              setAgreed(false);
-            }}
-          />
-          <Paragraph type="secondary">
-            {t(
-              'Share only what you want everyone to see. Leave out names, contact details and credential IDs.'
-            )}
-          </Paragraph>
-          <Card size="small" aria-label={t('Public preview')}>
-            <PublicOutcomeCard
-              report={{
-                bankId: record.bankId,
-                result: record.result,
-                experience: experience.trim(),
-              }}
-            />
-          </Card>
-          <Checkbox
-            checked={agreed}
-            disabled={busy}
-            onChange={(event) => setAgreed(event.target.checked)}
-          >
-            {t('I want to submit these fields for public sharing.')}
-          </Checkbox>
-        </>
-      ) : (
-        <Paragraph>
-          {t(
-            action === 'delete'
-              ? 'This deletes the private record and any shared report.'
-              : 'This removes the shared report. Your private record stays saved.'
-          )}
-        </Paragraph>
-      )}
+      <Paragraph>
+        {t(
+          action === 'delete'
+            ? 'This deletes the private record and any shared report.'
+            : 'This removes the shared report. Your private record stays saved.'
+        )}
+      </Paragraph>
       {failure && <Alert type="error" showIcon message={t(outcomeMessage(failure))} />}
     </Modal>
   );
@@ -158,17 +108,15 @@ function PrivateOutcomes({ uid, onNavigate }) {
       state.reload();
     }
   };
-  const decide = async (experience) => {
+  const decide = async () => {
     if (!operation) return;
     const { action, record } = operation;
     const ok =
       action === 'delete'
         ? await mutation.write('remove', record)
-        : await mutation.write('share', {
+        : await mutation.write('withdraw', {
             ...record,
-            action: action === 'withdraw' ? 'remove' : 'submit',
             reportRevision: record.report?.revision || 0,
-            experience,
           });
     if (ok) {
       setOperation(null);
@@ -176,7 +124,6 @@ function PrivateOutcomes({ uid, onNavigate }) {
         {
           delete: 'Certification outcome deleted.',
           withdraw: 'Report withdrawn.',
-          submit: 'Report submitted for moderation.',
         }[action]
       );
       state.reload();
@@ -268,7 +215,7 @@ function PrivateOutcomes({ uid, onNavigate }) {
                     <time dateTime={record.examDate}>{dayLabel(record.examDate)}</time>
                   </dd>
                   <dt>{t('Exam outcome')}</dt>
-                  <dd>{t(outcomeResultLabel(record.result))}</dd>
+                  <dd>{t(record.result === 'passed' ? 'Passed' : 'Did not pass')}</dd>
                   {record.score !== null && (
                     <>
                       <dt>{t('Reported score')}</dt>
@@ -313,12 +260,6 @@ function PrivateOutcomes({ uid, onNavigate }) {
                   <Button disabled={busy} onClick={() => start(record)}>
                     {t('Edit outcome')}
                   </Button>
-                  {CERT_OUTCOME_SHARING_ENABLED &&
-                    !['pending', 'published'].includes(record.report?.status) && (
-                      <Button disabled={busy} onClick={() => action(record, 'submit')}>
-                        {t('Preview public report')}
-                      </Button>
-                    )}
                   {record.report && record.report.status !== 'removed' && (
                     <Button disabled={busy} onClick={() => action(record, 'withdraw')}>
                       {t('Withdraw report')}
@@ -358,68 +299,53 @@ export default function CertificationOutcomesPage({
   onNavigate,
 }) {
   const { t } = useLanguage();
-  const [moderation, setModeration] = useState(null);
   const uid = user?.uid || null;
   const view = params.get('view');
-  const mode = ['public', 'moderation'].includes(view) ? view : null;
-  const canModerate = !!uid && moderation?.uid === uid && moderation.allowed;
-  useEffect(() => {
-    let current = true;
-    if (!uid || !CERT_OUTCOME_SHARING_ENABLED) return;
-    service.canModerate(uid).then(
-      (allowed) => {
-        if (current) setModeration({ uid, allowed });
-      },
-      () => {
-        if (current) setModeration({ uid, allowed: false });
-      }
-    );
-    return () => {
-      current = false;
-    };
-  }, [uid]);
+  const isPublic = view === 'public';
+  const legacyModeration = view === 'moderation';
   return (
     <section className="account-page certification-outcomes">
       <div className="page-heading">
         <Title level={1}>
           {t(
-            mode === 'public'
-              ? 'Community outcomes'
-              : mode === 'moderation'
+            isPublic
+              ? 'Public certificate links'
+              : legacyModeration
                 ? 'Outcome moderation'
                 : 'Certification outcomes'
           )}
         </Title>
         <Paragraph type="secondary">
-          {t('Self-reported results from actual certification exams.')}
+          {t(
+            isPublic
+              ? 'Certificate and badge links shared by learners.'
+              : 'Self-reported results from actual certification exams.'
+          )}
         </Paragraph>
       </div>
       {CERT_OUTCOMES_ENABLED && (
         <nav className="outcome-actions" aria-label={t('Certification outcomes')}>
-          {mode ? (
+          {isPublic || legacyModeration ? (
             <Button onClick={() => onNavigate('#/outcomes')}>
               {t('My certification outcomes')}
             </Button>
           ) : (
             <Button onClick={() => onNavigate('#/profile')}>{t('Back to profile')}</Button>
           )}
-          {CERT_OUTCOME_SHARING_ENABLED && mode !== 'public' && (
+          {CERT_OUTCOME_SHARING_ENABLED && !isPublic && (
             <Button onClick={() => onNavigate('#/outcomes?view=public')}>
-              {t('Community outcomes')}
-            </Button>
-          )}
-          {canModerate && mode !== 'moderation' && (
-            <Button onClick={() => onNavigate('#/outcomes?view=moderation')}>
-              {t('Outcome moderation')}
+              {t('Public certificate links')}
             </Button>
           )}
         </nav>
       )}
-      {!CERT_OUTCOMES_ENABLED || (mode && !CERT_OUTCOME_SHARING_ENABLED) ? (
+      {!CERT_OUTCOMES_ENABLED || (isPublic && !CERT_OUTCOME_SHARING_ENABLED) ? (
         <Alert type="info" showIcon message={t('Certification outcomes are not enabled here.')} />
-      ) : mode === 'public' ? (
-        <CertificationOutcomeFeed key="public" />
-      ) : authLoading || (mode === 'moderation' && uid && moderation?.uid !== uid) ? (
+      ) : legacyModeration ? (
+        <Alert type="info" showIcon message={t('Public sharing now uses certificate links.')} />
+      ) : isPublic ? (
+        <CertificationLinks user={user} authLoading={authLoading} onSignIn={onSignIn} />
+      ) : authLoading ? (
         <div className="inline-status" role="status">
           <Spin size="small" />
           {t('Loading account…')}
@@ -431,12 +357,6 @@ export default function CertificationOutcomesPage({
             {t('Sign in')}
           </Button>
         </Card>
-      ) : mode === 'moderation' ? (
-        canModerate ? (
-          <CertificationOutcomeFeed key={uid} moderator={uid} />
-        ) : (
-          <Alert type="error" showIcon message={t('You do not have permission for this action.')} />
-        )
       ) : (
         <PrivateOutcomes key={uid} uid={uid} onNavigate={onNavigate} />
       )}

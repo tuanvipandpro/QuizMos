@@ -1,7 +1,38 @@
 export const CERTIFICATION_OUTCOME_MESSAGES = {
   'Certification outcomes': 'Kết quả thi chứng chỉ',
   'My certification outcomes': 'Kết quả thi của tôi',
-  'Community outcomes': 'Kết quả thi từ cộng đồng',
+  'Public certificate links': 'Liên kết chứng chỉ công khai',
+  'Certificate and badge links shared by learners.':
+    'Liên kết chứng chỉ và huy hiệu do người học chia sẻ.',
+  'Public sharing now uses certificate links.':
+    'Mục chia sẻ công khai hiện dùng liên kết chứng chỉ.',
+  'My public links': 'Liên kết công khai của tôi',
+  'Refresh my links': 'Tải lại liên kết của tôi',
+  'Add certificate link': 'Thêm liên kết chứng chỉ',
+  'You can publish up to six certificate links.':
+    'Bạn có thể công khai tối đa sáu liên kết chứng chỉ.',
+  'Certificate or badge URL': 'URL chứng chỉ hoặc huy hiệu',
+  'The full link will be visible to everyone.': 'Mọi người sẽ thấy toàn bộ liên kết.',
+  'Enter a valid HTTPS certificate or badge link.':
+    'Nhập liên kết HTTPS hợp lệ đến chứng chỉ hoặc huy hiệu.',
+  'This link changed. Refresh and review the current link.':
+    'Liên kết đã thay đổi. Tải lại và kiểm tra liên kết hiện tại.',
+  'Publish link': 'Công khai liên kết',
+  'Save public link': 'Lưu liên kết công khai',
+  'Certificate link published.': 'Đã công khai liên kết chứng chỉ.',
+  'Public link updated.': 'Đã cập nhật liên kết công khai.',
+  'Public link removed.': 'Đã gỡ liên kết công khai.',
+  'Edit link': 'Sửa liên kết',
+  'Remove link': 'Gỡ liên kết',
+  'Remove this public link?': 'Gỡ liên kết công khai này?',
+  'Guests will no longer see this link in QuizMos.':
+    'Khách sẽ không còn thấy liên kết này trên QuizMos.',
+  'Loading certificate links…': 'Đang tải liên kết chứng chỉ…',
+  'Sign in to publish a link': 'Đăng nhập để công khai liên kết',
+  'Community certificate links': 'Liên kết chứng chỉ từ cộng đồng',
+  'Refresh public links': 'Tải lại liên kết công khai',
+  'No public certificate links yet.': 'Chưa có liên kết chứng chỉ công khai.',
+  'Load more': 'Tải thêm',
   'Outcome moderation': 'Kiểm duyệt kết quả thi',
   'Self-reported results from actual certification exams.':
     'Kết quả thi chứng chỉ do người học tự báo cáo.',
@@ -32,37 +63,16 @@ export const CERTIFICATION_OUTCOME_MESSAGES = {
   'Save private outcome': 'Lưu kết quả riêng tư',
   'Changing the quiz bank or result withdraws the shared report.':
     'Đổi bộ câu hỏi hoặc kết quả sẽ rút báo cáo đã chia sẻ.',
-  'Self-reported': 'Tự báo cáo',
-  'Pending reports': 'Báo cáo chờ duyệt',
-  'Published reports': 'Báo cáo đã công khai',
   'Refresh outcomes': 'Tải lại kết quả thi',
-  'Review public fields for personal information before publishing.':
-    'Kiểm tra thông tin cá nhân trong nội dung công khai trước khi duyệt.',
   'Loading certification outcomes…': 'Đang tải kết quả thi chứng chỉ…',
-  'No reports in this queue.': 'Danh sách này chưa có báo cáo.',
-  'No public outcomes yet.': 'Chưa có kết quả được công khai.',
-  'Publish this report?': 'Công khai báo cáo này?',
-  'Reject this report?': 'Từ chối báo cáo này?',
-  'Remove this public report?': 'Gỡ báo cáo công khai này?',
-  'Publish report': 'Công khai báo cáo',
-  'Reject report': 'Từ chối báo cáo',
-  'Remove public report': 'Gỡ báo cáo công khai',
   'Pending moderation': 'Chờ kiểm duyệt',
   Published: 'Đã công khai',
   Rejected: 'Đã từ chối',
   Removed: 'Đã gỡ',
-  'Preview public report': 'Xem trước báo cáo công khai',
-  'Submit for moderation': 'Gửi để kiểm duyệt',
   'Withdraw this public report?': 'Rút báo cáo công khai này?',
   'Withdraw report': 'Rút báo cáo',
   'Delete this certification outcome?': 'Xóa kết quả thi này?',
   'Delete outcome': 'Xóa kết quả thi',
-  'Public study experience (optional)': 'Kinh nghiệm ôn tập công khai (không bắt buộc)',
-  'Share only what you want everyone to see. Leave out names, contact details and credential IDs.':
-    'Chỉ chia sẻ nội dung bạn muốn mọi người thấy. Hãy bỏ tên, thông tin liên hệ và mã chứng chỉ.',
-  'Public preview': 'Bản xem trước công khai',
-  'I want to submit these fields for public sharing.':
-    'Tôi muốn gửi các thông tin này để chia sẻ công khai.',
   'This deletes the private record and any shared report.':
     'Thao tác này xóa kết quả riêng tư và báo cáo đã chia sẻ.',
   'This removes the shared report. Your private record stays saved.':
@@ -70,7 +80,6 @@ export const CERTIFICATION_OUTCOME_MESSAGES = {
   'Private outcome saved.': 'Đã lưu kết quả riêng tư.',
   'Certification outcome deleted.': 'Đã xóa kết quả thi.',
   'Report withdrawn.': 'Đã rút báo cáo.',
-  'Report submitted for moderation.': 'Đã gửi báo cáo để kiểm duyệt.',
   'This record is no longer available. Your form input is still here.':
     'Kết quả này không còn khả dụng. Dữ liệu bạn nhập vẫn được giữ.',
   'You can keep up to six certification outcomes.':
@@ -84,7 +93,6 @@ export const CERTIFICATION_OUTCOME_MESSAGES = {
   'This record changed. Refresh and review the latest version.':
     'Kết quả đã thay đổi. Tải lại và kiểm tra bản mới nhất.',
   'The selected study target is no longer available.': 'Mục tiêu học đã chọn không còn khả dụng.',
-  'The public experience is too long.': 'Nội dung kinh nghiệm công khai quá dài.',
   'You do not have permission for this action.': 'Bạn không có quyền thực hiện thao tác này.',
   'Could not complete the request. Please retry.': 'Không hoàn tất được yêu cầu. Hãy thử lại.',
 };
