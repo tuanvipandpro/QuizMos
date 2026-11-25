@@ -82,19 +82,25 @@ async function fill(page, date = '2026-11-21') {
   );
 }
 
-test('private outcomes remain gated and ordinary accounts cannot access moderation', async ({
+test('private outcomes remain gated and the legacy moderation view is retired', async ({
   page,
 }) => {
-  await init(page, { enabled: false });
+  await init(page, { enabled: false, sharing: false });
   await page.goto('./#/outcomes');
   await expect(
     page.getByText('Certification outcomes are not enabled here.', { exact: true })
   ).toBeVisible();
   await page.evaluate(() => sessionStorage.setItem('quiz-e2e-outcomes-enabled', '1'));
+  await page.goto('./#/outcomes?view=public');
+  await page.reload();
+  await expect(
+    page.getByText('Certification outcomes are not enabled here.', { exact: true })
+  ).toBeVisible();
+  await expect(btn(page, 'Add certificate link')).toHaveCount(0);
   await page.goto('./#/outcomes?view=moderation');
   await page.reload();
   await expect(
-    page.getByText('You do not have permission for this action.', { exact: true })
+    page.getByText('Public sharing now uses certificate links.', { exact: true })
   ).toBeVisible();
   await expect(btn(page, 'Publish report')).toHaveCount(0);
 });
@@ -139,61 +145,110 @@ test('a private result retains data after a lost response, links a plan, and nev
   await expect(page.getByText('Edited privately.', { exact: true })).toHaveCount(0);
 });
 
-test('public preview needs opt-in, approval exposes only selected fields, and withdrawal removes the projection', async ({
+test('owners publish, edit and remove certificate links and guests see only the public URL', async ({
   page,
 }) => {
+  const first = 'https://www.credly.com/badges/quizmos-test/public_url';
+  const updated = 'https://issuer.example.org/verify/quizmos-test';
+  const visibleLink = (url) =>
+    page.locator('main').getByRole('link', { name: new RegExp(url.replaceAll('.', '\\.')) });
   await init(page);
   await page.goto('./#/outcomes');
   await fill(page);
   await btn(page, 'Save private outcome').click();
-  await btn(page, 'Preview public report').click();
-  const preview = dialog(page, 'Preview public report');
-  await expect(btn(preview, 'Submit for moderation')).toBeDisabled();
-  await field(preview, 'Public study experience (optional)').fill('The practice helped.');
-  const renderedPreview = preview.getByLabel('Public preview', { exact: true });
-  await expect(renderedPreview.getByText('The practice helped.', { exact: true })).toBeVisible();
+  await expect(page.getByText('Private outcome saved.', { exact: true })).toBeVisible();
+  await btn(page.locator('main'), 'Public certificate links').click();
+  await btn(page, 'Add certificate link').click();
+  await field(page, 'Certificate or badge URL').fill(
+    'https://account@issuer.example.org/credential'
+  );
+  await btn(page, 'Publish link').click();
+  await expect(field(page, 'Certificate or badge URL')).toHaveAttribute('aria-invalid', 'true');
+  await expect(field(page, 'Certificate or badge URL')).toBeFocused();
+  await expect(field(page, 'Certificate or badge URL')).toHaveValue(
+    'https://account@issuer.example.org/credential'
+  );
+  await field(page, 'Certificate or badge URL').fill(first);
+  await page.evaluate(() => sessionStorage.setItem('quiz-e2e-credential-drop-response', '1'));
+  await btn(page, 'Publish link').click();
   await expect(
-    preview.getByText('Keep this preparation note private.', { exact: true })
-  ).toHaveCount(0);
-  await expect(preview.getByText('87.5 / 100', { exact: true })).toHaveCount(0);
-  await preview.getByRole('checkbox').check();
-  await clickAfterUiMotion(btn(preview, 'Submit for moderation'));
-  await expect(page.getByText('Pending moderation', { exact: true })).toBeVisible();
+    page.getByText('Could not complete the request. Please retry.', { exact: true })
+  ).toBeVisible();
+  await expect(field(page, 'Certificate or badge URL')).toHaveValue(first);
+  await btn(page, 'Publish link').click();
+  await expect(page.getByText('Certificate link published.', { exact: true })).toBeVisible();
+  await expect(btn(page, 'Edit link')).toHaveCount(1);
   await switchUser(page, null);
-  await page.goto('./#/outcomes?view=public');
-  await expect(page.getByText('No public outcomes yet.', { exact: true })).toBeVisible();
-  await switchUser(page, reviewer);
-  await btn(page.locator('main'), 'Outcome moderation').click();
-  await expect(page.getByText('The practice helped.', { exact: true })).toBeVisible();
-  await btn(page, 'Publish report').click();
-  await clickAfterUiMotion(btn(dialog(page, 'Publish this report?'), 'Publish report'));
-  await expect(page.getByText('No reports in this queue.', { exact: true })).toBeVisible();
-  await switchUser(page, null);
-  await page.goto('./#/outcomes?view=public');
-  await expect(page.getByText('The practice helped.', { exact: true })).toBeVisible();
-  await expect(page.getByText('Self-reported', { exact: true })).toBeVisible();
+  await expect(btn(page, 'Sign in to publish a link')).toBeVisible();
+  await expect(visibleLink(first)).toHaveCount(1);
+  await expect(visibleLink(first)).toHaveAttribute('rel', 'noopener noreferrer nofollow ugc');
   await expect(page.getByText('Keep this preparation note private.', { exact: true })).toHaveCount(
     0
   );
   await expect(page.getByText('87.5 / 100', { exact: true })).toHaveCount(0);
+  await switchUser(page, reviewer);
+  await expect(btn(page, 'Add certificate link')).toBeEnabled();
+  await expect(btn(page, 'Edit link')).toHaveCount(0);
+  await expect(btn(page, 'Remove link')).toHaveCount(0);
+  await btn(page, 'Add certificate link').click();
+  await field(page, 'Certificate or badge URL').fill('https://issuer.example.org/other-draft');
   await switchUser(page, owner);
-  await page.goto('./#/outcomes');
-  await btn(page, 'Withdraw report').click();
-  await clickAfterUiMotion(btn(dialog(page, 'Withdraw this public report?'), 'Withdraw report'));
-  await expect(page.getByText('Report withdrawn.', { exact: true })).toBeVisible();
+  await expect(field(page, 'Certificate or badge URL')).toHaveCount(0);
+  await btn(page, 'Edit link').click();
+  await field(page, 'Certificate or badge URL').fill(updated);
+  await btn(page, 'Save public link').click();
+  await expect(page.getByText('Public link updated.', { exact: true })).toBeVisible();
+  await page.reload();
+  await expect(visibleLink(updated)).toHaveCount(2);
+  await expect(visibleLink(first)).toHaveCount(0);
+  await btn(page, 'Remove link').click();
+  const confirm = dialog(page, 'Remove this public link?');
+  await expect(btn(confirm, 'Cancel')).toBeFocused();
+  await clickAfterUiMotion(btn(confirm, 'Remove link'));
+  await expect(page.getByText('Public link removed.', { exact: true })).toBeVisible();
+  await switchUser(page, null);
+  await btn(page, 'Refresh public links').click();
+  await expect(page.getByText('No public certificate links yet.', { exact: true })).toBeVisible();
+  await switchUser(page, owner);
+  await btn(page, 'My certification outcomes').click();
   await expect(
     page.getByText('Keep this preparation note private.', { exact: true })
   ).toBeVisible();
-  await switchUser(page, null);
-  await page.goto('./#/outcomes?view=public');
-  await expect(page.getByText('No public outcomes yet.', { exact: true })).toBeVisible();
-  await switchUser(page, owner);
-  await page.goto('./#/outcomes');
   await btn(page, 'Delete outcome').click();
   await clickAfterUiMotion(
     btn(dialog(page, 'Delete this certification outcome?'), 'Delete outcome')
   );
   await expect(page.getByText('Certification outcome deleted.', { exact: true })).toBeVisible();
+});
+
+test('a late retry cannot republish a link removed in another tab', async ({ page, context }) => {
+  const url = 'https://issuer.example.org/verify/lost-response';
+  await init(page);
+  await page.goto('./#/outcomes?view=public');
+  await btn(page, 'Add certificate link').click();
+  await field(page, 'Certificate or badge URL').fill(url);
+  await page.evaluate(() => sessionStorage.setItem('quiz-e2e-credential-drop-response', '1'));
+  await btn(page, 'Publish link').click();
+  await expect(
+    page.getByText('Could not complete the request. Please retry.', { exact: true })
+  ).toBeVisible();
+
+  const other = await context.newPage();
+  await init(other);
+  await other.goto('./#/outcomes?view=public');
+  await btn(other, 'Remove link').click();
+  await clickAfterUiMotion(btn(dialog(other, 'Remove this public link?'), 'Remove link'));
+  await expect(other.getByText('Public link removed.', { exact: true })).toBeVisible();
+  await expect(other.getByText('No public certificate links yet.', { exact: true })).toBeVisible();
+  await btn(page, 'Publish link').click();
+  await expect(
+    page.getByText('This link changed. Refresh and review the current link.', { exact: true })
+  ).toBeVisible();
+  await btn(page, 'Refresh my links').click();
+  await expect(field(page, 'Certificate or badge URL')).toHaveValue(url);
+  await expect(btn(page, 'Publish link')).toBeDisabled();
+  await btn(other, 'Refresh public links').click();
+  await expect(other.getByText('No public certificate links yet.', { exact: true })).toBeVisible();
 });
 
 test('private editor fits the supported widths and themes with reachable controls', async ({
@@ -228,12 +283,34 @@ test('private editor fits the supported widths and themes with reachable control
   await field(form, t('Exam date')).fill('2026-11-21');
   await field(form, t('Exam outcome')).selectOption('passed');
   await btn(form, t('Save private outcome')).click();
-  await btn(page, t('Preview public report')).click();
-  const preview = dialog(page, t('Preview public report'));
-  await expect(btn(preview, t('Cancel'))).toBeFocused();
-  await preview.screenshot({ path: info.outputPath('public-preview.png') });
-  await page.setViewportSize({ width: 844, height: 390 });
-  await expect(preview.getByRole('checkbox')).toBeVisible();
-  const submit = await btn(preview, t('Submit for moderation')).boundingBox();
-  expect(submit.height).toBeGreaterThanOrEqual(44);
+  await expect(page.getByText(t('Private outcome saved.'), { exact: true })).toBeVisible();
+  await btn(page.locator('main'), t('Public certificate links')).click();
+  await btn(page, t('Add certificate link')).click();
+  const publicForm = page.locator('.credential-form');
+  const longUrl = 'https://issuer.example.org/verify/' + 'a'.repeat(240);
+  await field(publicForm, t('Certificate or badge URL')).fill(longUrl);
+  await field(publicForm, t('Certificate or badge URL')).press('Tab');
+  await expect(btn(publicForm, t('Publish link'))).toBeFocused();
+  await btn(publicForm, t('Publish link')).press('Enter');
+  await expect(page.getByText(t('Certificate link published.'), { exact: true })).toBeVisible();
+  for (const [width, height] of [
+    [320, 844],
+    [390, 844],
+    [412, 915],
+    [768, 1024],
+    [1280, 900],
+    [844, 390],
+  ]) {
+    await page.setViewportSize({ width, height });
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+      .toBe(true);
+    const bounds = await btn(page, t('Edit link')).boundingBox();
+    expect(bounds.height).toBeGreaterThanOrEqual(44);
+  }
+  await btn(page, t('Remove link')).click();
+  const confirm = dialog(page, t('Remove this public link?'));
+  await expect(btn(confirm, t('Cancel'))).toBeFocused();
+  await expect(btn(confirm, t('Remove link'))).toBeVisible();
+  await confirm.screenshot({ path: info.outputPath('public-link-removal.png') });
 });

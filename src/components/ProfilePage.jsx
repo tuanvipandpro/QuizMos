@@ -3,7 +3,7 @@ import { Avatar, Button, Card, Radio, Spin, Typography } from 'antd';
 import { ArrowLeftOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { STUDY_ROADMAP_ENABLED } from '../config/studyRoadmapConfig';
-import { CERT_OUTCOMES_ENABLED } from '../config/certOutcomeConfig';
+import { CERT_OUTCOMES_ENABLED, CERT_OUTCOME_SHARING_ENABLED } from '../config/certOutcomeConfig';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -67,6 +67,11 @@ export default function ProfilePage({
               {CERT_OUTCOMES_ENABLED && (
                 <Button onClick={() => onNavigate('#/outcomes')}>
                   {t('Certification outcomes')}
+                </Button>
+              )}
+              {CERT_OUTCOME_SHARING_ENABLED && (
+                <Button onClick={() => onNavigate('#/outcomes?view=public')}>
+                  {t('Public certificate links')}
                 </Button>
               )}
               {STUDY_ROADMAP_ENABLED && (
