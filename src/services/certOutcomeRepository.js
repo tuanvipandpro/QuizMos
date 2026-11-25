@@ -3,13 +3,8 @@ import {
   doc,
   getDocFromServer,
   getDocsFromServer,
-  limit,
-  orderBy,
-  query,
   runTransaction,
   serverTimestamp,
-  startAfter,
-  where,
 } from 'firebase/firestore';
 import {
   changedOutcomeClaim,
@@ -17,14 +12,11 @@ import {
   matchingPlan,
   outcomeError,
   outcomeRecordEdit,
-  outcomeReportEdit,
-  OUTCOME_PAGE_SIZE,
   OUTCOME_SLOTS,
-  publicOutcome,
   readOutcome,
   readOutcomeReport,
-  readPublicOutcome,
   sameOutcomeVersion,
+  withdrawOutcomeReport,
 } from '../utils/certificationOutcomes.js';
 
 export function createCertOutcomeRepository(db) {
@@ -48,18 +40,7 @@ export function createCertOutcomeRepository(db) {
     if (!after) return;
     const stamp = serverTimestamp();
     tx.set(reportRef(id), { ...after, updatedAt: stamp });
-    if (after.status === 'published')
-      tx.set(doc(published, id), { ...publicOutcome(after), publishedAt: stamp });
-    else if (before?.status === 'published') tx.delete(doc(published, id));
-  };
-  const readPage = async (ref, predicates, read, after) => {
-    const snap = await getDocsFromServer(
-      query(ref, ...predicates, ...(after ? [startAfter(after)] : []), limit(OUTCOME_PAGE_SIZE))
-    );
-    return {
-      rows: snap.docs.map((item) => ({ id: item.id, ...read(item.data()) })),
-      next: snap.docs.length === OUTCOME_PAGE_SIZE ? snap.docs.at(-1) : null,
-    };
+    if (before?.status === 'published') tx.delete(doc(published, id));
   };
 
   return {
@@ -100,10 +81,7 @@ export function createCertOutcomeRepository(db) {
               tx,
               current.instanceId,
               before,
-              outcomeReportEdit(before, {
-                action: 'remove',
-                revision: before.revision,
-              })
+              withdrawOutcomeReport(before, before.revision)
             );
         }
         tx.set(target, candidate);
@@ -122,8 +100,7 @@ export function createCertOutcomeRepository(db) {
         tx.delete(target);
       });
     },
-    async share(uid, command) {
-      if (!['submit', 'remove'].includes(command.action)) throw outcomeError('denied');
+    async withdraw(uid, command) {
       await runTransaction(db, async (tx) => {
         const target = recordRef(uid, command.slot);
         const current = readRecord(await tx.get(target));
@@ -132,33 +109,8 @@ export function createCertOutcomeRepository(db) {
         const before = readReport(await tx.get(sub));
         if (before && (before.owner !== uid || before.slot !== command.slot))
           throw outcomeError('denied');
-        const next = outcomeReportEdit(before, {
-          uid,
-          slot: command.slot,
-          action: command.action,
-          revision: command.reportRevision,
-          bankId: current.bankId,
-          result: current.result,
-          experience: command.experience,
-        });
+        const next = withdrawOutcomeReport(before, command.reportRevision);
         updateReport(tx, current.instanceId, before, next);
-      });
-    },
-    publicPage(after) {
-      return readPage(published, [orderBy('publishedAt', 'desc')], readPublicOutcome, after);
-    },
-    moderationPage(status, after) {
-      if (!['pending', 'published'].includes(status)) throw outcomeError('invalid');
-      return readPage(reports, [where('status', '==', status)], readOutcomeReport, after);
-    },
-    async moderate(uid, { id, action, revision }) {
-      if (!['publish', 'reject', 'remove'].includes(action)) throw outcomeError('denied');
-      await runTransaction(db, async (tx) => {
-        const before = readReport(await tx.get(reportRef(id)));
-        if (!before || before.owner === uid) throw outcomeError('denied');
-        if (action === 'remove' && before.status !== 'published' && before.status !== 'removed')
-          throw outcomeError('conflict');
-        updateReport(tx, id, before, outcomeReportEdit(before, { action, revision }));
       });
     },
   };

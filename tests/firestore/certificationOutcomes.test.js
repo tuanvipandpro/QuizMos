@@ -2,17 +2,7 @@ import { before, after, beforeEach, test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { assertFails, initializeTestEnvironment } from '@firebase/rules-unit-testing';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  limit,
-  query,
-  setDoc,
-  serverTimestamp,
-  writeBatch,
-} from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, limit, query, setDoc } from 'firebase/firestore';
 import { createCertOutcomeRepository } from '../../src/services/certOutcomeRepository.js';
 
 assert.equal(process.env.GCLOUD_PROJECT, 'demo-quiz-app');
@@ -39,12 +29,6 @@ const existing = { ...input, revision: 1 };
 const privatePath = 'users/alice/certificationOutcomes/slot-1';
 const reportPath = 'outcomeSubmissions/' + id;
 const publicPath = 'publishedOutcomes/' + id;
-const submit = {
-  ...existing,
-  action: 'submit',
-  reportRevision: 0,
-  experience: 'My public experience',
-};
 const context = (uid, moderator = false, provider = 'google.com') =>
   environment
     .authenticatedContext(uid, {
@@ -113,100 +97,67 @@ test('owner writes are bounded, preserve explicit plan links and replay without 
   await assert.rejects(() => service.remove('alice', existing), /conflict/);
 });
 
-test('a separate moderator is required and withdrawal atomically removes the public projection', async () => {
-  const author = repo('alice', true),
-    moderator = repo('moderator', true),
-    foreign = repo('bob');
+const legacyReport = {
+  owner: 'alice',
+  slot: 'slot-1',
+  bankId: 'gcp-ace',
+  result: 'passed',
+  experience: 'Legacy public experience',
+  status: 'published',
+  revision: 2,
+  updatedAt: new Date('2026-11-24T12:00:00Z'),
+};
+const legacyPublic = {
+  bankId: legacyReport.bankId,
+  result: legacyReport.result,
+  experience: legacyReport.experience,
+  publishedAt: legacyReport.updatedAt,
+};
+const seedLegacy = () =>
+  environment.withSecurityRulesDisabled(async (unrestricted) => {
+    const db = unrestricted.firestore();
+    await setDoc(doc(db, reportPath), legacyReport);
+    await setDoc(doc(db, publicPath), legacyPublic);
+  });
+
+test('legacy public access and submissions are retired while owners can withdraw old reports', async () => {
+  const author = repo('alice');
+  const ownerDb = context('alice');
+  const moderatorDb = context('moderator', true);
   const guestDb = environment.unauthenticatedContext().firestore();
-  const guest = createCertOutcomeRepository(guestDb);
   await author.save('alice', input);
-  await author.share('alice', submit);
-  await author.share('alice', submit);
-  await assertFails(getDoc(doc(guestDb, reportPath)));
+  await assertFails(setDoc(doc(ownerDb, reportPath), { ...legacyReport, status: 'pending' }));
+  await assertFails(setDoc(doc(moderatorDb, publicPath), legacyPublic));
+  await seedLegacy();
+  await assertFails(getDoc(doc(guestDb, publicPath)));
+  await assertFails(getDocs(query(collection(guestDb, 'publishedOutcomes'), limit(20))));
+  await assertFails(getDoc(doc(moderatorDb, reportPath)));
   await assertFails(getDoc(doc(context('bob'), reportPath)));
-  await assertFails(getDocs(query(collection(context('bob'), 'outcomeSubmissions'), limit(20))));
-  assert.deepEqual((await guest.publicPage()).rows, []);
-  await assert.rejects(
-    () => author.moderate('alice', { id, action: 'publish', revision: 1 }),
-    /denied/
-  );
-  await assertFails(foreign.moderationPage('pending'));
-  const [pending] = (await moderator.moderationPage('pending')).rows;
-  assert.equal(pending.experience, submit.experience);
-  assert.equal(Object.hasOwn(pending, 'note'), false);
-  await assertFails(
-    setDoc(doc(context('moderator', true), publicPath), {
-      bankId: 'gcp-ace',
-      result: 'passed',
-      experience: submit.experience,
-      publishedAt: serverTimestamp(),
-    })
-  );
-  for (const [actor, append] of [
-    [context('alice', true), {}],
-    [context('moderator', true), { note: input.fields.note }],
-  ]) {
-    const forged = writeBatch(actor);
-    forged.update(doc(actor, reportPath), {
-      status: 'published',
-      revision: 2,
-      updatedAt: serverTimestamp(),
-    });
-    forged.set(doc(actor, publicPath), {
-      bankId: 'gcp-ace',
-      result: 'passed',
-      experience: submit.experience,
-      publishedAt: serverTimestamp(),
-      ...append,
-    });
-    await assertFails(forged.commit());
-  }
-  await moderator.moderate('moderator', { id, action: 'publish', revision: 1 });
-  const projection = (await getDoc(doc(guestDb, publicPath))).data();
-  assert.deepEqual(Object.keys(projection).sort(), [
-    'bankId',
-    'experience',
-    'publishedAt',
-    'result',
-  ]);
-  assert.equal(projection.experience, submit.experience);
-  assert.equal((await guest.publicPage()).rows.length, 1);
-  await author.share('alice', { ...existing, action: 'remove', reportRevision: 2 });
-  assert.equal((await getDoc(doc(guestDb, publicPath))).exists(), false);
+  await author.withdraw('alice', { ...existing, reportRevision: 2 });
+  await author.withdraw('alice', { ...existing, reportRevision: 2 });
   const [record] = await author.list('alice', true);
   assert.equal(record.note, input.fields.note);
-  assert.equal(record.report.experience, '');
   assert.equal(record.report.status, 'removed');
+  assert.equal(record.report.experience, '');
+  await environment.withSecurityRulesDisabled(async (unrestricted) => {
+    assert.equal((await getDoc(doc(unrestricted.firestore(), publicPath))).exists(), false);
+  });
 });
 
-test('reject, resubmit, moderator remove, material correction and deletion stay consistent', async () => {
-  const author = repo('alice'),
-    moderator = repo('moderator', true);
-  const guest = createCertOutcomeRepository(environment.unauthenticatedContext().firestore());
+test('private correction and deletion clean up a pre-existing legacy publication', async () => {
+  const author = repo('alice');
   await author.save('alice', input);
-  await author.share('alice', submit);
-  await moderator.moderate('moderator', { id, action: 'reject', revision: 1 });
-  assert.equal((await author.list('alice', true))[0].report.status, 'rejected');
-  await author.share('alice', { ...submit, reportRevision: 2 });
-  await moderator.moderate('moderator', { id, action: 'publish', revision: 3 });
-  await moderator.moderate('moderator', { id, action: 'remove', revision: 4 });
-  assert.deepEqual((await guest.publicPage()).rows, []);
-  await author.share('alice', { ...submit, reportRevision: 5 });
-  await moderator.moderate('moderator', { id, action: 'publish', revision: 6 });
+  await seedLegacy();
   await author.save('alice', { ...existing, fields: { ...input.fields, result: 'not-passed' } });
-  assert.deepEqual((await guest.publicPage()).rows, []);
-  const [corrected] = await author.list('alice', true);
-  assert.equal(corrected.report.status, 'removed');
-  await author.share('alice', {
-    ...corrected,
-    action: 'submit',
-    reportRevision: 8,
-    experience: '',
-  });
-  await moderator.moderate('moderator', { id, action: 'publish', revision: 9 });
-  await author.remove('alice', corrected);
-  await author.remove('alice', corrected);
+  const [record] = await author.list('alice', true);
+  assert.equal(record.report.status, 'removed');
+  await seedLegacy();
+  await author.remove('alice', record);
+  await author.remove('alice', record);
   assert.deepEqual(await author.list('alice', true), []);
-  assert.deepEqual((await guest.publicPage()).rows, []);
-  assert.equal((await getDoc(doc(context('alice'), reportPath))).exists(), false);
+  await environment.withSecurityRulesDisabled(async (unrestricted) => {
+    for (const path of [privatePath, reportPath, publicPath]) {
+      assert.equal((await getDoc(doc(unrestricted.firestore(), path))).exists(), false);
+    }
+  });
 });

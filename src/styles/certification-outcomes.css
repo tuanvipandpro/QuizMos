@@ -25,8 +25,7 @@
   overflow-wrap: anywhere;
 }
 .certification-outcomes .ant-btn,
-.outcome-dialog .ant-btn,
-.outcome-dialog .ant-checkbox-wrapper {
+.outcome-dialog .ant-btn {
   min-height: 44px;
   height: auto;
   max-width: 100%;
@@ -40,8 +39,7 @@
 .outcome-form-wide {
   grid-column: 1 / -1;
 }
-.outcome-form label,
-.outcome-dialog label:not(.ant-checkbox-wrapper) {
+.outcome-form label {
   display: block;
   margin-block-end: 4px;
   font-weight: 600;
@@ -79,11 +77,37 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-.outcome-dialog :is(.ant-input, .ant-card, .ant-alert) {
+.outcome-dialog .ant-alert {
   margin-block-end: 12px;
 }
-.outcome-dialog .ant-checkbox-wrapper {
-  align-items: center;
+.credential-panel > .ant-card-body,
+.credential-list,
+.credential-list li,
+.credential-link {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.credential-panel > .ant-card-body > .ant-btn {
+  justify-self: start;
+}
+.credential-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.credential-list li + li {
+  padding-block-start: 12px;
+  border-block-start: 1px solid var(--app-control-border);
+}
+.credential-link {
+  gap: 2px;
+  align-content: center;
+  min-height: 44px;
+  overflow-wrap: anywhere;
+}
+.credential-form .ant-typography {
+  margin-block: 6px 0;
 }
 @media (max-width: 580px) {
   .outcome-form,

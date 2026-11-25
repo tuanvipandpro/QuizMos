@@ -439,6 +439,7 @@ export default function App() {
     }
   }, [hash, active?.id, active?.contentVersion, cloud.loading]);
   const guide = getQuickSummary(route.quizId);
+  const outcomeView = route.page === 'outcomes' ? route.params.get('view') : null;
   useEffect(() => {
     document.title =
       (route.page === 'roadmap'
@@ -460,9 +461,13 @@ export default function App() {
                       : route.page === 'updates'
                         ? t('Quiz updates')
                         : route.page === 'outcomes'
-                          ? t('Certification outcomes')
+                          ? t(
+                              outcomeView === 'public'
+                                ? 'Public certificate links'
+                                : 'Certification outcomes'
+                            )
                           : active?.name || t('Quiz overview')) + ` · ${appBrand.name}`;
-  }, [route.page, active?.name, t]);
+  }, [route.page, outcomeView, active?.name, t]);
   let examDraft = null;
   if (active && ['overview', 'exam'].includes(route.mode)) {
     try {

@@ -4,9 +4,7 @@ import {
   matchingPlan,
   normalizeOutcome,
   outcomeRecordEdit,
-  outcomeReportEdit,
-  publicOutcome,
-  readPublicOutcome,
+  withdrawOutcomeReport,
 } from '../src/utils/certificationOutcomes.js';
 
 const form = {
@@ -54,27 +52,18 @@ test('record retries are idempotent and a stale revision cannot replace a newer 
   );
 });
 
-test('sharing projects only the public fields and cannot bypass pending review', () => {
-  const pending = outcomeReportEdit(null, {
-    uid: 'alice',
+test('legacy withdrawal clears shared text and tolerates an exact retry', () => {
+  const report = {
+    owner: 'alice',
     slot: 'slot-1',
-    action: 'submit',
-    revision: 0,
-    bankId: 'gcp-ace',
-    result: 'passed',
-    experience: ' Reviewed the guide ',
-  });
-  assert.throws(() => outcomeReportEdit(null, { action: 'publish', revision: 0 }), /conflict/);
-  const report = outcomeReportEdit(pending, { action: 'publish', revision: 1 });
-  assert.equal(outcomeReportEdit(report, { action: 'publish', revision: 1 }), null);
-  assert.deepEqual(publicOutcome({ ...report, note: 'Private', score: 99 }), {
+    status: 'published',
+    revision: 2,
     bankId: 'gcp-ace',
     result: 'passed',
     experience: 'Reviewed the guide',
-  });
-  assert.throws(
-    () => readPublicOutcome({ ...publicOutcome(report), owner: 'alice', publishedAt: 1 }),
-    /invalid/
-  );
-  assert.equal(outcomeReportEdit(report, { action: 'remove', revision: 2 }).experience, '');
+  };
+  const removed = withdrawOutcomeReport(report, 2);
+  assert.deepEqual(removed, { ...report, status: 'removed', revision: 3, experience: '' });
+  assert.equal(withdrawOutcomeReport(removed, 2), null);
+  assert.throws(() => withdrawOutcomeReport(report, 1), /conflict/);
 });

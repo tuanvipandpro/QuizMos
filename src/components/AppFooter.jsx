@@ -15,7 +15,7 @@ export default function AppFooter({ onNavigate, page, embedded = false }) {
       <div className="footer-links">
         {CERT_OUTCOME_SHARING_ENABLED && (
           <button className="public-text-link" onClick={() => onNavigate('#/outcomes?view=public')}>
-            {t('Community outcomes')}
+            {t('Public certificate links')}
           </button>
         )}
         <button
