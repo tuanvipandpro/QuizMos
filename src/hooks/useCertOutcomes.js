@@ -7,7 +7,6 @@ export const outcomeMessage = (error) => {
   if (error?.outcomeCode === 'conflict')
     return 'This record changed. Refresh and review the latest version.';
   if (error?.outcomeCode === 'plan') return 'The selected study target is no longer available.';
-  if (error?.outcomeCode === 'experience') return 'The public experience is too long.';
   if (
     error?.outcomeCode === 'denied' ||
     ['permission-denied', 'unauthenticated'].includes(error?.code)
@@ -92,38 +91,4 @@ export function useOutcomeWrite(uid) {
     }
   }
   return { busy, error, write, clear: () => setError(null) };
-}
-
-export function useOutcomeFeed(status) {
-  const [state, setState] = useState(null);
-  const generation = useRef(0);
-  const load = useCallback(
-    async (after = null) => {
-      const version = ++generation.current;
-      setState((before) => ({ status, rows: after ? before?.rows || [] : [], loading: true }));
-      try {
-        const page = await (status
-          ? service.moderationPage(status, after)
-          : service.publicPage(after));
-        if (generation.current === version)
-          setState((before) => ({
-            status,
-            rows: [...before.rows, ...page.rows],
-            next: page.next,
-            loading: false,
-          }));
-      } catch (error) {
-        if (generation.current === version)
-          setState((before) => ({ ...before, next: after, loading: false, error }));
-      }
-    },
-    [status]
-  );
-  useEffect(() => {
-    load();
-    return () => {
-      generation.current++;
-    };
-  }, [load]);
-  return state?.status === status && state ? { ...state, load } : { rows: [], loading: true, load };
 }

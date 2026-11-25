@@ -6,7 +6,6 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.firebase.sign_in_provider != 'anonymous';
     }
     function certOwner(uid) { return certSignedIn() && request.auth.uid == uid; }
-    function certModerator() { return certSignedIn() && request.auth.token.get('certOutcomeModerator', false) == true; }
     function certId(id) { return id is string && id.matches('[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'); }
     function certSlot(slot) { return slot in ['slot-1','slot-2','slot-3','slot-4','slot-5','slot-6']; }
     function certBank(bank) { return bank is string && bank.matches('[a-z0-9-]{1,120}'); }
@@ -47,62 +46,91 @@ service cloud.firestore {
         && (d.status != 'removed' || d.experience == '')
         && d.revision is int && d.revision > 0 && d.updatedAt == request.time;
     }
-    function certMatchRecord(d, id) {
-      let row = getAfter(certRecordPath(d.owner,d.slot)).data;
-      return row.instanceId == id && row.bankId == d.bankId && row.result == d.result;
-    }
     function certCanKeepSharedClaim(d) {
       return !existsAfter(certReportPath(d.instanceId))
         || getAfter(certReportPath(d.instanceId)).data.status == 'removed';
     }
-    function certProjection(d, source) {
-      let fields = ['bankId','result','experience','publishedAt'];
-      return d.keys().hasAll(fields) && d.keys().hasOnly(fields)
-        && d.bankId == source.bankId && d.result == source.result
-        && d.experience == source.experience && d.publishedAt == request.time;
-    }
-    function certReportEdit(d, old, id) {
+    function certReportWithdrawal(d, old) {
       return d.owner == old.owner && d.slot == old.slot && d.revision == old.revision + 1
-        && ((certOwner(old.owner)
-          && ((d.status == 'pending' && old.status in ['removed','rejected'] && certMatchRecord(d,id))
-            || (d.status == 'removed' && old.status in ['pending','published','rejected']
-              && d.bankId == old.bankId && d.result == old.result)))
-          || (certModerator() && request.auth.uid != old.owner
-            && d.bankId == old.bankId && d.result == old.result
-            && ((old.status == 'pending' && d.status in ['published','rejected']
-              && d.experience == old.experience && certMatchRecord(d,id))
-              || (old.status == 'published' && d.status == 'removed'))));
+        && certOwner(old.owner) && d.status == 'removed' && old.status in ['pending','published','rejected']
+        && d.bankId == old.bankId && d.result == old.result;
     }
     match /outcomeSubmissions/{id} {
-      allow get: if certSignedIn() && certId(id) && (resource == null || certOwner(resource.data.owner) || certModerator());
-      allow list: if certModerator() && request.query.limit > 0 && request.query.limit <= 20;
-      allow create: if certReport(request.resource.data,id) && certOwner(request.resource.data.owner)
-        && request.resource.data.status == 'pending' && request.resource.data.revision == 1
-        && certMatchRecord(request.resource.data,id) && !existsAfter(certPublicPath(id));
+      allow get: if certSignedIn() && certId(id) && (resource == null || certOwner(resource.data.owner));
       allow update: if certReport(request.resource.data,id)
-        && certReportEdit(request.resource.data,resource.data,id)
-        && (request.resource.data.status == 'published'
-          ? certProjection(getAfter(certPublicPath(id)).data,request.resource.data)
-          : !existsAfter(certPublicPath(id)));
+        && certReportWithdrawal(request.resource.data,resource.data)
+        && !existsAfter(certPublicPath(id));
       allow delete: if certOwner(resource.data.owner)
         && !existsAfter(certRecordPath(resource.data.owner,resource.data.slot))
         && !existsAfter(certPublicPath(id));
     }
     match /publishedOutcomes/{id} {
+      allow delete: if certOwner(get(certReportPath(id)).data.owner)
+        && (!existsAfter(certReportPath(id)) || getAfter(certReportPath(id)).data.status == 'removed');
+    }
+
+    function credentialLinkId(id) {
+      return id is string && id.matches('slot-[1-6]_[^_]+') && certId(id.split('_')[1]);
+    }
+    function credentialUrl(url) {
+      return url is string && url.toUtf8().size() == url.size() && url.size() <= 2048
+        && url.matches('https://(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z][a-z0-9-]{0,61}[a-z0-9](?:[/?#][^\\s\\\\\\x00-\\x1f\\x7f]*)?');
+    }
+    function credentialOwnerPath(uid, slot) {
+      return /databases/$(database)/documents/users/$(uid)/certificationLinks/$(slot);
+    }
+    function credentialPublicPath(id) {
+      return /databases/$(database)/documents/publishedCertificationLinks/$(id);
+    }
+    function credentialOwnerRecord(d, slot) {
+      let fields = ['id','url','revision'];
+      return d.keys().hasAll(fields) && d.keys().hasOnly(fields)
+        && credentialLinkId(d.id) && d.id.split('_')[0] == slot
+        && d.revision is int && d.revision > 0
+        && (d.url == null
+          ? !existsAfter(credentialPublicPath(d.id))
+          : credentialUrl(d.url) && getAfter(credentialPublicPath(d.id)).data.url == d.url);
+    }
+    function credentialPublicRecord(d, id, ownerPath) {
+      let fields = ['url','publishedAt'];
+      let entry = getAfter(ownerPath).data;
+      return d.keys().hasAll(fields) && d.keys().hasOnly(fields) && credentialUrl(d.url)
+        && entry.id == id && entry.url == d.url;
+    }
+    match /publishedCertificationLinks/{id} {
+      function ownSlot() {
+        return credentialOwnerPath(request.auth.uid, id.split('_')[0]);
+      }
       allow get: if true;
       allow list: if request.query.limit > 0 && request.query.limit <= 20;
-      allow create: if certModerator() && certId(id)
-        && get(certReportPath(id)).data.status == 'pending'
-        && get(certReportPath(id)).data.owner != request.auth.uid
-        && getAfter(certReportPath(id)).data.status == 'published'
-        && certProjection(request.resource.data,getAfter(certReportPath(id)).data);
-      allow update: if false;
-      allow delete: if (certOwner(get(certReportPath(id)).data.owner) || certModerator())
-        && (!existsAfter(certReportPath(id)) || getAfter(certReportPath(id)).data.status == 'removed');
+      allow create: if certSignedIn() && credentialLinkId(id)
+        && credentialPublicRecord(request.resource.data,id,ownSlot())
+        && request.resource.data.publishedAt == request.time;
+      allow update: if certSignedIn() && credentialLinkId(id) && get(ownSlot()).data.id == id
+        && credentialPublicRecord(request.resource.data,id,ownSlot())
+        && request.resource.data.publishedAt == resource.data.publishedAt;
+      allow delete: if certSignedIn() && credentialLinkId(id) && get(ownSlot()).data.id == id
+        && getAfter(ownSlot()).data.id == id && getAfter(ownSlot()).data.url == null;
     }
     // Users collection - mỗi user chỉ có thể đọc/ghi profile của chính mình
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      match /certificationLinks/{slot} {
+        allow get, list: if certOwner(userId);
+        allow create: if certOwner(userId) && certSlot(slot)
+          && credentialOwnerRecord(request.resource.data,slot)
+          && request.resource.data.url != null
+          && request.resource.data.revision == 1
+          && !exists(credentialPublicPath(request.resource.data.id));
+        allow update: if certOwner(userId) && certSlot(slot)
+          && credentialOwnerRecord(request.resource.data,slot)
+          && request.resource.data.revision == resource.data.revision + 1
+          && ((resource.data.url != null && request.resource.data.id == resource.data.id)
+            || (resource.data.url == null && request.resource.data.url != null
+              && request.resource.data.id != resource.data.id
+              && !exists(credentialPublicPath(request.resource.data.id))));
+      }
 
       match /certificationOutcomes/{slot} {
         allow get, list: if certOwner(userId);
