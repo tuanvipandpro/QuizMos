@@ -29,6 +29,10 @@ export const CERTIFICATION_SOURCES = Object.freeze({
   ab731: 'https://learn.microsoft.com/en-us/credentials/certifications/exams/ab-731/',
   ai103:
     'https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-apps-and-agents-developer-associate/',
+  dp800:
+    'https://learn.microsoft.com/en-us/credentials/certifications/developing-ai-enabled-database-solutions/',
+  dp800Score:
+    'https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-800',
   microsoftScore: 'https://learn.microsoft.com/certifications/exam-scoring-reports',
   microsoftFormat:
     'https://learn.microsoft.com/en-us/credentials/support/exam-duration-exam-experience',
@@ -161,6 +165,11 @@ export const certificationProfiles = Object.freeze([
   }),
   profile('ai-103', 'AI-103', null, null, 120, scaled(700, 1), ['ai103', 'microsoftScore'], {
     formats: null,
+  }),
+  profile('dp-800', 'DP-800', null, null, 120, scaled(700, 1), ['dp800', 'dp800Score'], {
+    formats: null,
+    revision: '2026-11-26',
+    reviewedAt: '2026-11-26',
   }),
   profile('aws-saa', 'SAA-C03', 65, 65, 130, scaled(720), ['saa', 'saaScore']),
   profile('aws-dva', 'DVA-C02', 65, 65, 130, scaled(720), ['dva', 'dvaTransition'], {
