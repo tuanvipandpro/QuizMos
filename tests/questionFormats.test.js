@@ -37,7 +37,23 @@ test('every built-in bank remains loadable with legacy placeholder compatibility
       count++;
     }
   }
-  assert.equal(count, 26);
+  assert.equal(count, 27);
+});
+
+test('DP-800 preserves the imported question sequence and all four answer formats', () => {
+  const questions = JSON.parse(
+    fs.readFileSync(new URL('../public/quiz/Azure/DP-800.json', import.meta.url), 'utf8')
+  );
+  assert.equal(validateQuizQuestions(questions), questions);
+  assert.deepEqual(
+    questions.map((question) => question.id),
+    Array.from({ length: 101 }, (_, index) => String(index + 1))
+  );
+  const groups = Object.groupBy(questions, (question) => question.type ?? 'multiple_choice');
+  assert.deepEqual(
+    Object.fromEntries(Object.entries(groups).map(([type, group]) => [type, group.length])),
+    { multiple_choice: 57, yes_no: 10, dropdown: 16, drag_drop: 18 }
+  );
 });
 
 test('all imported banks validate and include five dropdown and five yes-no questions', () => {

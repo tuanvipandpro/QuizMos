@@ -172,6 +172,15 @@ export const quizzes = [
     code: 'AI-103',
   },
   {
+    id: 'dp-800',
+    name: 'Microsoft SQL AI Developer Associate (DP-800)',
+    file: 'quiz/Azure/DP-800.json',
+    category: 'Microsoft',
+    difficulty: 'Associate',
+    totalQuestions: 101,
+    code: 'DP-800',
+  },
+  {
     id: 'aws-saa',
     name: 'Solutions Architect Associate (SAA-C03)',
     file: 'quiz/AWS/AWS_SAA.json',
