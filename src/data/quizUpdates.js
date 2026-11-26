@@ -2,6 +2,14 @@
 // Review the referenced bank diff before adding or revising an entry.
 export const quizUpdates = [
   {
+    id: 'dp-800-2026-11-26',
+    bankId: 'dp-800',
+    kind: 'added',
+    date: '2026-11-26',
+    summary: 'Added 101 DP-800 practice questions, including dropdown and drag-and-drop items.',
+    sourceRevision: '5c40de73ef4a2b8b0da4fae96b72535b765cc358',
+  },
+  {
     id: 'ai-103-study-2026-11-24',
     bankId: 'ai-103',
     kind: 'updated',
